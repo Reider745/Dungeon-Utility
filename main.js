@@ -2,7 +2,7 @@
 BUILD INFO:
   dir: dev
   target: main.js
-  files: 5
+  files: 7
 */
 
 
@@ -15,60 +15,203 @@ let loadStructure = {};
 let loadReg = [];
 Callback.addCallback("LevelLoaded", function(){
 	Callback.invokeCallback("StructurePreLoad")
-	if(__config__.get("debug.message"))
+	if(__config__.get("debug.info_load"))
 		alert("start load")
 	for(let i in loadReg){
-		let start = new Date().getTime();
-		loadStructure[loadReg[i].name] = StructureLoader["get"+loadReg[i].func](loadReg[i].path)
-		if(__config__.get("debug.message"))
-			alert("load: "+loadReg[i].name+", type: "+loadReg[i].func+", time: "+((new Date().getTime())-start))
+		//try{
+			let start = new Date().getTime();
+			if(FileTools.isExists(loadReg[i].path))
+				loadStructure[loadReg[i].name] = StructureLoader.types[loadReg[i].type].read(FileTools.ReadText(loadReg[i].path));
+			else 
+				alert("error path, load structure: "+loadReg[i].name+"");
+			if(__config__.get("debug.info_load"))
+				alert("load: "+loadReg[i].name+", type: "+loadReg[i].type+", time: "+((new Date().getTime())-start))
+		/*}catch(error){
+			if(__config__.get("debug.message_error_load"))
+				alert("error load structure: "+loadReg[i].name+"\n"+error);
+		}*/
 	}
-	if(__config__.get("debug.message"))
+	if(__config__.get("debug.info_load"))
 		alert("end load")
 	Callback.invokeCallback("StructureLoad")
 });
 let StructureLoader = {
-	getDungeonAPI(path){
+	save(path, name, type){
+		FileTools.WriteText(path, this.types[type || "DungeonUtility"].save(loadStructure[name]), false)
+	},
+	types: {},
+	registerType(name, obj){
+		obj = obj || {};
+		obj.save = obj.save || function(){};
+		obj.read = obj.read || function(){};
+		this.types[name] = obj;
+	},
+	load(path, name, type){
+		loadReg.push({name: name, path: path, type: type || "DungeonUtility"})
+	},
+	loadRuntime(path, name, type){
+		try{
+			let start = new Date().getTime();
+			if(FileTools.isExists(path))
+				loadStructure[name] = StructureLoader.types[type].read(FileTools.ReadText(path));
+			else 
+				alert("error path, load structure: "+name+"");
+			if(__config__.get("debug.info_load"))
+				alert("load: "+name+", type: "+type+", time: "+((new Date().getTime())-start))
+		}catch(error){
+			if(__config__.get("debug.message_error_load"))
+				alert("error load structure: "+name+"\n"+error);
+		}
+	}
+};
+
+
+
+
+// file: StructureType.js
+
+function getId(id){
+	if(id >= 8000){
+		let keys = Object.keys(BlockID)
+		for(let i in keys){
+			if(BlockID[keys[i]] == id)
+				return keys[i]
+		}
+	}
+	return id;
+}
+
+StructureLoader.registerType("DungeonAPI", {
+	read(file){
 		let arr = [];
-		let stru = FileTools.ReadText(path).split(":");
+		let stru = file.split(":");
 		for(let i in stru){
 			let data = stru[i].split(".");
 			arr.push(new BlockData(parseInt(data[2]), parseInt(data[3]), parseInt(data[4]), new BlockState(parseInt(data[0]) ? parseInt(data[0]) : BlockID[data[0]], parseInt(data[1])), new BlockState(0, {}), new NBT.CompoundTag()))
 		}
 		return arr;
 	},
-	getDungeonCore(path){
-		let arr = [];
-		let stru = FileTools.ReadJSON(path);
+	save(stru){
+		let str = "";
 		for(let i in stru){
-			stru[i][3] = stru[i][3] || []
-			stru[i][3][0] = stru[i][3][0] || 0
-			stru[i][3][1] = stru[i][3][1] || {}
+			str += getId(stru[i].state.id)+"."+stru[i].state.data+"."+stru[i].x+"."+stru[i].y+"."+stru[i].z;
+			if(i == stru.length - 1)
+			 str += ":";
+		}
+		return str;
+	}
+})
+
+StructureLoader.registerType("DungeonAPI_V2", {
+	read(file){
+		let arr = [];
+		let stru = JSON.parse(file);
+		for(let i in stru){
+			let data = stru[i].split(".");
+			arr.push(new BlockData(parseInt(data[2]), parseInt(data[3]), parseInt(data[4]), new BlockState(parseInt(data[0]) ? parseInt(data[0]) : BlockID[data[0]], parseInt(data[1])), new BlockState(0, {}), new NBT.CompoundTag()))
+		}
+		return arr;
+	},
+	save(stru){
+		let arr = [];
+		for(let i in stru){
+			arr.push(getId(stru[i].state.id)+"."+stru[i].state.data+"."+stru[i].x+"."+stru[i].y+"."+stru[i].z)
+		}
+		return JSON.stringify(arr);
+	}
+})
+
+StructureLoader.registerType("DungeonCore", {
+	read(file){
+		let arr = [];
+		let stru = JSON.parse(file);
+		for(let i in stru){
+			stru[i][3] = stru[i][3] || [];
+			stru[i][3][0] = stru[i][3][0] || 0;
+			stru[i][3][1] = stru[i][3][1] || {};
 			arr.push(new BlockData(parseInt(stru[i][1].split(".")[1]), parseInt(stru[i][1].split(".")[2]), parseInt(stru[i][1].split(".")[3]), new BlockState(typeof(stru[i][0]) == "string" ? BlockID[stru[i][0]] : stru[i][0], stru[i][2]), new BlockState(stru[i][3][0] == "string" ? BlockID[stru[i][3][0]] : stru[i][3][0], stru[i][3][1]), new NBT.CompoundTag()))
 		}
 		return arr;
 	},
-	getDungeonUtility(path){
+	save(stru){
 		let arr = [];
-		let stru = FileTools.ReadJSON(path);
+		for(let i in stru){
+			let block = [getId(stru[i].state.id), stru[i].state.data+"."+stru[i].x+"."+stru[i].y+"."+stru[i].z, stru[i].state.getNamedStatesScriptable(), [getId(stru[i].stateExtra.id), stru[i].stateExtra.getNamedStatesScriptable()]];
+			arr.push(block);
+		}
+		return JSON.stringify(arr);
+	}
+});
+
+StructureLoader.registerType("Structures", {
+	read(file){
+		let arr = [];
+		let stru = JSON.parse(file).structure;
+		for(let i in stru){
+			arr.push(new BlockData(stru[i][0], stru[i][1], stru[i][2], new BlockState(typeof(stru[i][3]) == "string" ? BlockID[stru[i][3]] : (typeof(stru[i][3]) == "object" ? stru[i][3].id : 0), stru[i][3].id ? stru[i][3].data : 0), new BlockState(0, {}), new NBT.CompoundTag()));
+		}
+		return arr;
+	},
+	save(stru){
+		let arr = {
+			version: 3,
+			structure: []
+		};
+		for(let i in stru){
+			arr.structure.push([stru[i].x, stru[i].y, stru[i].z, {id: getId(stru[i].state.id)},null])
+		}
+		return JSON.stringify(arr);
+	}
+});
+
+StructureLoader.registerType("DungeonUtility", {
+	read(file){
+		let arr = [];
+		let stru = JSON.parse(file);
 		for(let i in stru){
 			let data = stru[i][0].split(".")
 			arr.push(new BlockData(parseInt(data[2])||0, parseInt(data[3])||0, parseInt(data[4])||0, new BlockState(typeof(parseInt(data[0])||(data[0]==""?0:data[0])) == "number" ? parseInt(data[0])||0 : BlockID[data[0]], stru[i][1] || {}), new BlockState(typeof(parseInt(data[1])||(data[1]==""?0:data[1])) == "number" ? parseInt(data[1])||0 : BlockID[data[1]], stru[i][2] || {}), new NBT.CompoundTag()))
 		}
 		return arr;
 	},
-	getStructures(path){
-		let arr = [];
-		let stru = FileTools.ReadJSON(path).structure;
+	save(stru){
+		let arr = []
 		for(let i in stru){
-			arr.push(new BlockData(stru[i][0], stru[i][1], stru[i][2], new BlockState(typeof(stru[i][3]) == "string" ? BlockID[stru[i][3]] : (typeof(stru[i][3]) == "object" ? stru[i][3].id : 0), stru[i][3].id ? stru[i][3].data : 0), new BlockState(0, {}), new NBT.CompoundTag()));
+			let str = "";
+			let data = stru[i].state.id;
+			if(data!=0)
+				str+=getId(data)+"."
+			else
+				str+="."
+			data = stru[i].stateExtra.id;
+			if(data!=0)
+				str+=getId(data)+"."
+			else
+				str+="."
+			if(stru[i].x!=0)
+				str+=stru[i].x+"."
+			else
+				str+="."
+			if(stru[i].y!=0)
+				str+=stru[i].y+"."
+			else
+				str+="."
+			if(stru[i].z!=0)
+				str+=stru[i].z
+			let blockData=[str];
+			arr.push(blockData)
+			if(JSON.stringify(stru[i].state.getNamedStatesScriptable())!="{}")
+				blockData.push(stru[i].state.getNamedStatesScriptable());
+			if(JSON.stringify(stru[i].stateExtra.getNamedStatesScriptable())!="{}"){
+				if(blockData.length == 1)
+					blockData.push({});
+				blockData.push(stru[i].stateExtra.getNamedStatesScriptable());
+			}
+			arr.push(blockData)
 		}
-		return arr;
-	},
-	load(path, name, type){
-		loadReg.push({name: name, path: path, func: type || "DungeonUtility"})
+		return JSON.stringify(arr);
 	}
-};
+});
 
 
 
@@ -115,6 +258,9 @@ let Structure = {
 		this.setStruct = function(name){
 			stru.setStructure(Structure.getStructure(name||[]))
 			return this;
+		}
+		this.getJavaStructure = function(){
+			return stru;
 		}
 		this.setPrototype = function(obj){
 			stru.setPrototype(new StructureProtJs(obj.isBlock || function(){return true},obj.setBlock || function(){}, obj.after || function(){}, obj.before || function(){}))
@@ -259,13 +405,13 @@ let StructureUtility = {
 			if(stru[i].x == x && stru[i].y == y && stru[i].z == z)
 				return stru[i];
 	},
-	getBlockIndex(name, x, y, z){
+	getBlockByIndex(name, x, y, z){
 		let stru = Structure.getStructure(name||[]);
 		for(let i in stru)
 			if(stru[i].x == x && stru[i].y == y && stru[i].z == z)
 				return i;
 	},
-	setBlock(stru, i, state, extra, tag){
+	setBlockIndex(stru, i, state, extra, tag){
 		extra = extra || new BlockState(0, {});
 		tag = tag || new NBT.CompoundTag();
 		if(typeof(stru) == "string"){
@@ -277,8 +423,82 @@ let StructureUtility = {
 				stru[i] = new BlockData(x, y, z, state, extra, tag)
 		}
 	},
-	getBlockByIndex(name, i){
+	getBlockIndex(name, i){
 		return Structure.getStructure(name||[])[i];
+	}
+};
+
+
+
+
+// file: VisualStructure.js
+
+let VisualStructure = {
+	getArrMesh(name, size){
+		let BaseArr = [];
+		let pos = [];
+		let stru = Structure.getStructure(name||[]);
+		for(let i in stru){
+			if(stru[i].state.id == 0)
+				continue;
+			let base = new Animation.Item(stru[i].x, stru[i].y, stru[i].z);
+			base.describeItem({
+				id: stru[i].state.id,
+				data: stru[i].state.data,
+				size: size || .95,
+				material: "visual_structure"
+			});
+			BaseArr.push(base);
+			pos.push([stru[i].x, stru[i].y, stru[i].z]);
+			if(stru[i].stateExtra.id == 0)
+				continue;
+			let base_extra = new Animation.Item(stru[i].x, stru[i].y, stru[i].z);
+			base_extra.describeItem({
+				id: stru[i].stateExtra.id,
+				data: stru[i].stateExtra.data,
+				size: size || .95,
+				material: "visual_structure"
+			});
+			BaseArr.push(base_extra);
+			pos.push([stru[i].x, stru[i].y, stru[i].z]);
+		}
+		return {base: BaseArr, pos: pos};
+	},
+	Animation(stru, size){
+		let BaseArr = VisualStructure.getArrMesh(stru, size);
+		
+		this.loaded = false;
+		this.setStructure = function(stru, size){
+			this.destroy();
+			BaseArr = VisualStructure.getArrMesh(stru, size);
+		}
+		this.getStructure = function(){
+			return stru;
+		}
+		this.load = function(x, y, z, a){
+			this.loaded = true;
+			for(let i in BaseArr.base){
+				let pos = BaseArr.pos[i];
+				BaseArr.base[i].setPos(x+pos[0],y+pos[1],z+pos[2]);
+				BaseArr.base[i].load();
+				BaseArr.base[i].getShaderUniforms().setUniformValue("visual_structure", "A", a || .6);
+			}
+		}
+		this.loadCustom = function(x, y, z, func, a){
+			this.loaded = true;
+			for(let i in BaseArr.base){
+				let pos = BaseArr.pos[i];
+				BaseArr.base[i].setPos(x+pos[0],y+pos[1],z+pos[2]);
+				BaseArr.base[i].loadCustom(func);
+				BaseArr.base[i].getShaderUniforms().setUniformValue("visual_structure", "A", a || .6);
+			}
+		}
+		this.destroy = function(){
+			this.loaded = false;
+			for(let i in BaseArr.base){
+				BaseArr.base[i].destroy();
+			}
+		}
 	}
 };
 
@@ -364,12 +584,14 @@ let ItemGeneration = {
 				}
 			}
 			gen.prot.after({x: x, y: y, z: z}, region, packet)
+		}else if(__config__.get("debug.message_error_generation_item")){
+			Game.message("noy container x:"+x+", y: "+y+", z: "+z)
 		}
 	},
 	enchantAdd(type, count){
 		let arr = TYPE[type];
 		let extra = new ItemExtraData();
-		for(var i=0;i<=count;i++){
+		for(let i=0;i<=count;i++){
 			let r = Math.ceil(Math.random()*(arr.length-1));
 			let lvl = Math.ceil(Math.random()*(arr[r].l))+1;
 			if(arr[r]){
@@ -391,21 +613,15 @@ ModAPI.registerAPI("DungeonUtility", {
 	Structure: Structure,
 	ItemGeneration: ItemGeneration,
 	StructureUtility: StructureUtility,
+	VisualStructure: VisualStructure,
 	requireGlobal(command){
 		return eval(command);
 	},
+	getDir(){
+		return __dir__;
+	},
 	version: 1
 });
-function getId(id){
-	if(id >= 8000){
-		let keys = Object.keys(BlockID)
-		for(let i in keys){
-			if(BlockID[keys[i]] == id)
-				return keys[i]
-		}
-	}
-	return id;
-}
 IDRegistry.genItemID("dungeon_utility_wood"); 
 Item.createItem("dungeon_utility_wood", "Dungeon wood \n /struct save name:string save_air:bool specialSeparator:bool", {
 	name: "axe", 

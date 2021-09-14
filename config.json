@@ -1,4 +1,8 @@
 {
   "enabled":true,
-  "debug": {"message": true}
+  "debug": {
+  	"info_load":false,
+  	"message_error_load":true,
+  	"message_error_generation_item":false
+  }
 }

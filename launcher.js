@@ -1,9 +1,10 @@
 ConfigureMultiplayer({
     name: "Dungeon-Utility", 
-    version: "1.0", 
+    version: "2.0", 
     isClientOnly: false
 });
 Launch();
+
 
 
 

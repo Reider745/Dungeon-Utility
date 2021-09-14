@@ -75,12 +75,14 @@ let ItemGeneration = {
 				}
 			}
 			gen.prot.after({x: x, y: y, z: z}, region, packet)
+		}else if(__config__.get("debug.message_error_generation_item")){
+			Game.message("noy container x:"+x+", y: "+y+", z: "+z)
 		}
 	},
 	enchantAdd(type, count){
 		let arr = TYPE[type];
 		let extra = new ItemExtraData();
-		for(var i=0;i<=count;i++){
+		for(let i=0;i<=count;i++){
 			let r = Math.ceil(Math.random()*(arr.length-1));
 			let lvl = Math.ceil(Math.random()*(arr[r].l))+1;
 			if(arr[r]){

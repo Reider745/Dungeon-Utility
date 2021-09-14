@@ -3,21 +3,15 @@ ModAPI.registerAPI("DungeonUtility", {
 	Structure: Structure,
 	ItemGeneration: ItemGeneration,
 	StructureUtility: StructureUtility,
+	VisualStructure: VisualStructure,
 	requireGlobal(command){
 		return eval(command);
 	},
+	getDir(){
+		return __dir__;
+	},
 	version: 1
 });
-function getId(id){
-	if(id >= 8000){
-		let keys = Object.keys(BlockID)
-		for(let i in keys){
-			if(BlockID[keys[i]] == id)
-				return keys[i]
-		}
-	}
-	return id;
-}
 IDRegistry.genItemID("dungeon_utility_wood"); 
 Item.createItem("dungeon_utility_wood", "Dungeon wood \n /struct save name:string save_air:bool specialSeparator:bool", {
 	name: "axe", 

@@ -1,0 +1,7 @@
+{
+    "visual_structure:entity_alphatest_custom": {
+        "fragmentShader": "./visual_structure.fragment",
+        "-defines": ["ALPHA_TEST"],
+        "+states": ["Blending", "DisableCulling", "DisableDepthWrite"]
+    }
+}
