@@ -1,4 +1,12 @@
 let VisualStructure = {
+	getStructureModel(name){
+		let model = BlockRenderer.createModel();
+		let stru = Structure.getStructure(name||[]);
+		for(let i in stru){
+			model.addBox(stru[i].x, stru[i].y, stru[i].z,stru[i].x+1, stru[i].y+1, stru[i].z+1,  Block.convertItemToBlockId(stru[i].state.id), stru[i].state.data)
+		}
+		return model
+	},
 	getArrMesh(name, size, value){
 		let BaseArr = [];
 		let stru = Structure.getStructure(name||[]);
@@ -60,6 +68,7 @@ let VisualStructure = {
 		}
 		this.load = function(x, y, z, a, packet){
 			this.loaded = true;
+			this.remove = false
 			for(let i in BaseArr){
 				let pos = BaseArr[i].pos;
 				BaseArr[i].base.setPos(x+pos[0],y+pos[1],z+pos[2]);
@@ -72,23 +81,31 @@ let VisualStructure = {
 				
 				BaseArr[i].base.getShaderUniforms().setUniformValue("visual_structure", "A", a || .6);
 			}
-			Updatable.addUpdatable({
-				update(){
-					prot.tick(x,y,z, packet)
-				}
-			});
+			this.update = function(){
+				prot.tick(x,y,z, packet)
+			}
+			Updatable.addUpdatable(this)
 		}
 		this.destroy = function(){
+			if(!this.loaded)
+				return
 			this.loaded = false;
+			this.remove = true
 			for(let i in BaseArr){
 				BaseArr[i].base.destroy();
 			}
 		}
 	}
 };
+Callback.addCallback("StructureLoad", function(){
+	let model = VisualStructure.getStructureModel("home_0")
+	let render = new ICRender.Model(model)
+});
+
 /*
 Пусть будет здесь в качестве примера 
 Callback.addCallback("StructureLoad", function(){
+	//wood_0 структура 
  let Test = new VisualStructure.Animation("wood_0", 1.1);
  Test.setPrototype({
  	load(x, y, z, org_pos, base){
@@ -117,10 +134,7 @@ Callback.addCallback("StructureLoad", function(){
  })
  Callback.addCallback("ItemUseLocal", function(coords, item){
   if(item.id == 264)
-   Test.load(coords.x+.5, coords.y+.5, coords.z+.5, .6, {
-   	stru: Structure.getStructure("test"),
-   	count: StructureUtility.getCountBlock("test")
-   })
+   Test.load(coords.x+.5, coords.y+.5, coords.z+.5)
  })
 });
 */

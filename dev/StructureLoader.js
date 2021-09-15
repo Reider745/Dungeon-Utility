@@ -42,11 +42,11 @@ let StructureLoader = {
 		try{
 			let start = new Date().getTime();
 			if(FileTools.isExists(path))
-				loadStructure[name] = StructureLoader.types[type].read(FileTools.ReadText(path));
+				loadStructure[name] = StructureLoader.types[type|| "DungeonUtility"].read(FileTools.ReadText(path));
 			else 
 				alert("error path, load structure: "+name+"");
 			if(__config__.get("debug.info_load"))
-				alert("load: "+name+", type: "+type+", time: "+((new Date().getTime())-start))
+				alert("load: "+name+", type: "+(type|| "DungeonUtility")+", time: "+((new Date().getTime())-start))
 		}catch(error){
 			if(__config__.get("debug.message_error_load"))
 				alert("error load structure: "+name+"\n"+error);
