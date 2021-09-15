@@ -8,6 +8,9 @@ let StructureUtility = {
 	getCountBlock(stru){
 		return Structure.getStructure(stru||[]).length;
 	},
+	getAllStructureName(){
+		return Object.keys(loadStructure);
+	},
 	addBlock(stru, x, y, z, state, extra, tag){
 		extra = extra || new BlockState(0, {});
 		tag = tag || new NBT.CompoundTag();

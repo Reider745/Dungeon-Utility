@@ -1,9 +1,9 @@
 let VisualStructure = {
 	getArrMesh(name, size, value){
 		let BaseArr = [];
-		let pos = [];
 		let stru = Structure.getStructure(name||[]);
 		for(let i in stru){
+			let obj = {state: stru[i].state, extra: stru[i].stateExtra, pos: [stru[i].x, stru[i].y, stru[i].z]}
 			if(stru[i].state.id == 0 || value)
 				continue;
 			let base = new Animation.Item(stru[i].x, stru[i].y, stru[i].z);
@@ -13,28 +13,28 @@ let VisualStructure = {
 				size: size || .95,
 				material: "visual_structure"
 			});
-			base.block = {};
-			base.block.id = stru[i].state.id;
-			BaseArr.push(base);
-			pos.push([stru[i].x, stru[i].y, stru[i].z]);
-			if(stru[i].stateExtra.id == 0)
-				continue;
-			let base_extra = new Animation.Item(stru[i].x, stru[i].y, stru[i].z);
-			base_extra.describeItem({
-				id: stru[i].stateExtra.id,
-				data: stru[i].stateExtra.data,
-				size: size || .95,
-				material: "visual_structure"
-			});
-			BaseArr.push(base_extra);
-			pos.push([stru[i].x, stru[i].y, stru[i].z]);
+			obj.base = base;
+			if(stru[i].stateExtra.id != 0){
+				let base_extra = new Animation.Item(stru[i].x, stru[i].y, stru[i].z);
+				base_extra.describeItem({
+					id: stru[i].stateExtra.id,
+					data: stru[i].stateExtra.data,
+					size: size || .95,
+					material: "visual_structure"
+				});
+				obj.base_extra = base_extra;
+			}
+			BaseArr.push(obj)
 		}
-		return {base: BaseArr, pos: pos};
+		return BaseArr;
 	},
 	Animation(stru, size, value){
 		let BaseArr = VisualStructure.getArrMesh(stru, size, value);
 		
 		this.loaded = false;
+		this.getArrBase = function(){
+			return BaseArr;
+		}
 		this.setStructure = function(stru, size, value){
 			this.destroy();
 			BaseArr = VisualStructure.getArrMesh(stru, size, value);
@@ -45,37 +45,82 @@ let VisualStructure = {
 		let prot = {
 			isLoad(){return true},
 			load(){return "visual_structure"},
-			tick(){}
+			tick(){},
+			tickBlock(){}
 		};
 		this.setPrototype = function(obj){
 			obj.isLoad = obj.isLoad || function(){return true}
 			obj.load = obj.load || function(){return "visual_structure"}
 			obj.tick = obj.tick || function(){}
+			obj.tickBlock = obj.tickBlock || function(){}
 			prot = obj;
 		}
 		this.getPrototype = function(obj){
 			return prot;
 		}
-		this.load = function(x, y, z, a){
+		this.load = function(x, y, z, a, packet){
 			this.loaded = true;
-			for(let i in BaseArr.base){
-				let pos = BaseArr.pos[i];
-				BaseArr.base[i].setPos(x+pos[0],y+pos[1],z+pos[2]);
-				if(prot.isLoad(x+pos[0],y+pos[1],z+pos[2], {x: pos[0], y: pos[1], z: pos[2]}, BaseArr.base[i]))
-					BaseArr.base[i].loadCustom(function(){
-						prot.tick(x+pos[0],y+pos[1],z+pos[2], {x: pos[0], y: pos[1], z: pos[2]}, this)
+			for(let i in BaseArr){
+				let pos = BaseArr[i].pos;
+				BaseArr[i].base.setPos(x+pos[0],y+pos[1],z+pos[2]);
+				if(prot.isLoad(x+pos[0],y+pos[1],z+pos[2], {x: pos[0], y: pos[1], z: pos[2]}, BaseArr[i].base, i, packet))
+					BaseArr[i].base.loadCustom(function(){
+						prot.tickBlock(x+pos[0],y+pos[1],z+pos[2], {x: pos[0], y: pos[1], z: pos[2]}, this, i, packet)
 					});
-				let material = prot.load(x+pos[0],y+pos[1],z+pos[2], {x: pos[0], y: pos[1], z: pos[2]}, BaseArr.base[i])
-				BaseArr.base[i].render.setMaterial(material)
+				let material = prot.load(x+pos[0],y+pos[1],z+pos[2], {x: pos[0], y: pos[1], z: pos[2]}, BaseArr[i].base, i, packet)
+				BaseArr[i].base.render.setMaterial(material)
 				
-				BaseArr.base[i].getShaderUniforms().setUniformValue("visual_structure", "A", a || .6);
+				BaseArr[i].base.getShaderUniforms().setUniformValue("visual_structure", "A", a || .6);
 			}
+			Updatable.addUpdatable({
+				update(){
+					prot.tick(x,y,z, packet)
+				}
+			});
 		}
 		this.destroy = function(){
 			this.loaded = false;
-			for(let i in BaseArr.base){
-				BaseArr.base[i].destroy();
+			for(let i in BaseArr){
+				BaseArr[i].base.destroy();
 			}
 		}
 	}
 };
+/*
+Пусть будет здесь в качестве примера 
+Callback.addCallback("StructureLoad", function(){
+ let Test = new VisualStructure.Animation("wood_0", 1.1);
+ Test.setPrototype({
+ 	load(x, y, z, org_pos, base){
+ 		return "visual_structure_noy"
+ 	},
+ 	tick(x, y, z, packet){
+ 		if(World.getThreadTime() % 10 == 0){
+ 			let arr = Test.getArrBase();
+ 			let value = false;
+ 			for(let i in arr){
+ 				if(value)
+ 					continue
+ 				let id = BlockSource.getDefaultForActor(Player.get()).getBlockID(x-.5+arr[i].pos[0], y+arr[i].pos[1], z-.5+arr[i].pos[2]);
+ 				if(arr[i].state.id != id && id != 0){
+ 					arr[i].base.render.setMaterial("visual_structure_red");
+ 					value = true;
+ 				}else if(arr[i].state.id == id){
+ 					arr[i].base.render.setMaterial("visual_structure_noy");
+ 				}else{
+ 					arr[i].base.render.setMaterial("visual_structure");
+ 				value = true;
+ 				}
+ 			}
+ 		}
+ 	}
+ })
+ Callback.addCallback("ItemUseLocal", function(coords, item){
+  if(item.id == 264)
+   Test.load(coords.x+.5, coords.y+.5, coords.z+.5, .6, {
+   	stru: Structure.getStructure("test"),
+   	count: StructureUtility.getCountBlock("test")
+   })
+ })
+});
+*/
