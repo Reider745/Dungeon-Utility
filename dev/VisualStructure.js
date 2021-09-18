@@ -3,9 +3,26 @@ let VisualStructure = {
 		let model = BlockRenderer.createModel();
 		let stru = Structure.getStructure(name||[]);
 		for(let i in stru){
-			model.addBox(stru[i].x, stru[i].y, stru[i].z,stru[i].x+1, stru[i].y+1, stru[i].z+1,  Block.convertItemToBlockId(stru[i].state.id), stru[i].state.data)
+			model.addBox(stru[i].x, stru[i].y, stru[i].z, stru[i].x+1, stru[i].y+1, stru[i].z+1,  stru[i].state.id, stru[i].state.data)
 		}
 		return model
+	},
+	getStructureBitmap(name, size, size_block){
+		size = size || 1024;
+		size_block = size_block || size;
+		let stru = Structure.getStructure(name||[]);
+		let boxes = [];
+		for(let i in stru){
+			boxes.push(new com.zhekasmirnov.innercore.api.mod.ui.GuiBlockModel.Builder.PrecompiledBox(null, stru[i].x, stru[i].y, 1.0 - stru[i].z, stru[i].x+1, stru[i].y+1, 1.0 - (stru[i].z+1)).setBlock(stru[i].state.id, stru[i].state.data).compile())
+		}
+		let bitmap_stru = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888);
+		let canvas = new android.graphics.Canvas(bitmap_stru);
+		for(let i in boxes){
+			let block = boxes[i].genTexture(size_block);
+			canvas.drawBitmap(block, size - size_block, size - size_block, null);
+			block.recycle();
+		}
+		return bitmap_stru;
 	},
 	getArrMesh(name, size, value){
 		let BaseArr = [];
@@ -16,16 +33,18 @@ let VisualStructure = {
 				continue;
 			let base = new Animation.Item(stru[i].x, stru[i].y, stru[i].z);
 			base.describeItem({
-				id: stru[i].state.id,
+				id: Block.convertBlockToItemId(stru[i].state.id),
 				data: stru[i].state.data,
 				size: size || .95,
 				material: "visual_structure"
 			});
 			obj.base = base;
+			if(!stru[i].stateExtra)
+				continue;
 			if(stru[i].stateExtra.id != 0){
 				let base_extra = new Animation.Item(stru[i].x, stru[i].y, stru[i].z);
 				base_extra.describeItem({
-					id: stru[i].stateExtra.id,
+					id: Block.convertBlockToItemId(stru[i].stateExtra.id),
 					data: stru[i].stateExtra.data,
 					size: size || .95,
 					material: "visual_structure"
@@ -97,11 +116,6 @@ let VisualStructure = {
 		}
 	}
 };
-Callback.addCallback("StructureLoad", function(){
-	let model = VisualStructure.getStructureModel("home_0")
-	let render = new ICRender.Model(model)
-});
-
 /*
 Пусть будет здесь в качестве примера 
 Callback.addCallback("StructureLoad", function(){

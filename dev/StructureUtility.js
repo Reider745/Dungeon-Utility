@@ -1,3 +1,4 @@
+let StructureEditor = WRAP_JAVA("com.reider.dungeon_core.StructureEditor");
 let StructureUtility = {
 	getStructureByName(name){
 		return loadStructure[name] || [];
@@ -11,53 +12,31 @@ let StructureUtility = {
 	getAllStructureName(){
 		return Object.keys(loadStructure);
 	},
+	copy(name, name2){
+		loadStructure[name2] = loadStructure[name];
+	},
 	addBlock(stru, x, y, z, state, extra, tag){
-		extra = extra || new BlockState(0, {});
-		tag = tag || new NBT.CompoundTag();
 		if(typeof(stru) == "string")
-			loadStructure[stru].push(new BlockData(x, y, z, state, extra, tag))
+			loadStructure[stru].push(new BlockData(x, y, z, state, extra||null, tag||null))
 		else
 			stru.push(new BlockData(x, y, z, state, extra, tag))
 	},
 	setBlock(stru, x, y, z, state, extra, tag){
-		extra = extra || new BlockState(0, {});
-		tag = tag || new NBT.CompoundTag();
-		if(typeof(stru) == "string"){
-			let arr = loadStructure[stru];
-			for(let i in arr)
-				if(arr[i].x == x && arr[i].y == y && arr[i].z == z)
-					loadStructure[stru][i] = new BlockData(x, y, z, state, extra, tag)
-		}else{
-			for(let i in stru)
-				if(stru[i].x == x && stru[i].y == y && stru[i].z == z)
-					stru[i] = new BlockData(x, y, z, state, extra, tag)
-		}
+		this.setBlockByIndex(stru, this.getBlockIndex(stru, x, y, z), x, y, z, state, extra, tag)
 	},
 	getBlock(name, x, y, z){
-		let stru = Structure.getStructure(name||[]);
-		for(let i in stru)
-			if(stru[i].x == x && stru[i].y == y && stru[i].z == z)
-				return stru[i];
+		return StructureEditor.getBlock(Structure.getStructure(name||[]), new BlockData(x, y, z))
 	},
-	getBlockByIndex(name, x, y, z){
-		let stru = Structure.getStructure(name||[]);
-		for(let i in stru)
-			if(stru[i].x == x && stru[i].y == y && stru[i].z == z)
-				return i;
+	getBlockIndex(name, x, y, z){
+		return StructureEditor.getBlockIndex(Structure.getStructure(name||[]), new BlockData(x, y, z))
 	},
-	setBlockIndex(stru, i, state, extra, tag){
-		extra = extra || new BlockState(0, {});
-		tag = tag || new NBT.CompoundTag();
-		if(typeof(stru) == "string"){
-			let arr = loadStructure[stru];
-			if(arr[i].x == x && arr[i].y == y && arr[i].z == z)
-				loadStructure[stru][i] = new BlockData(x, y, z, state, extra, tag)
-		}else{
-			if(stru[i].x == x && stru[i].y == y && stru[i].z == z)
-				stru[i] = new BlockData(x, y, z, state, extra, tag)
-		}
+	setBlockByIndex(stru, i, x, y, z, state, extra, tag){
+		if(typeof(stru) == "string")
+			loadStructure[stru][i] = new BlockData(x, y, z, state, extra||null, tag||null);
+		else
+			stru[i] = new BlockData(x, y, z, state, extra||null, tag||null);
 	},
-	getBlockIndex(name, i){
+	getBlockByIndex(name, i){
 		return Structure.getStructure(name||[])[i];
 	}
 };
