@@ -38,7 +38,7 @@ let Structure = {
 			return stru;
 		}
 		this.setPrototype = function(obj){
-			stru.setPrototype(new StructureProtJs(obj.isBlock || function(){return true},obj.setBlock || function(){}, obj.after || function(){}, obj.before || function(){}))
+			stru.setPrototype(new StructureProtJs(obj.isBlock || function(){return true},obj.setBlock || function(){}, obj.before || function(){}, obj.after || function(){}))
 			return this;
 		}
 		this.getPrototype = function(){
@@ -90,10 +90,10 @@ let Structure = {
 						return;
 					if(thas.white_list){
 						if(thas.biome_list.indexOf(region.getBiome(coords.x, coords.z)) != -1){
-							thas.stru.setStructure(coords.x, coords.y, coords.z, region);
+							thas.stru.setStructure(coords.x, coords.y, coords.z, region, {random: random});
 						}
 					}else if(thas.biome_list.indexOf(region.getBiome(coords.x, coords.z)) == -1){
-							thas.stru.setStructure(coords.x, coords.y, coords.z, region);
+							thas.stru.setStructure(coords.x, coords.y, coords.z, region, {random: random});
 						}
 				} 
 				}
@@ -125,10 +125,10 @@ let Structure = {
 						return;
 					if(thas.white_list){
 						if(thas.biome_list.indexOf(region.getBiome(coords.x, coords.z)) != -1){
-							thas.stru.setStructure(coords.x, coords.y, coords.z, region);
+							thas.stru.setStructure(coords.x, coords.y, coords.z, region, {random: random});
 						}
 					}else if(thas.biome_list.indexOf(region.getBiome(coords.x, coords.z)) == -1){
-						thas.stru.setStructure(coords.x, coords.y, coords.z, region);
+						thas.stru.setStructure(coords.x, coords.y, coords.z, region, {random: random});
 					}
 				} 
 				}

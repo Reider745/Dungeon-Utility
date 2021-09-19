@@ -34,16 +34,16 @@ let ItemGeneration = {
 	addItem(name, id, random, count, data, extra){
 		count = count || {};
 		count.min = count.min || 1;
-		count.max = count.max || 2;
-		count.slotMax = count.slotMax || 2;
+		count.max = count.max+1 || 2;
+		count.slotMax = count.slotMax+1 || 2;
 		count.slotMin = count.slotMin || 1;
 		generators[name].items.push([id || 0, random || 1, count, data || 0, extra || null]);
 	},
 	setPrototype(name, obj){
 		if(!obj.before) obj.before = function(pos, region, packet){}
 		if(!obj.after) obj.after = function(pos, region, packet){}
-		if(!obj.isGenerate) obj.isGenerate = function(pos, random, slot, item, region, packet){return true}
-		if(!obj.generate) obj.generate = function(pos, random, slot, item, region, packet){}
+		if(!obj.isGenerate) obj.isGenerate = function(pos, random, slot, item, region, random, packet){return true}
+		if(!obj.generate) obj.generate = function(pos, random, slot, item, region, random, packet){}
 		generators[name].prot = obj;
 	},
 	getPrototype(name){
@@ -66,11 +66,12 @@ let ItemGeneration = {
 						let item = {
 							id: gen.items[i][0],
 							data: gen.items[i][3],
-							extra: gen.items[i][4]
+							extra: gen.items[i][4],
+							count: random.nextInt(gen.items[i][2].max-gen.items[i][2].min)+gen.items[i][2].min
 						};
-						if(gen.prot.isGenerate({x: x, y: y, z: z}, rand, slot, item, region, packet))
-							container.setSlot(slot, item.id, random.nextInt(gen.items[i][2].max-gen.items[i][2].min)+gen.items[i][2].min, item.data, item.extra);
-						gen.prot.generate({x: x, y: y, z: z}, rand, slot, item, region, packet)
+						if(gen.prot.isGenerate({x: x, y: y, z: z}, rand, slot, item, region, random,packet))
+							container.setSlot(slot, item.id, item.count, item.data, item.extra);
+						gen.prot.generate({x: x, y: y, z: z}, rand, slot, item, region, random, packet)
 					}
 				}
 			}

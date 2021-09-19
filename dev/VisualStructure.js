@@ -28,7 +28,7 @@ let VisualStructure = {
 		let BaseArr = [];
 		let stru = Structure.getStructure(name||[]);
 		for(let i in stru){
-			let obj = {state: stru[i].state, extra: stru[i].stateExtra, pos: [stru[i].x, stru[i].y, stru[i].z]}
+			let obj = {state: stru[i].state, pos: [stru[i].x, stru[i].y, stru[i].z]}
 			if(stru[i].state.id == 0 || value)
 				continue;
 			let base = new Animation.Item(stru[i].x, stru[i].y, stru[i].z);
@@ -39,17 +39,20 @@ let VisualStructure = {
 				material: "visual_structure"
 			});
 			obj.base = base;
-			if(!stru[i].stateExtra)
-				continue;
-			if(stru[i].stateExtra.id != 0){
-				let base_extra = new Animation.Item(stru[i].x, stru[i].y, stru[i].z);
-				base_extra.describeItem({
-					id: Block.convertBlockToItemId(stru[i].stateExtra.id),
-					data: stru[i].stateExtra.data,
-					size: size || .95,
-					material: "visual_structure"
-				});
-				obj.base_extra = base_extra;
+			try{
+				if(stru[i].stateExtra.id != 0){
+					obj.extra = stru[i].stateExtra;
+					let base_extra = new Animation.Item(stru[i].x, stru[i].y, stru[i].z);
+					base_extra.describeItem({
+						id: Block.convertBlockToItemId(stru[i].stateExtra.id),
+						data: stru[i].stateExtra.data,
+						size: size || .95,
+						material: "visual_structure"
+					});
+					obj.base_extra = base_extra;
+				}
+			}catch(error){
+				
 			}
 			BaseArr.push(obj)
 		}

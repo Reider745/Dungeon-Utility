@@ -15,7 +15,7 @@ StructureLoader.registerType("DungeonAPI", {
 		let stru = file.split(":");
 		for(let i in stru){
 			let data = stru[i].split(".");
-			arr.push(new BlockData(parseInt(data[2]), parseInt(data[3]), parseInt(data[4]), new BlockState(Block.convertBlockToItemId(parseInt(data[0]) ? parseInt(data[0]) : BlockID[data[0]]), parseInt(data[1]))))
+			arr.push(new BlockData(parseInt(data[2]), parseInt(data[3]), parseInt(data[4]), new BlockState(Block.convertBlockToItemId(parseInt(data[0]) ? parseInt(data[0]) : data[0] == "0" ? 0 : BlockID[data[0]]), parseInt(data[1]))))
 		}
 		return arr;
 	},
@@ -36,7 +36,7 @@ StructureLoader.registerType("DungeonAPI_V2", {
 		let stru = JSON.parse(file);
 		for(let i in stru){
 			let data = stru[i].split(".");
-			arr.push(new BlockData(parseInt(data[2]), parseInt(data[3]), parseInt(data[4]), new BlockState(parseInt(data[0]) ? parseInt(data[0]) : BlockID[data[0]], parseInt(data[1]))))
+			arr.push(new BlockData(parseInt(data[2]), parseInt(data[3]), parseInt(data[4]), new BlockState(parseInt(data[0]) ? parseInt(data[0]) : data[0] == "0" ? 0 : BlockID[data[0]], parseInt(data[1]))))
 		}
 		return arr;
 	},

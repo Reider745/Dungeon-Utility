@@ -15,6 +15,24 @@ let StructureUtility = {
 	copy(name, name2){
 		loadStructure[name2] = loadStructure[name];
 	},
+	getStructureByPos(pos, cen, value){
+		let region =  BlockSource.getDefaultForActor(Player.get());
+		let stru = [];
+		for(y = Math.min(pos[0].y, pos[1].y); y<=Math.max(pos[0].y, pos[1].y);y++){
+			for(x = Math.min(pos[0].x, pos[1].x); x<=Math.max(pos[0].x, pos[1].x);x++){
+				for(z = Math.min(pos[0].z, pos[1].z); z<=Math.max(pos[0].z, pos[1].z);z++){
+					if(region.getBlock(x, y, z).id != 0 || value){
+						let tile = region.getBlockEntity(x, y, z);
+						let tag = null;
+						if(tag)
+							tag = tile.getCompoundTag()
+						stru.push(new BlockData(x-cen.x, y-cen.y, z-cen.z, region.getBlock(x, y, z), region.getExtraBlock(x, y, z), tag))
+					}
+				}
+			}
+		}
+		return stru;
+	},
 	addBlock(stru, x, y, z, state, extra, tag){
 		if(typeof(stru) == "string")
 			loadStructure[stru].push(new BlockData(x, y, z, state, extra||null, tag||null))

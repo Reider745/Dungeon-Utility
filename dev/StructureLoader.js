@@ -2,7 +2,7 @@ let BlockData = WRAP_JAVA("com.reider.dungeon_core.BlockData");
 
 let loadStructure = {};
 let loadReg = [];
-Callback.addCallback("LevelLoaded", function(){
+Callback.addCallback("LevelPreLoaded", function(){
 	Callback.invokeCallback("StructurePreLoad")
 	if(__config__.get("debug.info_load"))
 		alert("start load")
@@ -25,8 +25,12 @@ Callback.addCallback("LevelLoaded", function(){
 	Callback.invokeCallback("StructureLoad")
 });
 let StructureLoader = {
-	save(path, name, type){
-		FileTools.WriteText(path, this.types[type || "DungeonUtility"].save(loadStructure[name]), false)
+	save(path, name, type, value){
+		try{
+			FileTools.WriteText(path, this.types[type || "DungeonUtility"].save(Structure.getStructure(name||[])), value)
+		}catch(error){
+			Logger.Log("not enough data to convert or an error occurred", "DungeonUtility")
+		}
 	},
 	types: {},
 	registerType(name, obj){

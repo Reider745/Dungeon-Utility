@@ -44,7 +44,7 @@ Callback.addCallback("NativeCommand", function(cmd){
 		if(arr[0] == "/struct"){
 			if(arr[1] == "save"){
 				Game.prevent()
-				let stru = [];
+				/*let stru = [];
 				for(y = Math.min(coordinates[0].y, coordinates[1].y); y<=Math.max(coordinates[0].y, coordinates[1].y);y++){
 					for(x = Math.min(coordinates[0].x, coordinates[1].x); x<=Math.max(coordinates[0].x, coordinates[1].x);x++){
 						for(z = Math.min(coordinates[0].z, coordinates[1].z); z<=Math.max(coordinates[0].z, coordinates[1].z);z++){
@@ -89,8 +89,8 @@ Callback.addCallback("NativeCommand", function(cmd){
 							}
 						}
 					}
-				}
-				FileTools.WriteJSON(__dir__+"output/"+arr[2]+".struct", stru, arr[4] == "true");
+				}*/
+				StructureLoader.save(__dir__+"output/"+arr[2]+".struct", StructureUtility.getStructureByPos(coordinates, origin, arr[3] == "true"), arr[5] || "DungeonUtility", arr[4] == "true")
 				Game.message("Структура сохранена")
 			}
 		}
