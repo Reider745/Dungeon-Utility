@@ -1,20 +1,12 @@
-let StructureJava = WRAP_JAVA("com.reider.dungeon_core.Dungeon");
-let StructureProJava = WRAP_JAVA("com.reider.dungeon_core.DungeonCore");
-StructureJava = new StructureJava();
+let StructureJava = WRAP_JAVA("com.reider.dungeon_core.Structure");
 let StructureProtJs = WRAP_JAVA("com.reider.dungeon_core.StructurePrototypeJSAdapter");
 
 let Structure = {
 	setStructure(name, x, y, z, region){
-		if(typeof(name) == "string")
-			StructureJava.setStructure(loadStructure[name] || [], x, y, z, region)
-		else
-			StructureJava.setStructure(name, x, y, z, region)
+		StructureJava.setStructure(Structure.getStructure(name||[]), x, y, z, region)
 	},
 	isStructure(name, x, y, z, region){
-		if(typeof(name) == "string")
-			StructureJava.isStructure(loadStructure[name] || [], x, y, z, region)
-		else
-			StructureJava.isStructure(name, x, y, z, region)
+		StructureJava.isStructureFull(Structure.getStructure(name||[]), x, y, z, region)
 	},
 	getStructure(stru){
 		if(typeof(stru) == "string")
@@ -27,13 +19,16 @@ let Structure = {
 		return GenerationUtils.findSurface(x*16 + random.nextInt(16), random.nextInt((obj.max||100) - (obj.min||50)) + (obj.min||50), z*16 + random.nextInt(16));
 	},
 	advanced(name){
-		let stru = new StructureProJava(Structure.getStructure(name||[]));
+		let stru = new StructureJava.Advanced(Structure.getStructure(name||[]));
 		try{
 			Callback.addCallback("StructureLoad", function(){
 				stru.setStructure(Structure.getStructure(name||[]));
 			})
 		}catch(error){
 			
+		}
+		this.getStructureJava = function(){
+			return stru;
 		}
 		this.setStruct = function(name){
 			stru.setStructure(Structure.getStructure(name||[]))
@@ -43,7 +38,7 @@ let Structure = {
 			return stru;
 		}
 		this.setPrototype = function(obj){
-			stru.setPrototype(new StructureProtJs(obj.isBlock || function(){return true},obj.setBlock || function(){}, obj.after || function(){}, obj.before || function(){}))
+			stru.setPrototype(new StructureProtJs(obj.isBlock || function(){return true},obj.setBlock || function(){}, obj.before || function(){}, obj.after || function(){}))
 			return this;
 		}
 		this.getPrototype = function(){
@@ -95,10 +90,10 @@ let Structure = {
 						return;
 					if(thas.white_list){
 						if(thas.biome_list.indexOf(region.getBiome(coords.x, coords.z)) != -1){
-							thas.stru.setStructure(coords.x, coords.y, coords.z, region);
+							thas.stru.setStructure(coords.x, coords.y, coords.z, region, {random: random});
 						}
 					}else if(thas.biome_list.indexOf(region.getBiome(coords.x, coords.z)) == -1){
-							thas.stru.setStructure(coords.x, coords.y, coords.z, region);
+							thas.stru.setStructure(coords.x, coords.y, coords.z, region, {random: random});
 						}
 				} 
 				}
@@ -130,10 +125,10 @@ let Structure = {
 						return;
 					if(thas.white_list){
 						if(thas.biome_list.indexOf(region.getBiome(coords.x, coords.z)) != -1){
-							thas.stru.setStructure(coords.x, coords.y, coords.z, region);
+							thas.stru.setStructure(coords.x, coords.y, coords.z, region, {random: random});
 						}
 					}else if(thas.biome_list.indexOf(region.getBiome(coords.x, coords.z)) == -1){
-						thas.stru.setStructure(coords.x, coords.y, coords.z, region);
+						thas.stru.setStructure(coords.x, coords.y, coords.z, region, {random: random});
 					}
 				} 
 				}
