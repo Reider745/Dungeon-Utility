@@ -6,7 +6,10 @@ let Structure = {
 		StructureJava.setStructure(Structure.getStructure(name||[]), x, y, z, region)
 	},
 	isStructure(name, x, y, z, region){
-		StructureJava.isStructureFull(Structure.getStructure(name||[]), x, y, z, region)
+		return StructureJava.isStructureFull(Structure.getStructure(name||[]), x, y, z, region)
+	},
+	destroy(name, x, y, z, region){
+		StructureJava.destroy(Structure.getStructure(name||[]), x, y, z, region)
 	},
 	getStructure(stru){
 		if(typeof(stru) == "string")
@@ -17,6 +20,13 @@ let Structure = {
 	getRandomCoords(x, z, random, obj){
 		obj = obj || {}
 		return GenerationUtils.findSurface(x*16 + random.nextInt(16), random.nextInt((obj.max||100) - (obj.min||50)) + (obj.min||50), z*16 + random.nextInt(16));
+	},
+	generators: {},
+	setStructureGeneration(name, generator){
+		this.generators[name] = generators;
+	},
+	getStructureGeneration(name){
+		return this.generators[name];
 	},
 	advanced(name){
 		let stru = new StructureJava.Advanced(Structure.getStructure(name||[]));
@@ -60,6 +70,10 @@ let Structure = {
 		}
 		this.setStructure = function(x, y, z, region, packet){
 			stru.setStructure(x, y, z, region, packet || {})
+			return this;
+		}
+		this.destroy = function(x, y, z, region){
+			stru.destroy(x, y, z, region)
 			return this;
 		}
 		this.getStructure = function(){

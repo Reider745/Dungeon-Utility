@@ -1,3 +1,16 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 var TYPE = {
   helmet: [{e: 0, l: 4}, {e: 1, l: 4}, {e: 3, l: 4}, {e: 4, l: 4}, {e: 5, l: 3}, {e: 6, l: 3}, {e: 8, l: 1}, {e: 17, l: 3}],
   chestplate: [{e: 0, l: 4}, {e: 1, l: 4}, {e: 3, l: 4}, {e: 4, l: 4}, {e: 5, l: 3}, {e: 17, l: 3}],
@@ -79,6 +92,48 @@ let ItemGeneration = {
 		}else if(__config__.get("debug.message_error_generation_item")){
 			Game.message("noy container x:"+x+", y: "+y+", z: "+z)
 		}
+	},
+	registerRecipeViewer(generator, name){
+		name = name || "";
+		Callback.addCallback('ModsLoaded', function(){
+			ModAPI.addAPICallback("RecipeViewer", function(api){
+				let arr = ItemGeneration.getItems(generator);
+				var RVTypeAW = (function(_super){
+  				__extends(RVTypeAW, _super);
+  		  	function RVTypeAW(nameRv, icon, content){
+     		 	let _this = _super.call(this, nameRv, icon, content) || this;
+     		 	return _this;
+   		 	}
+  		  	RVTypeAW.prototype.getAllList = function(){
+    				let list = [];
+    				for(let i in arr){
+    					list.push({
+    						min: arr[i][2].min,
+    						max: arr[i][2].max-1,
+    						random: (arr[i][1]*100)+"%",
+    						input: [],
+    						output: [{id: arr[i][0], data: arr[i][3], count: 1}]
+    					});
+    				}
+      			return list;
+   		 	};
+   		 	RVTypeAW.prototype.onOpen = function(elements, data){
+  					elements.get("textMax").onBindingUpdated("text", "max spawn: "+data.max);
+        	 	elements.get("textMin").onBindingUpdated("text", "min spawn: "+data.min);
+        	 	elements.get("textChance").onBindingUpdated("text", "chance spawn: "+data.random);
+  				};
+    			return RVTypeAW;
+  			}(api.RecipeType));
+  			api.RecipeTypeRegistry.register(generator, new RVTypeAW(name, 54, {
+  				elements: {
+  				output0: {x: 300, y: 150, size: 120},
+      	  	textMax: {type: "text", x: 490, y: 110, font: {size: 40}},
+       	 	textMin: {type: "text", x: 490, y: 160, font: {size: 40}},
+        		textChance: {type: "text", x: 490, y: 210, font: {size: 40}},
+        	}
+  			}));
+  		});
+		});
 	},
 	enchantAdd(type, count){
 		let arr = TYPE[type];

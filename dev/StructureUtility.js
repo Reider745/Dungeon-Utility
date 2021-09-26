@@ -12,8 +12,11 @@ let StructureUtility = {
 	getStructureByName(name){
 		return loadStructure[name] || [];
 	},
-	newStructure(name){
-		loadStructure[name] = [];
+	newStructure(name, stru){
+		loadStructure[name] = stru || [];
+	},
+	rotate(stru, rotate){
+		return StructureEditor.rotate(Structure.getStructure(stru||[]), rotate||0)
 	},
 	getCountBlock(stru){
 		return Structure.getStructure(stru||[]).length;
