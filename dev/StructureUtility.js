@@ -1,37 +1,28 @@
-let StructureEditor = WRAP_JAVA("com.reider.dungeon_core.StructureEditor");
+let StructureUtilityJava = WRAP_JAVA("com.reider.dungeon_utility.struct.StructureUtility");
 
-let cache;
-if(FileTools.isExists(__dir__+"assets/cache.json")){
-	cache = FileTools.ReadJSON(__dir__+"assets/cache.json");
-}else{
-	Logger.Log("Error open cache", "DungeonUtility");
-	cache = {};
-}
-cache.states = cache.states || {};
 let StructureUtility = {
+	getStructureSize(name){
+		return StructureUtilityJava.getStructureSize(Structure.getStructure(StructureLoader.getStructure(name)));
+	},
 	getStructureByName(name){
-		return loadStructure[name] || [];
+		return StructureLoader.getStructure(name).blocks;
 	},
 	newStructure(name, stru){
-		loadStructure[name] = stru || [];
-	},
-	rotate(stru, rotate){
-		return StructureEditor.rotate(Structure.getStructure(stru||[]), rotate||0)
+		StructureLoader.setStructure(name, new StructureDescription(stru || []));
 	},
 	getCountBlock(stru){
-		return Structure.getStructure(stru||[]).length;
+		return this.getStructureByName(stru).length;
+	},
+	rotate(stru, rotate){
+		return StructureUtilityJava.rotate(StructureLoader.getStructure(stru), rotate||0);
 	},
 	getAllStructureName(){
-		return Object.keys(loadStructure);
+		return StructureUtilityJava.getAllStructureName();
 	},
-	copy(name, name2){
-		loadStructure[name2] = loadStructure[name];
+	copy(name1, name2){
+		StructureUtilityJava.copy(name1, name2);
 	},
-	getStateByData(id, data){
-		cache.states[id] = cache.states[id] || {};
-		return cache.states[id][data]||{};
-	},
-	getStructureByPos(pos, cen, value){
+getStructureByPos(pos, cen, value){
 		let region =  BlockSource.getDefaultForActor(Player.get());
 		let stru = [];
 		for(y = Math.min(pos[0].y, pos[1].y); y<=Math.max(pos[0].y, pos[1].y);y++){
@@ -40,11 +31,11 @@ let StructureUtility = {
 					let block = region.getBlock(x, y, z);
 					if(block.id != 0 || value){
 						let tile = region.getBlockEntity(x, y, z);
-						cache.states[block.id] = cache.states[block.id] || {};
+						/*cache.states[block.id] = cache.states[block.id] || {};
 						if(block.data != 0)
 							cache.states[block.id][block.data] = block.getNamedStatesScriptable();
 						else
-							cache.states[block.id][block.data] = {};
+							cache.states[block.id][block.data] = {};*/
 						let tag = null;
 						if(tag)
 							tag = tile.getCompoundTag()
@@ -55,28 +46,32 @@ let StructureUtility = {
 		}
 		return stru;
 	},
+	generateShape(region, x, y, z, r, y_max, id, data, dirtId, dirtData, grassId, grassData){
+		data = data || 0;
+		y_max = y_max || r*2;
+		StructureUtilityJava.generateShape(x, y, z, r+2, y_max, new BlockData(0, 0, 0, new BlockState(id, data)), 3, new BlockData(0, 0, 0, new BlockState(dirtId||id, dirtData||data)), new BlockData(0, 0, 0, new BlockState(grassId||id, grassData||data)), region);
+	},
+	generateShapeOptimization(region, name, x, y, z, r, id, data){
+		StructureUtilityJava.generateShapeOptimization(x, y, z, r, new BlockData(0,0,0,new BlockState(id,data)), region);
+	},
+	spawnEntity(region, x, y, z, ents, random){
+		random = random || new java.util.Random();
+		StructureUtilityJava.spawnEntity(region, x, y, z, ents||[], random);
+	},
+	
 	addBlock(stru, x, y, z, state, extra, tag){
-		if(typeof(stru) == "string")
-			loadStructure[stru].push(new BlockData(x, y, z, state, extra||null, tag||null))
-		else
-			stru.push(new BlockData(x, y, z, state, extra, tag))
+		StructureUtilityJava.addBlock(StructureLoader.getStructure(stru), BlockData.createData(x, y, z, state||null, extra||null, tag||null));
 	},
 	setBlock(stru, x, y, z, state, extra, tag){
-		this.setBlockByIndex(stru, this.getBlockIndex(stru, x, y, z), x, y, z, state, extra, tag)
+		StructureUtilityJava.setBlock(StructureLoader.getStructure(stru), BlockData.createData(x, y, z, state||null, extra||null, tag||null));
 	},
 	getBlock(name, x, y, z){
-		return StructureEditor.getBlock(Structure.getStructure(name||[]), new BlockData(x, y, z))
+		return StructureUtilityJava.getBlock(StructureLoader.getStructure(name), x, y, z)
 	},
 	getBlockIndex(name, x, y, z){
-		return StructureEditor.getBlockIndex(Structure.getStructure(name||[]), new BlockData(x, y, z))
+		return StructureUtilityJava.getBlockIndex(StructureLoader.getStructure(name), x, y, z);
 	},
-	setBlockByIndex(stru, i, x, y, z, state, extra, tag){
-		if(typeof(stru) == "string")
-			loadStructure[stru][i] = new BlockData(x, y, z, state, extra||null, tag||null);
-		else
-			stru[i] = new BlockData(x, y, z, state, extra||null, tag||null);
-	},
-	getBlockByIndex(name, i){
-		return Structure.getStructure(name||[])[i];
+	setBlockByIndex(name, i, x, y, z, state, extra, tag){
+		StructureUtilityJava.setBlock(StructureLoader.getStructure(name), i, BlockData.createData(x, y, z, state||null, extra||null, tag||null))
 	}
 };

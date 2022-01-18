@@ -1,15 +1,27 @@
 var __extends = (this && this.__extends) || (function () {
+
     var extendStatics = function (d, b) {
+
         extendStatics = Object.setPrototypeOf ||
+
             ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+
             function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+
         return extendStatics(d, b);
+
     };
+
     return function (d, b) {
+
         extendStatics(d, b);
+
         function __() { this.constructor = d; }
+
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+
     };
+
 })();
 var TYPE = {
   helmet: [{e: 0, l: 4}, {e: 1, l: 4}, {e: 3, l: 4}, {e: 4, l: 4}, {e: 5, l: 3}, {e: 6, l: 3}, {e: 8, l: 1}, {e: 17, l: 3}],
@@ -43,6 +55,34 @@ let ItemGeneration = {
 	},
 	setItems(name, items){
 		generators[name].items = items;
+	},
+	isGenerator(name){
+		return !!generators[name];
+	},
+	importFromFile(name, path){
+		Callback.invokeCallback("ImportGeneratorFromFile", name, path);
+		if(!this.isGenerator(name))
+			this.newGenerator(name);
+		const loots = FileTools.ReadJSON(path);
+		const items = Object.keys(ItemID);
+		const blocks = Object.keys(BlockID);
+		for(let i in loots)
+			if(loots[i].type == "block")
+				this.addItem(name, typeof(loots[i].id) == "number" ? loots[i].id : blocks.indexOf(loots[i].id) != -1 ? BlockID[loots[i].id] : VanillaBlockID[loots[i].id], loots[i].chance, loots[i].count, loots[i].data, loots[i].extra ? (function(){
+				let extra = new ItemExtraData();
+				extra.setAllCustomData(JSON.stringify(loots[i].extra));
+				return extra;
+			})() : null);
+			else
+				this.addItem(name, typeof(loots[i].id) == "number" ? loots[i].id : items.indexOf(loots[i].id) != -1 ? ItemID[loots[i].id] : VanillaItemID[loots[i].id], loots[i].chance, loots[i].count, loots[i].data, loots[i].extra ? (function(){
+				let extra = new ItemExtraData();
+				extra.setAllCustomData(JSON.stringify(loots[i].extra));
+				return extra;
+			})() : null);
+		this.registerRecipeViewer(name.replace("_", " "), name);
+	},
+	getAllGenerator(){
+		return Object.keys(generators);
 	},
 	addItem(name, id, random, count, data, extra){
 		count = count || {};

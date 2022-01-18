@@ -1,33 +1,24 @@
 let VisualStructure = {
 	getStructureModel(name){
 		let model = BlockRenderer.createModel();
-		let stru = Structure.getStructure(name||[]);
+		let stru = Structure.getStructure(name);
 		for(let i in stru){
 			model.addBox(stru[i].x, stru[i].y, stru[i].z, stru[i].x+1, stru[i].y+1, stru[i].z+1,  stru[i].state.id, stru[i].state.data)
 		}
 		return model
 	},
-	getStructureBitmap(name, size, size_block){
-		size = size || 1024;
-		size_block = size_block || size;
-		let stru = Structure.getStructure(name||[]);
-		let boxes = [];
-		for(let i in stru){
-			boxes.push(new com.zhekasmirnov.innercore.api.mod.ui.GuiBlockModel.Builder.PrecompiledBox(null, stru[i].x, stru[i].y, 1.0 - stru[i].z, stru[i].x+1, stru[i].y+1, 1.0 - (stru[i].z+1)).setBlock(stru[i].state.id, stru[i].state.data).compile())
-		}
-		let bitmap_stru = android.graphics.Bitmap.createBitmap(size, size, android.graphics.Bitmap.Config.ARGB_8888);
-		let canvas = new android.graphics.Canvas(bitmap_stru);
-		for(let i in boxes){
-			let block = boxes[i].genTexture(size_block);
-			canvas.drawBitmap(block, size - size_block, size - size_block, null);
-			block.recycle();
-		}
-		return bitmap_stru;
+	getStructureBitmap(name){
+		let model = this.getStructureModel(name);
+		let render = new ICRender.Model(); 
+		render.addEntry(model);
+		BlockRenderer.setStaticICRender(5, -1, render);
+		let gui = model.buildGuiModel(true, 1024);
+		return gui.genTexture(1024, 1024);
 	},
 	getArrMesh(name, size, value){
 		let BaseArr = [];
-		let stru = Structure.getStructure(name||[]);
-		for(let i in stru){
+		let stru = Structure.getStructure(name);
+		for(let i = 0;i < stru.length;i++){
 			let obj = {state: stru[i].state, pos: [stru[i].x, stru[i].y, stru[i].z]}
 			if(stru[i].state.id == 0 || value)
 				continue;

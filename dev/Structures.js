@@ -1,84 +1,121 @@
-let StructureJava = WRAP_JAVA("com.reider.dungeon_core.Structure");
-let StructureProtJs = WRAP_JAVA("com.reider.dungeon_core.StructurePrototypeJSAdapter");
+let StructureJava = WRAP_JAVA("com.reider.dungeon_utility.struct.Structure");
+
+let blockSource = function(){
+	return BlockSource.getCurrentWorldGenRegion();
+}
 
 let Structure = {
-	setStructure(name, x, y, z, region){
-		StructureJava.setStructure(Structure.getStructure(name||[]), x, y, z, region)
+	setStructure(name, x, y, z, region, packet){
+		StructureJava.setStructure(StructureLoader.getStructure(name), x||0, y||0,z||0, region||blockSource(), packet||{});
 	},
 	isStructure(name, x, y, z, region){
-		return StructureJava.isStructureFull(Structure.getStructure(name||[]), x, y, z, region)
+		return StructureJava.isStructure(StructureLoader.getStructure(name), x||0, y||0, z||0, region||blockSource())==1;
 	},
 	destroy(name, x, y, z, region){
-		StructureJava.destroy(Structure.getStructure(name||[]), x, y, z, region)
+		StructureJava.destroy(StructureLoader.getStructure(name), x||0, y||0, z||0, region||blockSource());
 	},
-	getStructure(stru){
-		if(typeof(stru) == "string")
-			return loadStructure[stru] || [];
+	getStructure(name){
+		if(!Array.isArray(name))
+			return StructureLoader.getStructure(name).blocks;
+		return [];
+	},
+	setGlobalPrototype(name, obj){
+		obj.isBlock = obj.isBlock || function(){return true};
+		try{
+			Callback.addCallback("StructureLoad", function(){
+				StructureJava.setGlobalPrototype(name, obj);
+			});
+		}catch(e){
+			StructureJava.setGlobalPrototype(name, obj);
+		}
+	},
+	getGlobalPrototype(name){
+		return StructureJava.getGlobalPrototype(name);
+	},
+	advanced(name){
+		let stru = new StructureJava(new StructureDescription([]));
+		if(StructureLoader.isLoad(name))
+			stru.setStructure(StructureLoader.getStructure(name));
 		else
+			Callback.addCallback("StructureLoad", function(){
+				stru.setStructure(StructureLoader.getStructure(name));
+			});
+		this.getStructureJava = function(){
 			return stru;
+		}
+		this.setUseGlobalPrototype = function(value){
+			stru.setUseGlobalPrototype(value);
+			return this;
+		}
+		this.isUseGlobalPrototype = function(){
+			return stru.isUseGlobalPrototype();
+		}
+		//для обратной совместимости 
+		this.setPrototype = function(obj){
+			obj.isBlock = obj.isBlock || function(){return true};
+			const funcIsBlock = obj.isBlock;
+			obj.isBlock = function(original_pos, data, region, packet){
+				return funcIsBlock(original_pos, {
+					x: original_pos.x + data.x,
+					y: original_pos.y + data.y,
+					x: original_pos.z + data.z
+				}, data.state, data.stateExtra, data, region, packet);
+			}
+			const funcSetBlock = obj.setBlock;
+			if(funcSetBlock)
+				obj.setBlock = function(original_pos, data, region, packet){
+					funcSetBlock(original_pos, {
+						x: original_pos.x + data.x,
+						y: original_pos.y + data.y,
+						z: original_pos.z + data.z
+					}, data.state, data.stateExtra, data, region, packet);
+			}
+			stru.setPrototype(obj);
+			return this;
+		}
+		//новый метод 
+		this.setProt = function(obj){
+			try{
+				obj.isBlock = obj.isBlock || function(){return true};
+			}catch(e){
+				
+			}
+			stru.setPrototype(obj);
+			return this;
+		}
+		this.getPrototype = function(){
+			return stru.getPrototype();
+		}
+		this.setStruct = function(name){
+			stru.setStructure(Structure.getStructure(name));
+			return this;
+		}
+		this.getStructure = function(){
+			return stru.getStructure();
+		}
+		this.isStructure = function(x, y, z, region){
+			return stru.isStructure(x||0, y||0, z||0, region||blockSource());
+		}
+		this.setStructure = function(x, y, z, region, packet){
+			stru.setStructure(x||0, y||0, z||0, region||blockSource, packet||{})
+			return this;
+		}
+		this.destroy = function(x, y, z, region){
+			stru.destroy(x||0, y||0, z||0, region||blockSource());
+			return this;
+		}
 	},
+	
 	getRandomCoords(x, z, random, obj){
 		obj = obj || {}
 		return GenerationUtils.findSurface(x*16 + random.nextInt(16), random.nextInt((obj.max||100) - (obj.min||50)) + (obj.min||50), z*16 + random.nextInt(16));
 	},
 	generators: {},
 	setStructureGeneration(name, generator){
-		this.generators[name] = generators;
+		this.generators[name] = generator;
 	},
 	getStructureGeneration(name){
 		return this.generators[name];
-	},
-	advanced(name){
-		let stru = new StructureJava.Advanced(Structure.getStructure(name||[]));
-		try{
-			Callback.addCallback("StructureLoad", function(){
-				stru.setStructure(Structure.getStructure(name||[]));
-			})
-		}catch(error){
-			
-		}
-		this.getStructureJava = function(){
-			return stru;
-		}
-		this.setStruct = function(name){
-			stru.setStructure(Structure.getStructure(name||[]))
-			return this;
-		}
-		this.getJavaStructure = function(){
-			return stru;
-		}
-		this.setPrototype = function(obj){
-			stru.setPrototype(new StructureProtJs(obj.isBlock || function(){return true},obj.setBlock || function(){}, obj.before || function(){}, obj.after || function(){}))
-			return this;
-		}
-		this.getPrototype = function(){
-			let prot = stru.getPrototype()
-			return {
-				isBlock: prot.isSetBlockFunc,
-				setBlock: prot.setBlockFunc,
-				after: prot.afterFunc,
-				before: prot.beforeFunc
-			};
-		}
-		this.isStructure = function(x, y, z, region){
-			stru.isStructure(x, y, z, region)
-			return this;
-		}
-		this.isStructureFull = function(x, y, z, region){
-			stru.isStructureFull(x, y, z, region)
-			return this;
-		}
-		this.setStructure = function(x, y, z, region, packet){
-			stru.setStructure(x, y, z, region, packet || {})
-			return this;
-		}
-		this.destroy = function(x, y, z, region){
-			stru.destroy(x, y, z, region)
-			return this;
-		}
-		this.getStructure = function(){
-			return stru.getStructure();
-		}
 	},
 	GenerateType: {
 		OverworldFind(obj){
@@ -103,6 +140,7 @@ let Structure = {
 					if(!thas.isSet(coords, random, region))
 						return;
 					if(thas.white_list){
+Logger.Log("Dungeon Utility", "Generation "+stru.name);
 						if(thas.biome_list.indexOf(region.getBiome(coords.x, coords.z)) != -1){
 							thas.stru.setStructure(coords.x, coords.y, coords.z, region, {random: random});
 						}
@@ -149,4 +187,4 @@ let Structure = {
 			});
 		}
 	}
-}
+};
