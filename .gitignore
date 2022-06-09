@@ -1,10 +1,8 @@
 .vscode/.ropeproject
-toolchain/build
-toolchain/temp
-toolchain/ndk
-toolchain/stdincludes
+toolchains
 src/native/mcpe/stl
-toolchain/adb
+src/java/du/src/com/google
+toolchain
 output
 !.idea/runConfigurations
 **/__pycache__

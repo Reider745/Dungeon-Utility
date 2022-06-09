@@ -10,6 +10,7 @@ const DU = {
 	StructureDescription: StructureDescriptionJS,
 	StructurePool: StructurePool,
 	StructurePiece: StructurePiece,
+	StructureDestructibility: StructureDestructibility,
 	//StructurePrivate: StructurePrivate,
 	requireGlobal(command){
 		return eval(command);

@@ -3,8 +3,7 @@
         {
             "name": "Android",
             "includePath": [
-                "${workspaceFolder}/toolchain/stdincludes/horizon",
-                "${workspaceFolder}/toolchain/ndk/arm/sysroot/usr/include/**"
+                "${workspaceFolder}/toolchain/stdincludes/horizon/**"
             ],
             "defines": [
                 "_DEBUG",

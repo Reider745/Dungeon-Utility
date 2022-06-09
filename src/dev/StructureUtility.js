@@ -119,7 +119,10 @@ getStructureByPos(pos, cen, value){
 	setBlockByIndex(name, i, x, y, z, state, extra, tag){
 		StructureUtilityJava.setBlock(StructureLoader.getStructure(name), i, BlockData.createData(x, y, z, state||null, extra||null, tag||null))
 	},
- fill(x1, y1, z1, x2, y2, z2, block, region){
-  StructureUtilityJava.fill(x1, y1, z1, x2, y2, z2, BlockData.createData(0, 0, 0, block, null, null), region || blockSource());
- }
+	fill(x1, y1, z1, x2, y2, z2, block, region){
+		StructureUtilityJava.fill(x1, y1, z1, x2, y2, z2, BlockData.createData(0, 0, 0, block, null, null), region || blockSource());
+	},
+	fillHandler(x1, y1, z1, x2, y2, z2, block, region, obj){
+		StructureUtilityJava.fill(x1, y1, z1, x2, y2, z2, BlockData.createData(0, 0, 0, block, null, null), region || blockSource(), obj);
+	}
 };

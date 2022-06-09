@@ -1,10 +1,26 @@
 let StructureJava = WRAP_JAVA("com.reider.dungeonutility.struct.Structure");
+let DefaultStructurePrototype = WRAP_JAVA("com.reider.dungeonutility.struct.structures.DefaultStructurePrototype");
+let StructureDestructibilityJava = WRAP_JAVA("com.reider.dungeonutility.struct.structures.StructureDestructibility");
 
 let blockSource = function(){
 	return BlockSource.getCurrentWorldGenRegion();
 }
 
+function StructureDestructibility(){
+	let self = new StructureDestructibilityJava();
+	this.addBlock = function(id, state){
+		self.addBlock(id, state);
+		return this;
+	}
+	this.get = function(){
+		return self;
+	}
+}
+
 let Structure = {
+	getPrototypeDefault(obj){
+		return new DefaultStructurePrototype(obj.isItems, obj.name ? obj.name : null, obj.blocks);
+	},
 	setStructure(name, x, y, z, region, packet){
 		StructureJava.setStructure(StructureLoader.getStructure(name), x||0, y||0,z||0, region||blockSource(), packet||{});
 	},

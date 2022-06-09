@@ -32,11 +32,11 @@
 	],
 	"compile": [
 		{
-			"source": "src/native/",
+			"source": "src/native/*",
 			"type": "native"
 		},
 		{
-			"source": "src/java/",
+			"source": "src/java/*",
 			"type": "java"
 		}
 	],
