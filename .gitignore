@@ -1,0 +1,17 @@
+.vscode/.ropeproject
+toolchain/build
+toolchain/temp
+toolchain/ndk
+toolchain/stdincludes
+src/native/mcpe/stl
+toolchain/adb
+output
+!.idea/runConfigurations
+**/__pycache__
+**/tsconfig.json
+
+*.bat
+*.jar
+*.py
+*.log
+*.icmod

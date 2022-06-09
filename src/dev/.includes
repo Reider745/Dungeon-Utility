@@ -1,0 +1,14 @@
+header.js
+
+StructureLoader.js
+StructureType.js
+Structures.js
+StructureUtility.js
+VisualStructure.js
+ItemGeneration.js
+StructureIntegration.js
+StructureDescription.js
+StructurePrivate.js
+StructurePiece.js
+
+shared.js

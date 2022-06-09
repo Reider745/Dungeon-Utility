@@ -1,0 +1,57 @@
+{
+	"global": {
+		"info": {
+			"name": "Dungeon Utility",
+			"description": "Dungeon Utility - мод библиотека для создания структур",
+			"author": "Reider ___",
+			"version": "relese 6.0",
+			"icon": "src/icon.png"
+		},
+		"api": "CoreEngine"
+	},
+	"make": {
+		"debugAbi": "armeabi-v7a",
+		"abis": [
+			"armeabi-v7a",
+			"x86"
+		],
+		"linkNative": [
+			"minecraftpe",
+			"innercore",
+			"nativejs"
+		],
+		"excludeFromRelease": [],
+		"pushTo": "storage/emulated/0/games/horizon/packs/innercore-test-b113-performance-beta-v2/innercore/mods/DungeonUtility",
+		"ndkPath": "D:\\visual-studio-code\\ndk"
+	},
+	"resources": [
+		{
+			"path": "src/assets",
+			"type": "resource_directory"
+		}
+	],
+	"compile": [
+		{
+			"source": "src/native/",
+			"type": "native"
+		},
+		{
+			"source": "src/java/",
+			"type": "java"
+		}
+	],
+	"sources": [
+		{
+			"source": "src/dev",
+			"target": "main.js",
+			"type": "main",
+			"language": "typescript"
+		},
+		{
+			"source": "src/launcher.js",
+			"type": "launcher",
+			"language": "javascript"
+		}
+	],
+	"additional": []
+}

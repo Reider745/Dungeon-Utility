@@ -1,0 +1,11 @@
+{
+    "shared": {
+        "name": "dungeon_utility_lib",
+		"include": []
+    },
+
+    "depends": [
+    	"innercore",
+    	"nativejs"
+	]
+}

@@ -1,0 +1,17 @@
+{
+    "visual_structure:entity_alphatest_custom": {
+        "fragmentShader": "./visual_structure.fragment",
+        "-defines": ["ALPHA_TEST"],
+        "+states": ["Blending", "DisableCulling", "DisableDepthWrite"]
+    },
+"visual_structure_red:entity_alphatest_custom": {
+        "fragmentShader": "./visual_structure_red.fragment",
+        "-defines": ["ALPHA_TEST"],
+        "+states": ["Blending", "DisableCulling", "DisableDepthWrite"]
+    },
+"visual_structure_noy:entity_alphatest_custom": {
+        "fragmentShader": "./visual_structure_noy.fragment",
+        "-defines": ["ALPHA_TEST"],
+        "+states": ["Blending", "DisableCulling", "DisableDepthWrite"]
+    }
+}
