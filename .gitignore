@@ -1,6 +1,6 @@
 .vscode/.ropeproject
 toolchain
-src/native/mcpe/stl
+src/native/du/mcpe/stl
 src/java/du/src/com/google
 toolchain
 output
