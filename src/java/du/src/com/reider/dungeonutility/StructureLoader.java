@@ -124,8 +124,8 @@ public class StructureLoader {
 
         }
         AdaptedScriptAPI.Logger.Log("end load, load time: "+(System.currentTimeMillis()-startLoad), logger_name);
-        AdaptedScriptAPI.Callback.invokeCallback("StructureLoad", null, null, null, null, null, null, null, null, null, null);
         stopTick = false;
+        AdaptedScriptAPI.Callback.invokeCallback("StructureLoad", null, null, null, null, null, null, null, null, null, null);
     }
 
     private static class StructurePreLoad {

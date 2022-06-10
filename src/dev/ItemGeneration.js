@@ -1,3 +1,16 @@
+var __extends = (this && this.__extends) || (function () {
+	var extendStatics = function (d, b) {
+		extendStatics = Object.setPrototypeOf ||
+		({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+		function (d, b) {for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+		return extendStatics(d, b);
+	};
+	return function (d, b) {
+		extendStatics(d, b);
+		function __() { this.constructor = d; }
+		d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+	};
+})();
 let ItemGenerationJava = WRAP_JAVA("com.reider.dungeonutility.items.ItemGeneration");
 let GeneratorJava = WRAP_JAVA("com.reider.dungeonutility.items.Generator");
 let ItemGeneration = {
@@ -14,7 +27,7 @@ let ItemGeneration = {
 		ItemGenerationJava.setItems(name, items);
 	},
 	getItems(name){
-		ItemGenerationJava.getItems(name);
+		return ItemGenerationJava.getItems(name);
 	},
     importFromFile(name, path){
 		Callback.invokeCallback("ImportGeneratorFromFile", name, path);
@@ -75,14 +88,16 @@ let ItemGeneration = {
 					}
 					RVTypeAW.prototype.getAllList = function(){
 							let list = [];
-							for(let i in arr)
+							for(let i = 0;i < arr.size();i++){
+								let item = arr.get(i);
 								list.push({
-									min: arr[i].getMin(),
-									max: arr[i].getMax()-1,
-									random: (arr[i].getChance()*100)+"%",
+									min: item.getMin(),
+									max: item.getMax()-1,
+									random: (item.getChance()*100)+"%",
 									input: [],
-									output: [{id: arr[i].getId(), data: arr[i].getData(), count: 1}]
+									output: [{id: item.getId(), data: item.getData(), count: 1}]
 								});
+							}
 						return list;
 					};
 					RVTypeAW.prototype.onOpen = function(elements, data){
