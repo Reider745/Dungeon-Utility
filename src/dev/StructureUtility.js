@@ -73,14 +73,10 @@ getStructureByPos(pos, cen, value){
 					let block = region.getBlock(x, y, z);
 					if(block.id != 0 || value){
 						let tile = region.getBlockEntity(x, y, z);
-						/*cache.states[block.id] = cache.states[block.id] || {};
-						if(block.data != 0)
-							cache.states[block.id][block.data] = block.getNamedStatesScriptable();
-						else
-							cache.states[block.id][block.data] = {};*/
 						let tag = null;
-						if(tag)
-							tag = tile.getCompoundTag()
+						if(tile)
+							tag = tile.getCompoundTag();;
+						
 						stru.push(new BlockData(x-cen.x, y-cen.y, z-cen.z, block, region.getExtraBlock(x, y, z), tag))
 					}
 				}

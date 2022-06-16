@@ -3,10 +3,9 @@ package com.reider.dungeonutility.api.data;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
-import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
-
+import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 public class BlockData {
-    public BlockData(int x, int y, int z, BlockState block, BlockState extra, AdaptedScriptAPI.NBT.CompoundTag tag){
+    public BlockData(int x, int y, int z, BlockState block, BlockState extra, NativeCompoundTag tag){
         this.x = x;
         this.y = y;
         this.z = z;
@@ -34,7 +33,7 @@ public class BlockData {
     public int z;
     public BlockState state;
     public BlockState stateExtra;
-    public AdaptedScriptAPI.NBT.CompoundTag tag;
+    public NativeCompoundTag tag;
     public BlockData copy(){
         return new BlockData(this);
     }
@@ -53,7 +52,7 @@ public class BlockData {
         return "BlockData";
     }
     public BlockData getData() {
-        return new BlockData(x, y, z, state == null ? new BlockState(0, 0) : state, stateExtra == null ? new BlockState(0, 0) : stateExtra, tag);
+        return new BlockData(x, y, z, state == null ? new BlockState(0, 0) : state, stateExtra == null ? new BlockState(0, 0) : stateExtra, tag == null ? new NativeCompoundTag() : tag);
     }
 
     public Boolean isState(){
@@ -68,8 +67,10 @@ public class BlockData {
         return tag != null;
     }
 
-    public static BlockData createData(int x, int y, int z, BlockState block, BlockState extra, AdaptedScriptAPI.NBT.CompoundTag tag){
+    public static BlockData createData(int x, int y, int z, BlockState block, BlockState extra, NativeCompoundTag tag){
         if(block != null){
+            if(tag != null)
+                return new BlockData(x, y, z, block, extra, tag);
             if(extra != null) {
                 if(block.id == 0 && extra.id == 0)
                     return new BlockDataAir(x, y, z);
