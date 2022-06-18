@@ -1,14 +1,9 @@
 package com.reider.dungeonutility.struct.formats;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import com.google.gson_du.JsonArray;
-import com.google.gson_du.JsonElement;
 import com.google.gson_du.JsonObject;
 import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 import com.zhekasmirnov.innercore.api.nbt.NativeListTag;
