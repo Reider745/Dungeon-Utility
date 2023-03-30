@@ -4,6 +4,7 @@ import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
 import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
+
 public class BlockData {
     public BlockData(int x, int y, int z, BlockState block, BlockState extra, NativeCompoundTag tag){
         this.x = x;
@@ -68,6 +69,7 @@ public class BlockData {
     }
 
     public static BlockData createData(int x, int y, int z, BlockState block, BlockState extra, NativeCompoundTag tag){
+        //Logger.debug(x+" "+y+" "+z+"   "+(block != null) + "    "+(extra != null));
         if(block != null){
             if(tag != null)
                 return new BlockData(x, y, z, block, extra, tag);
@@ -81,9 +83,14 @@ public class BlockData {
                 return new BlockDataAir(x, y, z);
             return new BlockDataState(x, y, z, block);
         }
-        return new BlockDataEmpty();
+        return new BlockDataEmpty(x, y, z);
     }
-
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || !(obj instanceof BlockData)) return false;
+        BlockData data = ((BlockData) obj).getData();
+        return x == data.x && y == data.y && z == data.z && data.state.equals(state) && data.stateExtra.equals(stateExtra) && data.tag.equals(tag);
+    }
     public static BlockData createData(int x, int y, int z, BlockState block, BlockState extra){
         return createData(x, y, z, block, extra, null);
     }

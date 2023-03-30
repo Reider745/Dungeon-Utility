@@ -17,4 +17,6 @@ public interface IGenerationDescription {
     boolean isSet();
     Vector3 getOffset();
     boolean checkName();
+    boolean canOptimization();
+    boolean canLegacySpawn();
 }

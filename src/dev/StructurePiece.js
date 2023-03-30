@@ -69,11 +69,11 @@ let StructurePiece = {
 		obj.save = obj.save === undefined ? true :  obj.save;
 		obj.offset = obj.offset || {};
 		if(obj.structure)
-			return new DefaultDescription(obj.type || "default", obj.name || "noy_name", obj.offset.x||0, obj.offset.y||0, obj.offset.z||0, Number(obj.chance)||50, obj.distance || 0, !!obj.save, !!obj.isSet, obj.dimension || 0, !!obj.white_list, obj.biomes || [], !!obj.white_list_blocks, obj.blocks || [0], obj.structure.getStructureJava(), !!obj.checkName);
-			else{
-				Logger.Log("Error StructurePiece register, Structure = undefined or null "+obj.name || "noy_name", "DungeonUtility");
-				return null;
-			}
+			return new DefaultDescription(obj.type || "default", obj.name || "noy_name", obj.offset.x||0, obj.offset.y||0, obj.offset.z||0, Number(obj.chance)||50, obj.distance || 0, !!obj.save, !!obj.isSet, obj.dimension || 0, !!obj.white_list, obj.biomes || [], !!obj.white_list_blocks, obj.blocks || [0], obj.structure.getStructureJava(), !!obj.checkName, obj.optimization === undefined ? true : obj.optimization, !!obj.legacySpawn);
+		else{
+			Logger.Log("Error StructurePiece register, Structure = undefined or null "+obj.name || "noy_name", "DungeonUtility");
+			return null;
+		}
 	},
 	generateStructure(IStru, x, y, z, random, region, packet){
 		StructurePieceJava.generateStructure(IStru, x, y, z, random, region, packet);
@@ -125,3 +125,15 @@ Saver.addSavesScope("DungeonUtility", function(scope){
 StructurePiece.registerType(new OverWorld());
 StructurePiece.registerType(new Nether());
 StructurePiece.registerType(new DefaultType());
+
+let structure = new StructureDescriptionJS();
+for(let x = 0;x < 16;x++)
+	for(let y = 0;y < 16;y++)
+		for(let z = 0;z < 16;z++)
+			structure.addBlock(x, y, z, new BlockState(1, 0));
+
+StructurePiece.register(StructurePiece.getDefault({
+	distance: 32,
+	chance: 2,
+	structure: new Structure.advanced(structure.getDescription())
+}));

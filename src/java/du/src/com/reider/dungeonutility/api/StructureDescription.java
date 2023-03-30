@@ -80,7 +80,7 @@ public class StructureDescription {
     public Boolean isSetStructure(int x, int y, int z, NativeBlockSource region){
         for(BlockData block : blocks){
             BlockState state = region.getBlock(x+ block.x, y+ block.y,z+ block.z);
-            if(state.id != 0)
+            if(state.id != 0 || block.getData().state.id == state.id)
                 return false;
         }
         return true;
@@ -94,5 +94,10 @@ public class StructureDescription {
     public void destroy(int x, int y, int z, NativeBlockSource region){
         for (BlockData block : blocks)
             region.setBlock(x + block.x, y + block.y, z + block.z, 0, 0);
+    }
+    @Override
+    public boolean equals(Object obj) {
+        if(obj == null || !(obj instanceof StructureDescription) ) return false;
+        return ((StructureDescription) obj).blocks.equals(this.blocks);
     }
 }

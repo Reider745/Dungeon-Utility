@@ -3,16 +3,44 @@ package com.reider.dungeonutility;
 import com.google.gson_du.internal.LinkedTreeMap;
 import com.reider.dungeonutility.api.LoaderTypeInterface;
 import com.reider.dungeonutility.api.StructureDescription;
-
+import com.reider.dungeonutility.api.data.BlockData;
+import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
+import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
+import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.FileUtil;
+
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.BiConsumer;
 
 public class StructureLoader {
-    public static HashMap<String, StructurePool> pools = new HashMap();
+    public static void debugStructureFormat(String path, LoaderTypeInterface loader, StructureDescription structure){
+        String file = loader.save(structure);
+        FileUtil.writeFileText(path, file);
+        StructureDescription result = loader.read(file, path);
+        FileUtil.writeFileText(path+".result.stru", loader.save(result));
+    }
+
+    public static void debugFormats(String path, String pool, String name){
+        long start = System.currentTimeMillis();
+        StructureDescription structure = getStructurePoolByName(pool).getStructure(name);
+        types.forEach(new BiConsumer<String,LoaderTypeInterface>() {
+            @Override
+            public void accept(String t, LoaderTypeInterface u) {
+                try {
+                    debugStructureFormat(path+t+".stru", u, structure);
+                } catch (Exception e) {
+                    Logger.error(logger_name, "Failed debug format "+t+"\n"+e.getMessage());
+                }
+            }
+        });
+        Logger.debug("End debug structure format - "+(System.currentTimeMillis()-start));
+    }
+
+    public static HashMap<String, StructurePool> pools = new HashMap<>();
     public static final String default_pool = "default";
     public static final String logger_name = "DungeonUtility";
     public static ScriptableObject ids = new ScriptableObject() {

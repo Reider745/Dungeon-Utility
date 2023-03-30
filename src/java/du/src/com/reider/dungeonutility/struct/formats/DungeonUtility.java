@@ -23,6 +23,8 @@ public class DungeonUtility implements LoaderTypeInterface {
             state = new BlockState(StructureLoader.getIdBlock(datas[0]), StructureLoader.getHashMapToJson((LinkedTreeMap<String, Double>) list[1]));
         else if(list.length >= 2 && list[1] instanceof Double)
             state = new BlockState(StructureLoader.getIdBlock(datas[0]), ((Double) list[1]).intValue());
+        else if(list.length == 1)
+            state = new BlockState(StructureLoader.getIdBlock(datas[0]), 0);
         BlockState state_extra = null;
         if(list.length >= 3 && !(list[2] instanceof Double))
             state_extra = new BlockState(StructureLoader.getIdBlock(datas[1]), StructureLoader.getHashMapToJson((LinkedTreeMap<String, Double>) list[2]));
@@ -33,7 +35,6 @@ public class DungeonUtility implements LoaderTypeInterface {
         if(list.length >= 4)
             tag = CompoundTagJson.parse((LinkedTreeMap<String, ArrayList<Object>>) list[3]);
         
-            
         
         return BlockData.createData(
             StructureLoader.getInt(datas[2]),

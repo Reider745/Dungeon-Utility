@@ -29,11 +29,11 @@ public class DungeonCore implements LoaderTypeInterface {
                 state = new BlockState(((int) (StructureLoader.BlockID.get((String) list[0], StructureLoader.BlockID))), StructureLoader.getHashMapToJson((LinkedTreeMap<String, Double>) list[2]));
 
             if(list.length >= 4) {
-                Object[] extra = (Object[]) list[3];
-                if(extra[0] instanceof Double)
-                    stateExtra = new BlockState(((Double) extra[0]).intValue(), StructureLoader.getHashMapToJson((LinkedTreeMap<String, Double>) extra[1]));
-                else if(extra[0] instanceof String)
-                    stateExtra = new BlockState(((int) (StructureLoader.BlockID.get((String) extra[0], StructureLoader.BlockID))), StructureLoader.getHashMapToJson((LinkedTreeMap<String, Double>) extra[1]));
+                ArrayList<Object> extra = (ArrayList<Object>) list[3];
+                if(extra.get(0) instanceof Double)
+                    stateExtra = new BlockState(((Double) extra.get(0)).intValue(), StructureLoader.getHashMapToJson((LinkedTreeMap<String, Double>) extra.get(1)));
+                else if(extra.get(0) instanceof String)
+                    stateExtra = new BlockState(((int) (StructureLoader.BlockID.get((String) extra.get(0), StructureLoader.BlockID))), StructureLoader.getHashMapToJson((LinkedTreeMap<String, Double>) extra.get(1)));
 
             }
             blocks.add(BlockData.createData(
@@ -44,7 +44,6 @@ public class DungeonCore implements LoaderTypeInterface {
                     stateExtra
             ));
         }
-
         return new StructureDescription(blocks.toArray(new BlockData[blocks.size()]));
     }
 
@@ -65,10 +64,10 @@ public class DungeonCore implements LoaderTypeInterface {
             list.add(data.state.getNamedStates());
 
             if(bl.stateExtra != null){
-                ArrayList<Object> extra = new ArrayList();;
+                ArrayList<Object> extra = new ArrayList();
                 extra.add(StructureLoader.getIdBlock(data.stateExtra.id));
                 extra.add(data.stateExtra.getNamedStates());
-                json.add(extra);
+                list.add(extra);
             }
 
             json.add(list);

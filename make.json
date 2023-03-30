@@ -21,7 +21,7 @@
 			"nativejs"
 		],
 		"excludeFromRelease": [],
-		"pushTo": "storage/emulated/0/games/horizon/packs/innercore-test-b113-performance-beta-v2/innercore/mods/DungeonUtility",
+		"pushTo": "storage/emulated/0/games/horizon/packs/innercore-test-b113-performance-beta-v2/modpacks/YouTube/mods/DungeonUtility",
 		"ndkPath": "D:\\visual-studio-code\\ndk"
 	},
 	"resources": [

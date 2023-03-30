@@ -157,20 +157,14 @@ public class StructureUtility {
         Size[] size = {new Size(0, 0),new Size(0, 0),new Size(0, 0)};
         for(int i = 0; i < stru.length;i++){
             BlockData block = stru[i];
-            if(size[0].max < block.x)
-                size[0].max = block.x;
-            else if(size[0].min > block.x)
-                size[0].min = block.x;
+            size[0].max = Math.max(size[0].max, block.x);
+            size[0].min = Math.min(size[0].min, block.x);
 
-            if(size[1].max < block.y)
-                size[1].max = block.y;
-            else if(size[1].min > block.y)
-                size[1].min = block.y;
+            size[1].max = Math.max(size[0].max, block.y);
+            size[1].min = Math.min(size[0].min, block.y);
 
-            if(size[2].max < block.z)
-                size[2].max = block.z;
-            else if(size[2].min > block.z)
-                size[2].min = block.z;
+            size[2].max = Math.max(size[0].max, block.z);
+            size[2].min = Math.min(size[0].min, block.z);
         }
         return size;
     }

@@ -24,8 +24,10 @@ public class DefaultGeneration implements IGenerationDescription {
     private boolean checkName;
     private boolean white_list_blocks;
     private int[] blocks;
+    private boolean optimization;
+    private boolean legacy;
 
-    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName){
+    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy){
         this.type = type;
         this.name = name;
         this.x = x;
@@ -42,6 +44,8 @@ public class DefaultGeneration implements IGenerationDescription {
         this.white_list_blocks = white_list_blocks;
         this.blocks = blocks;
         this.checkName = checkName;
+        this.optimization = optimization;
+        this.legacy = legacy;
     }
 
     @Override
@@ -102,5 +106,15 @@ public class DefaultGeneration implements IGenerationDescription {
     @Override
     public boolean checkName() {
         return checkName;
+    }
+
+    @Override
+    public boolean canOptimization() {
+        return optimization;
+    }
+
+    @Override
+    public boolean canLegacySpawn() {
+        return legacy;
     }
 }

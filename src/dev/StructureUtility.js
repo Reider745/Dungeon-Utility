@@ -64,7 +64,7 @@ let StructureUtility = {
 		}
 		StructureUtilityJava.copy(name1, name2, prot);
 	},
-getStructureByPos(pos, cen, value){
+	getStructureByPos(pos, cen, value){
 		let region =  BlockSource.getDefaultForActor(Player.get());
 		let stru = [];
 		for(y = Math.min(pos[0].y, pos[1].y); y<=Math.max(pos[0].y, pos[1].y);y++){
@@ -90,6 +90,9 @@ getStructureByPos(pos, cen, value){
 		StructureUtilityJava.generateShape(x, y, z, r+2, y_max, new BlockData(0, 0, 0, new BlockState(id, data)), 3, new BlockData(0, 0, 0, new BlockState(dirtId||id, dirtData||data)), new BlockData(0, 0, 0, new BlockState(grassId||id, grassData||data)), region);
 	},
 	generateShapeOptimization(region, name, x, y, z, r, id, data){
+		StructureUtilityJava.generateShapeOptimization(x, y, z, r, new BlockData(0,0,0,new BlockState(id,data)), region);
+	},
+	generateShapeOpti(region, x, y, z, r, id, data){
 		StructureUtilityJava.generateShapeOptimization(x, y, z, r, new BlockData(0,0,0,new BlockState(id,data)), region);
 	},
 	spawnEntity(region, x, y, z, ents, random){

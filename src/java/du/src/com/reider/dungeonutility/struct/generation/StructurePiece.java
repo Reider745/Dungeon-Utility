@@ -1,9 +1,10 @@
 package com.reider.dungeonutility.struct.generation;
 
+import com.reider.dungeonutility.struct.generation.thread.Algorithms;
+import com.reider.dungeonutility.struct.generation.thread.Generation;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
-import com.zhekasmirnov.innercore.api.Version;
-import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
+
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
@@ -12,9 +13,9 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class StructurePiece {
-    public static HashMap<String, IGenerationType> types = new HashMap();
-    public static ArrayList<IGenerationDescription> descriptions = new ArrayList();
-    public static ArrayList<WorldStructure> structures = new ArrayList();
+    public static HashMap<String, IGenerationType> types = new HashMap<>();
+    public static ArrayList<IGenerationDescription> descriptions = new ArrayList<>();
+    public static ArrayList<WorldStructure> structures = new ArrayList<>();
 
     public static long structure_spawn = 0;
 
@@ -70,8 +71,11 @@ public class StructurePiece {
                 newList.add(structure);
         }
 
-            structures = newList;
+        structures = newList;
     }
+
+    public static Algorithms algorithms = new Algorithms();
+    public static Generation generation = new Generation();
 
     public static void callbackGeneration(int X, int Z, Random random, int dimension){
         NativeBlockSource region = NativeBlockSource.getCurrentWorldGenRegion();
@@ -101,13 +105,11 @@ public class StructurePiece {
             }
             if(!(type.isGeneration(pos, random, dimension, region) && description.isGeneration(pos, random, dimension, region)) || (description.isSet() && !description.getStructure().isSetStructure((int)pos.x, (int)pos.y, (int)pos.z, region)))
                 return;
-
-            description.getStructure().setStructure((int)pos.x, (int)pos.y, (int)pos.z, region, object);
-            if(description.isPoolStructure(pos, random, dimension, region)) {
-                structure_spawn++;
-                structures.add(new WorldStructure(pos, description.getName(), dimension));
-            }
-            algorithmsOptimization(pos);
+            
+            if(description.canLegacySpawn())
+                Generation.spawn(description, pos, region, object, random, dimension);
+            else
+                Generation.addGenStructure(new Generation.SpawnedStructure(description, pos, region, object, random, dimension));
         }
     }
 

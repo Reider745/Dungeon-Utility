@@ -2,21 +2,13 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="src" path="src/java/du/src/"/>
-	<classpathentry kind="lib" path="toolchain/classpath/innercore-libs/gson-2.6.2.jar"/>
 	<classpathentry kind="lib" path="toolchain/classpath/android.jar"/>
 	<classpathentry kind="lib" path="toolchain/classpath/android-support-v7-recyclerview.jar"/>
 	<classpathentry kind="lib" path="toolchain/classpath/android-support-v4.jar"/>
 	<classpathentry kind="lib" path="toolchain/classpath/horizon-classes.jar"/>
-	<classpathentry kind="lib" path="toolchain/classpath/innercore-classes.jar"/>
-	<classpathentry kind="lib" path="toolchain/classpath/innercore-libs/desugar_jdk_libs-1.0.10.jar"/>
-	<classpathentry kind="lib" path="toolchain/classpath/innercore-libs/dx.jar"/>
-	<classpathentry kind="lib" path="toolchain/classpath/innercore-libs/glide-3.6.0.jar"/>
-	<classpathentry kind="lib" path="toolchain/classpath/innercore-libs/mcpe.jar"/>
-	<classpathentry kind="lib" path="toolchain/classpath/innercore-libs/recyclerview-1.1.0.jar"/>
-	<classpathentry kind="lib" path="toolchain/classpath/innercore-libs/reflections.jar"/>
-	<classpathentry kind="lib" path="toolchain/classpath/org.jar"/>
-	<classpathentry kind="lib" path="toolchain/classpath/innercore-libs/support-annotations-25.3.1.jar"/>
-	<classpathentry kind="lib" path="toolchain/classpath/innercore-libs/zip4j.jar"/>
 	<classpathentry kind="lib" path="toolchain/classpath/android-support-multidex.jar"/>
+	<classpathentry kind="lib" path="toolchain/classpath/inner.jar"/>
+	<classpathentry kind="lib" path="toolchain/classpath/rhino.jar"/>
+	<classpathentry kind="lib" path="toolchain/classpath/json-io.jar"/>
 	<classpathentry kind="output" path="toolchain/build/java"/>
 </classpath>
