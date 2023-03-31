@@ -1,7 +1,12 @@
 package com.reider.dungeonutility.struct.generation;
 
 import com.reider.dungeonutility.struct.generation.thread.Algorithms;
-import com.reider.dungeonutility.struct.generation.thread.Generation;
+import com.reider.dungeonutility.struct.generation.thread.ChunckClearMembory;
+import com.reider.dungeonutility.struct.Structure;
+import com.reider.dungeonutility.struct.StructureUtility;
+import com.reider.dungeonutility.struct.StructureUtility.Size;
+import com.zhekasmirnov.innercore.api.NativeAPI;
+import com.zhekasmirnov.innercore.api.runtime.other.WorldGen.ChunkPos;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 
@@ -75,9 +80,10 @@ public class StructurePiece {
     }
 
     public static Algorithms algorithms = new Algorithms();
-    public static Generation generation = new Generation();
+    public static ChunckClearMembory generation = new ChunckClearMembory();
 
     public static void callbackGeneration(int X, int Z, Random random, int dimension){
+        loaded.add(new ChunckPosTime(dimension, X, Z));
         NativeBlockSource region = NativeBlockSource.getCurrentWorldGenRegion();
         Scriptable object =  new ScriptableObject() {
             @Override
@@ -88,6 +94,113 @@ public class StructurePiece {
         object.put("random", object, random);
         for(int i = 0;i < descriptions.size();i++)
             generateStructure(descriptions.get(i), X, Z, random, region, object);
+        synchronized(list_structures){
+            ArrayList<SpawnedStructure> newList = new ArrayList<>();
+
+            for(int i = 0;i < list_structures.size();i++){
+                SpawnedStructure stru = list_structures.get(i);
+                if(stru.canSpawn()){
+                    stru.spawn(region);
+                    list_structures.set(i, null);
+                }else if(System.currentTimeMillis() - stru.time <= stru.description.getTimeClearToMembory())
+                    newList.add(stru);
+            }
+
+            list_structures = newList;
+        }
+    }
+
+    public static ArrayList<ChunckPosTime> loaded = new ArrayList<>();
+
+    public static class ChunckPosTime extends ChunkPos {
+        public long time;
+
+        public ChunckPosTime(int dimension, int x, int y){
+            super(dimension, x, y);
+            this.time = System.currentTimeMillis();
+        }
+    }
+
+    public static boolean isChunckLoaded(int dimension, int X, int Z){
+        ChunkPos pos_ = new ChunkPos(dimension, X, Z);
+        synchronized(loaded){
+            for(ChunkPos pos : loaded)
+                if(pos.equals(pos_))
+                    return true;
+        }
+        return false;
+    }
+
+    public static class SpawnedStructure {
+        public Size[] size;
+        public IGenerationDescription description;
+        public Vector3 pos;
+        public Object object;
+        public Random random;
+        public int dimension;
+        public ChunkPos start;
+        public ChunkPos end;
+        public boolean v;
+        public long time;
+
+        public SpawnedStructure(IGenerationDescription description, Vector3 pos, NativeBlockSource region, Object object, Random random, int dimension, boolean v){
+            this.size = StructureUtility.getStructureSize(description.getStructure().getStructure());
+            this.description = description;
+            this.pos = pos;
+            this.object = object;
+            this.random = random;
+            this.dimension = dimension;
+            this.v = v;
+
+            this.start = new ChunkPos(dimension, (int) Math.floor(size[0].min / 16), (int) Math.floor(size[2].min / 16));
+            this.end = new ChunkPos(dimension, (int) Math.floor(size[0].max / 16), (int) Math.floor(size[2].max / 16));
+
+            this.time = System.currentTimeMillis();
+        }
+
+        public boolean canChunk(int X, int Z){
+            return start.x >= X && X <= end.x && start.z >= Z && Z <= end.z;
+        }
+
+        public boolean canChunk(ChunkPos pos){
+            return canChunk(pos.x, pos.z);
+        }
+
+        public boolean canSpawn(){
+            for(int X = start.x;X <= end.x;X++)
+                for(int Z = start.z;Z <= end.z;Z++)
+                    if(!StructurePiece.isChunckLoaded(dimension, X, Z))
+                        return false;
+            return true;
+        }
+
+        public void spawn(NativeBlockSource region){
+            StructurePiece.spawn(description, pos, region, object, random, dimension, v);
+        }
+    }
+
+    public static void spawn(IGenerationDescription description, Vector3 pos, NativeBlockSource region, Object object, Random random, int dimension, boolean v){
+        if(v){
+            description.getStructure().setStructure((int)pos.x, (int)pos.y, (int)pos.z, region, object);
+            if(description.isPoolStructure(pos, random, dimension, region))
+                structures.add(new WorldStructure(pos, description.getName(), dimension));
+            return;
+        }
+        description.getStructure().setStructure((int)pos.x, (int)pos.y, (int)pos.z, region, object);
+        if(description.isPoolStructure(pos, random, dimension, region)) {
+            StructurePiece.structure_spawn++;
+            StructurePiece.structures.add(new WorldStructure(pos, description.getName(), dimension));
+        }
+        if(description.canOptimization())
+            Algorithms.addPos(pos);
+    }
+
+    public static ArrayList<SpawnedStructure> list_structures = new ArrayList<>();
+
+    public static void addGenStructure(SpawnedStructure stru) {
+        synchronized(list_structures){
+            list_structures.add(stru);
+        }
     }
 
     public static void generateStructure(IGenerationDescription description, int X, int Z, Random random, NativeBlockSource region, Scriptable object){
@@ -107,9 +220,9 @@ public class StructurePiece {
                 return;
             
             if(description.canLegacySpawn())
-                Generation.spawn(description, pos, region, object, random, dimension);
+                StructurePiece.spawn(description, pos, region, object, random, dimension, false);
             else
-                Generation.addGenStructure(new Generation.SpawnedStructure(description, pos, region, object, random, dimension));
+                addGenStructure(new SpawnedStructure(description, pos, region, object, random, dimension, false));
         }
     }
 
@@ -128,9 +241,10 @@ public class StructurePiece {
         if(!(type.isGeneration(pos, random, dimension, region) && description.isGeneration(pos, random, dimension, region)) || (description.isSet() && !description.getStructure().isSetStructure((int)pos.x, (int)pos.y, (int)pos.z, region)))
             return;
 
-        description.getStructure().setStructure((int)pos.x, (int)pos.y, (int)pos.z, region, object);
-        if(description.isPoolStructure(pos, random, dimension, region))
-            structures.add(new WorldStructure(pos, description.getName(), dimension));
+        if(description.canLegacySpawn())
+            StructurePiece.spawn(description, pos, region, object, random, dimension, true);
+        else
+            addGenStructure(new SpawnedStructure(description, pos, region, object, random, dimension, true));
     }
 
     public static WorldStructure getNearestStructure(Vector3 pos, int dimension, String name, boolean is){

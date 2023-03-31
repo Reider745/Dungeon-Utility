@@ -69,7 +69,7 @@ let StructurePiece = {
 		obj.save = obj.save === undefined ? true :  obj.save;
 		obj.offset = obj.offset || {};
 		if(obj.structure)
-			return new DefaultDescription(obj.type || "default", obj.name || "noy_name", obj.offset.x||0, obj.offset.y||0, obj.offset.z||0, Number(obj.chance)||50, obj.distance || 0, !!obj.save, !!obj.isSet, obj.dimension || 0, !!obj.white_list, obj.biomes || [], !!obj.white_list_blocks, obj.blocks || [0], obj.structure.getStructureJava(), !!obj.checkName, obj.optimization === undefined ? true : obj.optimization, !!obj.legacySpawn);
+			return new DefaultDescription(obj.type || "default", obj.name || "noy_name", obj.offset.x||0, obj.offset.y||0, obj.offset.z||0, Number(obj.chance)||50, obj.distance || 0, !!obj.save, !!obj.isSet, obj.dimension || 0, !!obj.white_list, obj.biomes || [], !!obj.white_list_blocks, obj.blocks || [0], obj.structure.getStructureJava(), !!obj.checkName, obj.optimization === undefined ? true : obj.optimization, !!obj.legacySpawn, obj.clearToMembory || 30000);
 		else{
 			Logger.Log("Error StructurePiece register, Structure = undefined or null "+obj.name || "noy_name", "DungeonUtility");
 			return null;

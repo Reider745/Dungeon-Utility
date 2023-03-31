@@ -19,4 +19,5 @@ public interface IGenerationDescription {
     boolean checkName();
     boolean canOptimization();
     boolean canLegacySpawn();
+    long getTimeClearToMembory();
 }

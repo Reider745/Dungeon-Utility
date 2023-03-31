@@ -8,26 +8,27 @@ import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import java.util.Random;
 
 public class DefaultGeneration implements IGenerationDescription {
-    private String type;
-    private String name;
-    private int chance;
-    private Structure structure;
-    private int disnatnt;
-    private boolean pool;
-    private boolean isSet;
-    private int x;
-    private int y;
-    private int z;
-    private int dimension;
-    private boolean white_list;
-    private int[] biomes;
-    private boolean checkName;
-    private boolean white_list_blocks;
-    private int[] blocks;
-    private boolean optimization;
-    private boolean legacy;
+    public String type;
+    public String name;
+    public int chance;
+    public Structure structure;
+    public int disnatnt;
+    public boolean pool;
+    public boolean isSet;
+    public int x;
+    public int y;
+    public int z;
+    public int dimension;
+    public boolean white_list;
+    public int[] biomes;
+    public boolean checkName;
+    public boolean white_list_blocks;
+    public int[] blocks;
+    public boolean optimization;
+    public boolean legacy;
+    public long time;
 
-    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy){
+    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy, long time){
         this.type = type;
         this.name = name;
         this.x = x;
@@ -46,6 +47,7 @@ public class DefaultGeneration implements IGenerationDescription {
         this.checkName = checkName;
         this.optimization = optimization;
         this.legacy = legacy;
+        this.time = time;
     }
 
     @Override
@@ -116,5 +118,10 @@ public class DefaultGeneration implements IGenerationDescription {
     @Override
     public boolean canLegacySpawn() {
         return legacy;
+    }
+
+    @Override
+    public long getTimeClearToMembory() {
+        return time;
     }
 }

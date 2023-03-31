@@ -6,12 +6,11 @@ import com.reider.dungeonutility.struct.generation.StructurePiece;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.innercore.api.log.DialogHelper;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
-import com.zhekasmirnov.innercore.api.NativeAPI;
 
 public class Algorithms extends Thread {
-    private static ArrayList<Vector3> list = new ArrayList<>();
-    private static int length_pre = -1;
-    private static long time = 500l;
+    public static ArrayList<Vector3> list = new ArrayList<>();
+    public static int length_pre = -1;
+    public static long time = 500l;
 
 
     public Algorithms(){
@@ -46,7 +45,7 @@ public class Algorithms extends Thread {
                     }
                     length_pre = list.size();
                 }
-                this.sleep(time);
+                sleep(time);
             } catch (Exception e){
                 Logger.error(e.getLocalizedMessage());
                 DialogHelper.reportNonFatalError("Generation", e);
@@ -56,6 +55,5 @@ public class Algorithms extends Thread {
 
     public static void addPos(Vector3 pos){
         list.add(pos);
-        NativeAPI.clientMessage("addPos");
     }
 }
