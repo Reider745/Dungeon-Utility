@@ -69,7 +69,7 @@ let StructurePiece = {
 		obj.save = obj.save === undefined ? true :  obj.save;
 		obj.offset = obj.offset || {};
 		if(obj.structure)
-			return new DefaultDescription(obj.type || "default", obj.name || "noy_name", obj.offset.x||0, obj.offset.y||0, obj.offset.z||0, Number(obj.chance)||50, obj.distance || 0, !!obj.save, !!obj.isSet, obj.dimension || 0, !!obj.white_list, obj.biomes || [], !!obj.white_list_blocks, obj.blocks || [0], obj.structure.getStructureJava(), !!obj.checkName, obj.optimization === undefined ? true : obj.optimization, !!obj.legacySpawn, obj.clearToMembory || 30000);
+			return new DefaultDescription(obj.type || "default", obj.name || "noy_name", obj.offset.x||0, obj.offset.y||0, obj.offset.z||0, Number(obj.chance)||50, obj.distance || 0, !!obj.save, !!obj.isSet, obj.dimension || 0, !!obj.white_list, obj.biomes || [], !!obj.white_list_blocks, obj.blocks || [0], obj.structure.getStructureJava(), !!obj.checkName, obj.optimization === undefined ? true : obj.optimization, !!obj.legacySpawn, obj.clearToMembory || 60000, obj.count||[1], obj.minAndMaxY||[0, 255]);
 		else{
 			Logger.Log("Error StructurePiece register, Structure = undefined or null "+obj.name || "noy_name", "DungeonUtility");
 			return null;
@@ -126,14 +126,44 @@ StructurePiece.registerType(new OverWorld());
 StructurePiece.registerType(new Nether());
 StructurePiece.registerType(new DefaultType());
 
-let structure = new StructureDescriptionJS();
+/*let structure = new StructureDescriptionJS();
 for(let x = 0;x < 16;x++)
 	for(let y = 0;y < 16;y++)
 		for(let z = 0;z < 16;z++)
 			structure.addBlock(x, y, z, new BlockState(1, 0));
-
+const dimension = new Dimensions.CustomDimension("test", 1979)
+	dimension.setGenerator(new Dimensions.newGenerator(
+		{
+			layers: [
+			{
+			minY: 2,
+			maxY: 75,
+			yConversion: [[0, 0]],
+			material: {base: 9}
+			},
+			{
+			minY: 0,
+			maxY: 82,
+			yConversion: [[.7, 1], [1, -0.5]],
+			material: {base:1, surface: {id:3, data: 0, width:4}, cover: 3},
+			noise: {
+			octaves: {count: 4, scale: 20}
+			}
+			},
+			{
+			minY: 0,
+			maxY: 1,
+			yConversion: [[0, 0]],
+			material: {base: 7}
+			}
+			]
+			}));
+Callback.addCallback("ItemUse", function(coords, item, block, is, player){
+	Dimensions.transfer(player, dimension.id);
+});
 StructurePiece.register(StructurePiece.getDefault({
-	distance: 32,
+	dimension: dimension.id,
+	distance: 40,
 	chance: 2,
 	structure: new Structure.advanced(structure.getDescription())
-}));
+}));*/

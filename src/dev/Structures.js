@@ -61,7 +61,6 @@ let Structure = {
 		return StructureJava.getGlobalPrototype(name);
 	},
 	advanced(name){
-		
 		if(name instanceof com.reider.dungeonutility.api.StructureDescription)
 			var stru = new StructureJava(name);
 		else{

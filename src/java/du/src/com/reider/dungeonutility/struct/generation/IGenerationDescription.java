@@ -20,4 +20,7 @@ public interface IGenerationDescription {
     boolean canOptimization();
     boolean canLegacySpawn();
     long getTimeClearToMembory();
+    int[] getCount();
+    int[] getMinAndMaxY();
+    boolean canClearStructure();
 }

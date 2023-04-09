@@ -27,8 +27,10 @@ public class DefaultGeneration implements IGenerationDescription {
     public boolean optimization;
     public boolean legacy;
     public long time;
+    public int[] count;
+    public int[] minAndMaxY;
 
-    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy, long time){
+    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy, long time, int[] count, int[] minAndMaxY){
         this.type = type;
         this.name = name;
         this.x = x;
@@ -48,6 +50,8 @@ public class DefaultGeneration implements IGenerationDescription {
         this.optimization = optimization;
         this.legacy = legacy;
         this.time = time;
+        this.minAndMaxY = minAndMaxY;
+        this.count = count;
     }
 
     @Override
@@ -123,5 +127,20 @@ public class DefaultGeneration implements IGenerationDescription {
     @Override
     public long getTimeClearToMembory() {
         return time;
+    }
+
+    @Override
+    public int[] getCount() {
+        return this.count;
+    }
+
+    @Override
+    public int[] getMinAndMaxY() {
+        return this.minAndMaxY;
+    }
+
+    @Override
+    public boolean canClearStructure() {
+        return time != -1;
     }
 }
