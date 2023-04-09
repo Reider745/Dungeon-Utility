@@ -9,7 +9,7 @@ import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 
 public class ChunckClearMembory extends Thread {
-    public static long time = 1000l;
+    public static long time = 5000l;
 
     public static long limit = 60l*1000l;
 
