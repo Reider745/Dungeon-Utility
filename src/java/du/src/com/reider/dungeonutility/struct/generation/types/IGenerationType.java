@@ -1,4 +1,4 @@
-package com.reider.dungeonutility.struct.generation;
+package com.reider.dungeonutility.struct.generation.types;
 
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;

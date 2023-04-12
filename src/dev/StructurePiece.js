@@ -1,4 +1,4 @@
-let StructurePieceJava = WRAP_JAVA("com.reider.dungeonutility.struct.generation.StructurePiece");
+/*let StructurePieceJava = WRAP_JAVA("com.reider.dungeonutility.struct.generation.StructurePiece");
 let WorldStructure = WRAP_JAVA("com.reider.dungeonutility.struct.generation.WorldStructure");
 let OverWorld = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.OverWorld");
 let DefaultType = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.Default");
@@ -6,12 +6,17 @@ let Nether = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.Nether
 let DefaultDescription = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.DefaultGeneration");
 let Vector3 = WRAP_JAVA("com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3");
 
-try{
-StructurePieceJava.setCriticalReleaseSetting(__config__.get("critical_release.enable") == true, Number(__config__.get("critical_release.active")), Number(__config__.get("critical_release.radius")));
-StructurePieceJava.setClearingClustersSetting(__config__.get("critical_release.enable") == true, Number(__config__.get("critical_release.active")), Number(__config__.get("critical_release.radius")));
+/*try{
+	StructurePieceJava.setCriticalReleaseSetting(__config__.get("critical_release.enable") == true, Number(__config__.get("critical_release.active")), Number(__config__.get("critical_release.radius")));
+	StructurePieceJava.setClearingClustersSetting(__config__.get("critical_release.enable") == true, Number(__config__.get("critical_release.active")), Number(__config__.get("critical_release.radius")));
 }catch(e){
 	alert(e);
-}
+}*/
+
+const StructurePieceController = WRAP_JAVA("com.reider.dungeonutility.struct.generation.StructurePieceController");
+const DefaultDescription = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.api.DefaultGeneration");
+const WorldStructure = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.api.WorldStructure");
+const Vector3 = WRAP_JAVA("com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3");
 
 Network.addClientPacket("message", function(text){
 	Game.message(text.text);
@@ -37,16 +42,15 @@ Network.addServerPacket("DungeonUtility.optimization", function(client){
 });
 
 Callback.addCallback("NativeCommand", function(cmd){
-	if(cmd == "/optimization"){
+	if(cmd == "/optimization")
 		Network.sendToServer("DungeonUtility.optimization", {});
-	}
 });
 
 Callback.addCallback("GenerateChunk", function(x, z, rand, id){
-	StructurePieceJava.callbackGeneration(x, z, rand, id);
+	StructurePieceController.getPiece().generation(x, z, rand, id);
 });
 Callback.addCallback("GenerateCustomDimensionChunk", function(x, z, rand, id){
-	StructurePieceJava.callbackGeneration(x, z, rand, id);
+	StructurePieceController.getPiece().generation(x, z, rand, id);
 });
 
 let listPiece = [];
@@ -57,13 +61,18 @@ Callback.addCallback("StructureLoad", function(){
 		return;
 	reg = true;
 	Callback.invokeCallback("StructureLoadOne");
-	for(let i in listPiece)
-		StructurePieceJava.register(listPiece[i]);
+	for(let i in listPiece){
+		let pieces = StructurePieceController.getPieces();
+		for(let a in pieces)
+			StructurePieceController.getPiece(pieces[a]).addGeneration(listPiece[i]);
+	}
 });
 
 let StructurePiece = {
 	registerType(cl){
-		StructurePieceJava.registerType(cl);
+		let pieces = StructurePieceController.getPieces();
+		for(let i in pieces)
+			StructurePieceController.getPiece(pieces[i]).registerType(cl);
 	},
 	getDefault(obj){
 		obj.save = obj.save === undefined ? true :  obj.save;
@@ -76,35 +85,53 @@ let StructurePiece = {
 		}
 	},
 	generateStructure(IStru, x, y, z, random, region, packet){
-		StructurePieceJava.generateStructure(IStru, x, y, z, random, region, packet);
+		StructurePieceController.getPiece().spawnStructure(IStru, new Vector3(x, y, z), region, packet, random, region.getDimension());
 	},
 	register(stru){
 		listPiece.push(stru);
 	},
 	getNearestStructure(x, y, z, region, name, checkName){
-		return StructurePieceJava.getNearestStructure(new Vector3(x, y, z), region.getDimension(), name|| null, !!checkName);
+		return StructurePieceController.getStorage().getNearestStructure(new Vector3(x, y, z), region.getDimension(), name|| null, !!checkName);
 	},
 	addStructure(name, x, y, z, region){
-		StructurePieceJava.add(name, x, y, z, region);
+		StructurePieceController.getStorage().add(name, x, y, z, region);
 	},
 	deleteStructure(x, y, z){
-		StructurePieceJava.del(x, y, z);
+		StructurePieceController.getStorage().del(x, y, z);
 	}
 };
 
 Callback.addCallback("LevelLeft", function () {
-	StructurePieceJava.structures.clear();
+	StructurePieceController.getStorage().clear();
+	StructurePieceController.getChunkManager().clear();
 });
 
 Saver.addSavesScope("DungeonUtility", function(scope){
 	let arr = scope.structures;
+	let storage = StructurePieceController.getStorage();
+	let result = [];
 	for(let i in arr){
 		let obj = arr[i];
-		StructurePieceJava.structures.add(new WorldStructure(new Vector3(obj.pos.x, obj.pos.y, obj.pos.z), obj.name, obj.dimension||0));
+		storage.add(new WorldStructure(new Vector3(obj.pos.x, obj.pos.y, obj.pos.z), obj.name, obj.dimension||0));
 	}
+	storage.setStructures(result);
 }, function(){
 	let arr = [];
-	let size = StructurePieceJava.structures.size();
+	let storage = StructurePieceController.getStorage();
+	let structures = storage.getStructures();
+	for(let i = 0;i < structures.length;i++){
+		let object = structures[i];
+		arr.push({
+			name: String(object.name),
+			pos: {
+				x: Number(object.pos.x),
+				y: Number(object.pos.y),
+				z: Number(object.pos.z)
+			},
+			dimension: Number(object.dimension)
+		});
+	}
+	/*let size = StructurePieceJava.structures.size();
 	for(let i = 0;i < size;i++){
 		let object = StructurePieceJava.structures.get(i);
 		arr.push({
@@ -116,15 +143,30 @@ Saver.addSavesScope("DungeonUtility", function(scope){
 			},
 			dimension: Number(object.dimension)
 		});
-	}
+	}*/
 	return {
 		structures: arr
 	};
 });
 
-StructurePiece.registerType(new OverWorld());
-StructurePiece.registerType(new Nether());
-StructurePiece.registerType(new DefaultType());
+ModAPI.addAPICallback("RuntimeConfig", (api) => {
+	const ConfigStorage = api.ConfigStorage;
+	const BuilderConfig = api.BuilderConfig;
+	const Setting = api.Setting;
+
+	let config = new ConfigStorage(__dir__+"runtime_config.json")
+		.put("clearing_clusters_enable", true);
+
+	let builder = new BuilderConfig(config)
+		.addSectionDivider("Clearing Clusters")
+		.addCheckBox("Enable", "clearing_clusters_enable");
+
+	new Setting(__dir__)
+		.setBuilderConfig(builder)
+		.setChangeSetting((cfg, config, builder) => {
+			
+		});
+});
 
 /*let structure = new StructureDescriptionJS();
 for(let x = 0;x < 16;x++)

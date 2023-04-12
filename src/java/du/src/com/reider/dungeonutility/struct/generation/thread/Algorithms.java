@@ -2,48 +2,75 @@ package com.reider.dungeonutility.struct.generation.thread;
 
 import java.util.ArrayList;
 
-import com.reider.dungeonutility.struct.generation.StructurePiece;
+import com.reider.dungeonutility.struct.generation.StructurePieceController;
+import com.reider.dungeonutility.struct.generation.thread.algorithms.Base;
+import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.innercore.api.log.DialogHelper;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 
 public class Algorithms extends Thread {
-    public static ArrayList<Vector3> list = new ArrayList<>();
-    public static int length_pre = -1;
-    public static long time = 500l;
+    public ArrayList<Base> algorithms = new ArrayList<>();
 
+    public void addAlgoritm(Base base){
+        algorithms.add(base);
+    }
+
+    public ArrayList<Vector3> list = new ArrayList<>();
+    public int length_pre = -1;
+    public long time = 1000l;
 
     public Algorithms(){
         this.start();
+    }
+
+    public void setTime(long time){
+        this.time = time;
+    }
+    
+
+    public void algorithmsOptimization(Vector3 pos){
+        WorldStructure[] structures = StructurePieceController.getStorage().getStructures();
+
+        for(Base base : algorithms)
+            base.run(pos, structures);
+
+        ArrayList<WorldStructure> result = new ArrayList<>();
+        for(WorldStructure stru : structures)
+            if(stru != null)
+                result.add(stru);
+        StructurePieceController.getStorage().setStructures(structures);
     }
     
     @Override
     public void run() {
         while(true){
             try {
-                if(list.size() == 0){
-                    this.sleep(time);
-                    continue;
-                }
-                if(length_pre == -1){
-                    StructurePiece.algorithmsOptimization(list.remove(0));
-                    length_pre = list.size();
-                }else{
-                    int count = list.size() - length_pre;
-                    if(count <= 8)
-                        StructurePiece.algorithmsOptimization(list.remove(0));
-                    else if(count <= 64)
-                        for(int i = 0;i < 4;i++)
-                            StructurePiece.algorithmsOptimization(list.remove(0));
-                    else if(count <= 128)
-                        for(int i = 0;i < 16;i++)
-                            StructurePiece.algorithmsOptimization(list.remove(0));
-                    else{
-                        int size = list.size();
-                        for(int i = 0;i < size;i++)
-                            StructurePiece.algorithmsOptimization(list.remove(0));
+                synchronized(list){
+                    if(list.size() == 0){
+                        sleep(time);
+                        continue;
                     }
-                    length_pre = list.size();
+                    if(length_pre == -1){
+                        algorithmsOptimization(list.remove(0));
+                        length_pre = list.size();
+                    }else{
+                        int count = list.size() - length_pre;
+                        if(count <= 8)
+                            algorithmsOptimization(list.remove(0));
+                        else if(count <= 64)
+                            for(int i = 0;i < 4;i++)
+                                algorithmsOptimization(list.remove(0));
+                        else if(count <= 128)
+                            for(int i = 0;i < 16;i++)
+                                algorithmsOptimization(list.remove(0));
+                        else{
+                            int size = list.size();
+                            for(int i = 0;i < size;i++)
+                                algorithmsOptimization(list.remove(0));
+                        }
+                        length_pre = list.size();
+                    }
                 }
                 sleep(time);
             } catch (Exception e){
@@ -53,7 +80,9 @@ public class Algorithms extends Thread {
         }
     }
 
-    public static void addPos(Vector3 pos){
-        list.add(pos);
+    public void addPos(Vector3 pos){
+        synchronized(list){
+            list.add(pos);
+        }
     }
 }

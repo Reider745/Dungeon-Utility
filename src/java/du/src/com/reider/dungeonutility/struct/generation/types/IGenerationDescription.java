@@ -1,4 +1,4 @@
-package com.reider.dungeonutility.struct.generation;
+package com.reider.dungeonutility.struct.generation.types;
 
 import com.reider.dungeonutility.struct.Structure;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
