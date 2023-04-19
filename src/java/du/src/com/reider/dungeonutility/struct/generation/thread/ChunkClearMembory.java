@@ -2,7 +2,7 @@ package com.reider.dungeonutility.struct.generation.thread;
 
 import com.reider.dungeonutility.struct.generation.StructurePieceController;
 import com.reider.dungeonutility.struct.generation.types.IChunkManager;
-import com.reider.dungeonutility.struct.generation.types.api.Chunk;
+import com.reider.dungeonutility.struct.generation.types.api.IChunk;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.NativeAPI;
 
@@ -22,9 +22,11 @@ public class ChunkClearMembory extends Thread {
         this.start();
     }
 
-    public void optimization(IChunkManager manager, Chunk chunck){
-        if(System.currentTimeMillis() - chunck.time <= limit)
+    public void optimization(IChunkManager manager, IChunk chunck){
+        if(System.currentTimeMillis() - chunck.getTime() <= limit)
             manager.add(chunck);
+        else
+            chunck.free();
     }
 
     @Override

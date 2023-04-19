@@ -149,7 +149,7 @@ Saver.addSavesScope("DungeonUtility", function(scope){
 	};
 });
 
-ModAPI.addAPICallback("RuntimeConfig", (api) => {
+ModAPI.addAPICallback("RuntimeSetting", (api) => {
 	const ConfigStorage = api.ConfigStorage;
 	const BuilderConfig = api.BuilderConfig;
 	const Setting = api.Setting;

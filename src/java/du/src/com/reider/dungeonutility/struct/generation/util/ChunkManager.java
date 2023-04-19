@@ -8,12 +8,13 @@ import java.util.Set;
 
 import com.reider.dungeonutility.struct.generation.types.IChunkManager;
 import com.reider.dungeonutility.struct.generation.types.api.Chunk;
+import com.reider.dungeonutility.struct.generation.types.api.IChunk;
 
 public class ChunkManager implements IChunkManager {
-    public HashMap<Integer, ArrayList<Chunk>> dimensions = new HashMap<>();
+    public HashMap<Integer, ArrayList<IChunk>> dimensions = new HashMap<>();
 
-    public ArrayList<Chunk> getChunks(int dimension){
-        ArrayList<Chunk> result = dimensions.get(dimension);
+    public ArrayList<IChunk> getChunks(int dimension){
+        ArrayList<IChunk> result = dimensions.get(dimension);
         if(result == null){
             result = new ArrayList<>();
             dimensions.put(dimension, result);
@@ -22,9 +23,9 @@ public class ChunkManager implements IChunkManager {
     }
 
     @Override
-    public void add(Chunk chunk) {
+    public void add(IChunk chunk) {
         synchronized(dimensions){
-            getChunks(chunk.dimension).add(chunk);
+            getChunks(chunk.getDimension()).add(chunk);
         }
     }
 
@@ -38,16 +39,16 @@ public class ChunkManager implements IChunkManager {
     @Override
     public boolean isChunckLoaded(int dimension, int x, int z) {
         synchronized(dimensions){
-            ArrayList<Chunk> chunks = getChunks(dimension);
-            for(Chunk pos : chunks)
-                if(pos.x == x && pos.z == z)
+            ArrayList<IChunk> chunks = getChunks(dimension);
+            for(IChunk pos : chunks)
+                if(pos.getX() == x && pos.getZ() == z)
                     return true;
         }
         return false;
     }
 
     @Override
-    public Chunk remove(int dimension) {
+    public IChunk remove(int dimension) {
         synchronized(dimensions){
             return getChunks(dimension).remove(0);
         }
@@ -57,8 +58,8 @@ public class ChunkManager implements IChunkManager {
     public int getCount() {
         synchronized(dimensions){
             int result = 0;
-            Collection<ArrayList<Chunk>> array = dimensions.values();
-            for(ArrayList<Chunk> list : array)
+            Collection<ArrayList<IChunk>> array = dimensions.values();
+            for(ArrayList<IChunk> list : array)
                 result += list.size();
             return result;
         }

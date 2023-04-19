@@ -16,6 +16,7 @@ import com.reider.dungeonutility.struct.generation.types.api.Default;
 import com.reider.dungeonutility.struct.generation.types.api.Nether;
 import com.reider.dungeonutility.struct.generation.types.api.OverWorld;
 import com.reider.dungeonutility.struct.generation.util.ChunkManager;
+import com.reider.dungeonutility.struct.generation.util.NativeChunkManager;
 import com.reider.dungeonutility.struct.generation.util.StructureStorage;
 
 public class StructurePieceController {
@@ -50,7 +51,7 @@ public class StructurePieceController {
     }
 
     public static HashMap<String, IChunkManager> chunk_managers = new HashMap<>();
-    public static String type_chunk_managers = "java";
+    public static String type_chunk_managers = "native";
     public static void setTypeChunkManager(String type){
         StructurePieceController.type_chunk_managers = type;
     }
@@ -73,6 +74,7 @@ public class StructurePieceController {
         storages.put("java", new StructureStorage());
 
         chunk_managers.put("java", new ChunkManager());
+        chunk_managers.put("native", new NativeChunkManager());
 
         StructurePiece piece = new StructurePiece();
         pieces.put("java", piece);

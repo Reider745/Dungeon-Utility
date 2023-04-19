@@ -10,6 +10,8 @@
 #include <vector>
 #include <map>
 #include <regex>
+#include <java.h>
+
 
 struct GenItem {
 	int id;

@@ -18,7 +18,7 @@ public class Algorithms extends Thread {
 
     public ArrayList<Vector3> list = new ArrayList<>();
     public int length_pre = -1;
-    public long time = 1000l;
+    public long time = 2000l;
 
     public Algorithms(){
         this.start();
