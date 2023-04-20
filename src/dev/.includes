@@ -11,4 +11,6 @@ StructureDescription.js
 StructurePrivate.js
 StructurePiece.js
 
+RuntimeSetting.ts
+
 shared.js

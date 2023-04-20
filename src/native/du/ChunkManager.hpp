@@ -9,7 +9,7 @@ class Chunk {
         int dimension, x, z;
         jlong time;
         Chunk(int dimension, int x, int z, jlong time): dimension(dimension), x(x), z(z), time(time){};
-        void free();
+        ~Chunk(){}
 };
 
 namespace ChunkManager {

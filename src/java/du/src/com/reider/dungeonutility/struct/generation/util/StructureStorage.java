@@ -62,17 +62,17 @@ public class StructureStorage implements IStructureStorage {
 
     @Override
     public void setStructures(WorldStructure[] structures) {
-        synchronized(this.structures){
+        //synchronized(structures){
             this.structures.clear();
             for(WorldStructure stru : structures)
                 this.add(stru);
-        }
+       // }
     }
 
     @Override
     public void clear(){
-        synchronized(this.structures){
+        //synchronized(structures){
             this.structures.clear();
-        }
+        //}
     }
 }

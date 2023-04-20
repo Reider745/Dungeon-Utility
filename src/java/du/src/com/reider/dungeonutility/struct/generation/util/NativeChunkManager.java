@@ -3,7 +3,6 @@ package com.reider.dungeonutility.struct.generation.util;
 import com.reider.dungeonutility.struct.generation.types.IChunkManager;
 import com.reider.dungeonutility.struct.generation.types.api.IChunk;
 import com.reider.dungeonutility.struct.generation.types.api.NativeChunk;
-import com.zhekasmirnov.horizon.runtime.logger.Logger;
 
 public class NativeChunkManager implements IChunkManager {
 
@@ -17,47 +16,64 @@ public class NativeChunkManager implements IChunkManager {
 
     @Override
     public int[] getDimensions() {
-        return nativeGetDimensions();
+        synchronized(this){
+            return nativeGetDimensions();
+        }
     }
 
     @Override
     public void add(IChunk chunk) {
-        if(!(chunk instanceof NativeChunk)){
-            nativeAdd(new NativeChunk(chunk.getDimension(), chunk.getX(), chunk.getZ()).getPointer());
-            chunk.free();
-            Logger.error("Not chunk NativeChunk");
+        synchronized(this){
+            if(!(chunk instanceof NativeChunk)){
+                nativeAdd(new NativeChunk(chunk.getDimension(), chunk.getX(), chunk.getZ()).getPointer());
+                chunk.free();
+            }
+            nativeAdd(((NativeChunk) chunk).getPointer());
         }
-        nativeAdd(((NativeChunk) chunk).getPointer());
     }
 
     @Override
     public void add(int dimension, int x, int z) {
-        add(new NativeChunk(dimension, x, z));
+        synchronized(this){
+            nativeAdd(new NativeChunk(dimension, x, z).getPointer());
+        }
     }
 
 
     @Override
     public boolean isChunckLoaded(int dimension, int x, int z) {
-        return nativeIsChunckLoaded(dimension, x, z);
+        synchronized(this){
+            return nativeIsChunckLoaded(dimension, x, z);
+        }
     }
 
     @Override
     public IChunk remove(int dimension) {
-        return new NativeChunk(nativeRemove(dimension));
+        synchronized(this){
+            long ptr = nativeRemove(dimension);
+            if(ptr == 0) return null;
+            return new NativeChunk(ptr);
+        }
     }
 
     @Override
     public int getCount() {
-        return nativeGetCount();
+        synchronized(this){
+            return nativeGetCount();
+        }
     }
 
     @Override
     public int getCount(int dimension) {
-        return nativeGetCountByDimension(dimension);
+        synchronized(this){
+            return nativeGetCountByDimension(dimension);
+        }
     }
 
     @Override
     public void clear() {
-        nativeClear();
+        synchronized(this){
+            nativeClear();
+        }
     }
 }

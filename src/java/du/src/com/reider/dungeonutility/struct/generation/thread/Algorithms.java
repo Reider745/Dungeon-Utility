@@ -2,6 +2,7 @@ package com.reider.dungeonutility.struct.generation.thread;
 
 import java.util.ArrayList;
 
+import com.reider.Debug;
 import com.reider.dungeonutility.struct.generation.StructurePieceController;
 import com.reider.dungeonutility.struct.generation.thread.algorithms.Base;
 import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
@@ -16,7 +17,7 @@ public class Algorithms extends Thread {
         algorithms.add(base);
     }
 
-    public ArrayList<Vector3> list = new ArrayList<>();
+    public ArrayList<Vector3> list_pos = new ArrayList<>();
     public int length_pre = -1;
     public long time = 2000l;
 
@@ -46,32 +47,37 @@ public class Algorithms extends Thread {
     public void run() {
         while(true){
             try {
-                synchronized(list){
-                    if(list.size() == 0){
-                        sleep(time);
-                        continue;
-                    }
-                    if(length_pre == -1){
-                        algorithmsOptimization(list.remove(0));
-                        length_pre = list.size();
-                    }else{
-                        int count = list.size() - length_pre;
-                        if(count <= 8)
-                            algorithmsOptimization(list.remove(0));
-                        else if(count <= 64)
-                            for(int i = 0;i < 4;i++)
-                                algorithmsOptimization(list.remove(0));
-                        else if(count <= 128)
-                            for(int i = 0;i < 16;i++)
-                                algorithmsOptimization(list.remove(0));
-                        else{
-                            int size = list.size();
-                            for(int i = 0;i < size;i++)
-                                algorithmsOptimization(list.remove(0));
-                        }
-                        length_pre = list.size();
-                    }
+                long start = System.currentTimeMillis();
+                ArrayList<Vector3> list;
+                synchronized(list_pos){
+                    list = (ArrayList<Vector3>) list_pos.clone();
                 }
+                if(list.size() == 0){
+                    sleep(time);
+                    continue;
+                }
+                if(length_pre == -1){
+                    algorithmsOptimization(list.remove(0));
+                    length_pre = list.size();
+                }else{
+                    int count = list.size() - length_pre;
+                    if(count <= 8)
+                        algorithmsOptimization(list.remove(0));
+                    else if(count <= 64)
+                        for(int i = 0;i < 4;i++)
+                            algorithmsOptimization(list.remove(0));
+                    else if(count <= 128)
+                        for(int i = 0;i < 16;i++)
+                            algorithmsOptimization(list.remove(0));
+                    else{
+                        int size = list.size();
+                        for(int i = 0;i < size;i++)
+                            algorithmsOptimization(list.remove(0));
+                    }
+                    length_pre = list.size();
+                }
+
+                Debug.get().updateDebug("algorithms", "Algorithms time:"+(System.currentTimeMillis()-start));
                 sleep(time);
             } catch (Exception e){
                 Logger.error(e.getLocalizedMessage());
@@ -81,8 +87,8 @@ public class Algorithms extends Thread {
     }
 
     public void addPos(Vector3 pos){
-        synchronized(list){
-            list.add(pos);
+        synchronized(list_pos){
+            list_pos.add(pos);
         }
     }
 }

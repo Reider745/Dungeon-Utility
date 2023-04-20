@@ -87,7 +87,7 @@ public class ChunkManager implements IChunkManager {
 
     @Override
     public void clear(){
-        synchronized(this.dimensions){
+        synchronized(dimensions){
             this.dimensions.clear();
         }
     }

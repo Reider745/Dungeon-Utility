@@ -51,7 +51,7 @@ public class StructurePieceController {
     }
 
     public static HashMap<String, IChunkManager> chunk_managers = new HashMap<>();
-    public static String type_chunk_managers = "native";
+    public static String type_chunk_managers = "java";
     public static void setTypeChunkManager(String type){
         StructurePieceController.type_chunk_managers = type;
     }

@@ -7,6 +7,7 @@ import java.util.Random;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 
+import com.reider.Debug;
 import com.reider.dungeonutility.struct.StructureUtility;
 import com.reider.dungeonutility.struct.StructureUtility.Size;
 import com.reider.dungeonutility.struct.generation.types.IChunkManager;
@@ -58,11 +59,15 @@ public class StructurePiece implements IStructurePiece {
 
         public boolean canSpawn(NativeBlockSource region){
             if(region.getDimension() != dimension) return false;
+            long start_time = System.currentTimeMillis();
             IChunkManager manager = StructurePieceController.getChunkManager();
             for(int X = start.x;X <= end.x;X++)
                 for(int Z = start.z;Z <= end.z;Z++)
-                    if(!manager.isChunckLoaded(dimension, X, Z))
+                    if(!manager.isChunckLoaded(dimension, X, Z)){ 
+                        Debug.get().debug("canSpawn time: "+(System.currentTimeMillis()-start_time));
                         return false;
+                    }
+            Debug.get().debug("canSpawn time: "+(System.currentTimeMillis()-start_time));
             return true;
         }
 
@@ -87,6 +92,7 @@ public class StructurePiece implements IStructurePiece {
 
     @Override
     public void generation(int x, int z, Random random, int dimension) {
+        long start = System.currentTimeMillis();
         StructurePieceController.getChunkManager().add(dimension, x, z);
         NativeBlockSource region = NativeBlockSource.getCurrentWorldGenRegion();
         Scriptable object =  new ScriptableObject() {
@@ -113,6 +119,7 @@ public class StructurePiece implements IStructurePiece {
             for(SpawnedStructure stru : newList)
                 spawnedStructures.add(stru);
         }
+        Debug.get().debug("Generation logic time: "+(System.currentTimeMillis() - start));
     }
 
     public void generationStructure(IGenerationDescription description, int x, int z,Random random, NativeBlockSource region, Scriptable packet){

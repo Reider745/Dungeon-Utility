@@ -1,5 +1,6 @@
 package com.reider.dungeonutility.struct.generation.thread;
 
+import com.reider.Debug;
 import com.reider.dungeonutility.struct.generation.StructurePieceController;
 import com.reider.dungeonutility.struct.generation.types.IChunkManager;
 import com.reider.dungeonutility.struct.generation.types.api.IChunk;
@@ -22,17 +23,24 @@ public class ChunkClearMembory extends Thread {
         this.start();
     }
 
-    public void optimization(IChunkManager manager, IChunk chunck){
-        if(System.currentTimeMillis() - chunck.getTime() <= limit)
-            manager.add(chunck);
+    private long getTime(IChunk chunk){
+        if(chunk.canClear())
+            return (long) (Math.sqrt(chunk.getTime()) * 10);
+        return chunk.getTime();
+    }
+
+    public void optimization(IChunkManager manager, IChunk chunk){
+        if(System.currentTimeMillis() - getTime(chunk) <= limit)
+            manager.add(chunk);
         else
-            chunck.free();
+            chunk.free();
     }
 
     @Override
     public void run() {
         while(true){
             try{
+                long start = System.currentTimeMillis();
                 IChunkManager manager = StructurePieceController.getChunkManager();
                 int[] dimensions = manager.getDimensions();
                 for(int dimension : dimensions){
@@ -55,8 +63,8 @@ public class ChunkClearMembory extends Thread {
                             optimization(manager, manager.remove(dimension));
                     
                 }
+                Debug.get().updateDebug("chunk_clear_manager",  "ChunkClearMembory time:"+(System.currentTimeMillis()-start)+", chuncks:"+manager.getCount());
                 sleep(time);
-                NativeAPI.tipMessage("chuncks:"+manager.getCount());
             }catch(Exception e){
                 Logger.error(e.getLocalizedMessage());
             }
