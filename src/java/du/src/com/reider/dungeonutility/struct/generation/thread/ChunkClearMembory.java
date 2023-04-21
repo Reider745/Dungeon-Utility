@@ -63,10 +63,11 @@ public class ChunkClearMembory extends Thread {
                             optimization(manager, manager.remove(dimension));
                     
                 }
-                Debug.get().updateDebug("chunk_clear_manager",  "ChunkClearMembory time:"+(System.currentTimeMillis()-start)+", chuncks:"+manager.getCount());
+                Debug.get().updateСhart("chunk_clear_manager", "ChunkClear time", (int) (System.currentTimeMillis()-start));
+                Debug.get().updateСhart("chunk_clear_manager_chunks", "Chunks", manager.getCount());
                 sleep(time);
             }catch(Exception e){
-                Logger.error(e.getLocalizedMessage());
+                Debug.get().error(e);
             }
         }
     }

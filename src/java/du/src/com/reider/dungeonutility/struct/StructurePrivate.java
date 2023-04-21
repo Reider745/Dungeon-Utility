@@ -24,7 +24,7 @@ public class StructurePrivate {
         int dimension;
     }
 
-    public static ArrayList<Position> postions = new ArrayList();
+    public static ArrayList<Position> postions = new ArrayList<>();
 
     public static void addRegion(int x1, int y1, int z1, int x2, int y2, int z2, NativeBlockSource region){
         postions.add(new Position(x1, y1, z1, x2, y2, z2, region.getDimension()));

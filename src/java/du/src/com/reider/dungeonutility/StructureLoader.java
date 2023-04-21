@@ -3,8 +3,6 @@ package com.reider.dungeonutility;
 import com.google.gson_du.internal.LinkedTreeMap;
 import com.reider.dungeonutility.api.LoaderTypeInterface;
 import com.reider.dungeonutility.api.StructureDescription;
-import com.reider.dungeonutility.api.data.BlockData;
-import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.FileUtil;
@@ -95,7 +93,7 @@ public class StructureLoader {
         return Integer.parseInt(integer);
     }
     public static HashMap<String, Integer> getHashMapToJson(LinkedTreeMap<String, Double> object){
-        HashMap<String, Integer> result = new HashMap();
+        HashMap<String, Integer> result = new HashMap<>();
         Set<Map.Entry<String, Double>> keys = object.entrySet();
         for(Map.Entry<String, Double> key : keys)
             result.put(key.getKey(), key.getValue().intValue());
@@ -103,7 +101,7 @@ public class StructureLoader {
     }
 
     public static String[] split(String str, char symbol){
-        ArrayList<String> list = new ArrayList();
+        ArrayList<String> list = new ArrayList<>();
         list.add("");
         char[] chars = str.toCharArray();
         for(char s : chars)
@@ -117,7 +115,7 @@ public class StructureLoader {
     }
 
     public static HashMap<String, String[]> getAllStructureAndPool(){
-        HashMap<String, String[]> result = new HashMap();
+        HashMap<String, String[]> result = new HashMap<>();
         String[] keys = getAllPool();
         for(String name : keys)
             result.put(name, getStructurePoolByName(name).getAllStructure());

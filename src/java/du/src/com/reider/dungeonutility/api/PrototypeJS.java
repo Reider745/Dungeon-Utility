@@ -33,9 +33,9 @@ public class PrototypeJS implements StructurePrototypeInterface{
     }
     @Override
     public void after(int x, int y, int z, NativeBlockSource region, Object packet){
-        Object result = afterFunc.call(context, scope, scope, new Object[] {x, y, z, region, packet});
+        afterFunc.call(context, scope, scope, new Object[] {x, y, z, region, packet});
     }
     public void before(int x, int y, int z, NativeBlockSource region, Object packet){
-        Object result = beforeFunc.call(context, scope, scope, new Object[] {x, y, z, region, packet});
+        beforeFunc.call(context, scope, scope, new Object[] {x, y, z, region, packet});
     }
 }

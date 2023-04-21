@@ -103,8 +103,8 @@ public class StructurePiece implements IStructurePiece {
         };
 
         object.put("random", object, random);
-        for(int i = 0;i < structures.size();i++)
-            generationStructure(structures.get(i), x, z, random, region, object);
+        for(IGenerationDescription stru : structures)
+            generationStructure(stru, x, z, random, region, object);
 
         synchronized(spawnedStructures){
             ArrayList<SpawnedStructure> newList = new ArrayList<>();
@@ -125,10 +125,12 @@ public class StructurePiece implements IStructurePiece {
     public void generationStructure(IGenerationDescription description, int x, int z,Random random, NativeBlockSource region, Scriptable packet){
         int dimension = region.getDimension();
         IGenerationType type = types.get(description.getType());
+        if(type == null) return;
         int[] counts = description.getCount();
-        int count = counts[(int) Math.floor(Math.random()*counts.length)];
+        int count = counts[random.nextInt(counts.length)];
+        Debug.get().updateDebug("count", "count: "+count);
         for(int i = 0;i < count;i++)
-            if(type != null && random.nextInt(description.getChance()) <= 1) {
+            if(random.nextInt(description.getChance()) <= 1) {
                 Vector3 pos = type.getPosition(x, z, random, dimension, region);
                 Vector3 offset = description.getOffset();
                 int[] y = description.getMinAndMaxY();
@@ -152,7 +154,11 @@ public class StructurePiece implements IStructurePiece {
                 }
                 if(!(type.isGeneration(pos, random, dimension, region) && description.isGeneration(pos, random, dimension, region)) || (description.isSet() && !description.getStructure().isSetStructure((int)pos.x, (int)pos.y, (int)pos.z, region)))
                     return;
-                
+
+                IStructureStorage storage = StructurePieceController.getStorage();
+                if(description.isPoolStructure(pos, random, dimension, region))
+                    storage.add(new WorldStructure(pos, description.getName(), dimension));
+                    
                 if(description.canLegacySpawn())
                     spawnStructure(description, pos, region, packet, random, dimension);
                 else
@@ -168,11 +174,7 @@ public class StructurePiece implements IStructurePiece {
 
     @Override
     public void spawnStructure(IGenerationDescription description, Vector3 pos, NativeBlockSource region, Object object, Random random, int dimension) {
-        IStructureStorage storage = StructurePieceController.getStorage();
         description.getStructure().setStructure((int)pos.x, (int)pos.y, (int)pos.z, region, object);
-        if(description.isPoolStructure(pos, random, dimension, region)) {
-            storage.add(new WorldStructure(pos, description.getName(), dimension));
-        }
         if(description.canOptimization())
             StructurePieceController.algorithms.addPos(pos);
     }

@@ -91,4 +91,15 @@ public class ChunkManager implements IChunkManager {
             this.dimensions.clear();
         }
     }
+
+    @Override
+    public IChunk at(int dimension, int x, int z) {
+        synchronized(dimensions){
+            ArrayList<IChunk> chunks = getChunks(dimension);
+            for(IChunk chunk : chunks)
+                if(chunk.getX() == x && chunk.getZ() == z)
+                    return chunk;
+            return null;
+        }
+    }
 }

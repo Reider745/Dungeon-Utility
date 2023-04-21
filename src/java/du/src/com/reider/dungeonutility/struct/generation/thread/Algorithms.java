@@ -77,11 +77,10 @@ public class Algorithms extends Thread {
                     length_pre = list.size();
                 }
 
-                Debug.get().updateDebug("algorithms", "Algorithms time:"+(System.currentTimeMillis()-start));
+                Debug.get().updateСhart("algorithms", "Algorithms time:", (int) (System.currentTimeMillis()-start));
                 sleep(time);
             } catch (Exception e){
-                Logger.error(e.getLocalizedMessage());
-                DialogHelper.reportNonFatalError("Generation", e);
+                Debug.get().error(e);
             }
         }
     }

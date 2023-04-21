@@ -21,6 +21,10 @@ public class NativeChunkManager implements IChunkManager {
         }
     }
 
+    public IChunk at(int dimension, int x, int z){
+        return null;
+    }
+
     @Override
     public void add(IChunk chunk) {
         synchronized(this){

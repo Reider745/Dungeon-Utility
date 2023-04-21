@@ -128,5 +128,7 @@
         "toolchain/classpath/test-classes.jar",
         "toolchain/classpath/classes-dex2jar.jar"
     ],
-    "tslint.jsEnable": true
+    "tslint.jsEnable": true,
+    "cmake.configureOnOpen": true,
+    "cmake.sourceDirectory": "C:/vs/Dungeon-Utility/toolchain/ndk/arm/tools/scan-build"
 }

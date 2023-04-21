@@ -19,4 +19,19 @@ public class LoggerDisable implements ILogger {
     public void updateDebug(String key, String text) {
         
     }
+
+    @Override
+    public void updateСhart(String key, String title, int value) {
+        
+    }
+
+    @Override
+    public void error(Exception e) {
+        
+    }
+
+    @Override
+    public void updateDebug(String key, String text, boolean force) {
+
+    }
 }

@@ -180,13 +180,7 @@ public class StructureUtility {
     private static int getDis(int x1, int y1, int z1, int x2, int y2, int z2){
         return (int) Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2) + Math.pow(z1-z2, 2));
     }
-    private static int getRadius(int x1, int x2){
-        if(x1 < 0)
-            x1 = -x1;
-        if(x2 < 0)
-            x2 = -x2;
-        return x1 + x2;
-    }
+    
     public static void generateShapeOptimization(int xx, int yy, int zz, int r, BlockData block, NativeBlockSource region) {
         for (int y = yy - r; y <= yy + r; y++)
             for (int x = xx - r; x <= xx + r; x++)
