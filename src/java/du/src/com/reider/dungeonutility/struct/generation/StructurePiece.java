@@ -138,6 +138,9 @@ public class StructurePiece implements IStructurePiece {
                         return;
                 }
                 
+                if(description.canLegacyOffset())
+                    pos = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
+
                 double distant = description.getDistance();
                 if(distant != 0) {
                     WorldStructure nearest = StructurePieceController.getStorage().getNearestStructure(pos,dimension, description.getName(), description.checkName());
@@ -147,7 +150,8 @@ public class StructurePiece implements IStructurePiece {
                 if(!(type.isGeneration(pos, random, dimension, region) && description.isGeneration(pos, random, dimension, region)) || (description.isSet() && !description.getStructure().isSetStructure((int)pos.x, (int)pos.y, (int)pos.z, region)))
                     return;
                 
-                pos = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
+                if(!description.canLegacyOffset())
+                    pos = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
 
                 IStructureStorage storage = StructurePieceController.getStorage();
                 if(description.isPoolStructure(pos, random, dimension, region))

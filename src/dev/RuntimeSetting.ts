@@ -49,7 +49,7 @@ ModAPI.addAPICallback("RuntimeSetting", (api) => {
 		.addCheckBox("Chunks", "chunks_debug")
 		.addCheckBox("Structures", "structures_debug")
 		.addCheckBox("Generation", "generation_debug")
-		.addCheckBox("Generation", "structures_queue");
+		.addCheckBox("Structures queue", "structures_queue");
 
 	function configUpdate(cfg: ConfigType, config: ConfigStorage, builder: BuilderConfig){
 		let debug = config.get("debug_enable", false) ? new LoggerEnable() : new LoggerDisable();

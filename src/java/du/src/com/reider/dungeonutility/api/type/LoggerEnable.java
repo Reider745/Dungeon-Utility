@@ -60,16 +60,23 @@ public class LoggerEnable implements ILogger {
     private int WIDTH_CHART = 100;
     private HashMap<String, Boolean> enables = new HashMap<>();
 
+    private int convert(Object v){
+        if(v instanceof Double)
+            return (int) ((double) v);
+        else 
+            return (int) v;
+    }
+
     @Override
     public void setAdditionSetting(ScriptableObject setting) {
         if(setting.has("text_size", setting))
-            TEXT_SIZE = (int) ((double) setting.get("text_size"));
+            TEXT_SIZE = convert(setting.get("text_size"));
         if(setting.has("chart_info", setting))
-            STORAGE = (int) ((double) setting.get("chart_info"));
+            STORAGE = convert(setting.get("chart_info"));
         if(setting.has("chart_height", setting))
-            CHART = (int) ((double) setting.get("chart_height"));
+            CHART = convert(setting.get("chart_height"));
         if(setting.has("chart_width", setting))
-            WIDTH_CHART = (int) ((double) setting.get("chart_width"));
+            WIDTH_CHART = convert(setting.get("chart_width"));
     }
 
     @Override

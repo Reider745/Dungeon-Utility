@@ -29,8 +29,9 @@ public class DefaultGeneration implements IGenerationDescription {
     public long time;
     public int[] count;
     public int[] minAndMaxY;
+    public boolean _canLegacyOffset;
 
-    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy, long time, int[] count, int[] minAndMaxY){
+    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy, long time, int[] count, int[] minAndMaxY, boolean canLegacyOffset){
         this.type = type;
         this.name = name;
         this.x = x;
@@ -52,6 +53,7 @@ public class DefaultGeneration implements IGenerationDescription {
         this.time = time;
         this.minAndMaxY = minAndMaxY;
         this.count = count;
+        this._canLegacyOffset = canLegacyOffset;
     }
 
     @Override
@@ -142,5 +144,10 @@ public class DefaultGeneration implements IGenerationDescription {
     @Override
     public boolean canClearStructure() {
         return time != -1;
+    }
+
+    @Override
+    public boolean canLegacyOffset() {
+        return _canLegacyOffset;
     }
 }

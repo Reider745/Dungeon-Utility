@@ -23,4 +23,5 @@ public interface IGenerationDescription {
     int[] getCount();
     int[] getMinAndMaxY();
     boolean canClearStructure();
+    boolean canLegacyOffset();
 }
