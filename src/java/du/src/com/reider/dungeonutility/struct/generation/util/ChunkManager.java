@@ -48,6 +48,20 @@ public class ChunkManager implements IChunkManager {
     }
 
     @Override
+    public boolean canSpawn(int dimension, int sX, int sZ, int eX, int eZ) {
+        for(int X = sX;X <= eX;X++)
+            for(int Z = sZ;Z <= eZ;Z++)
+                if(!isChunckLoaded(dimension, X, Z))
+                    return false;
+        return true;
+    }
+
+    @Override
+    public void setNotClear(int dimension, int sX, int sZ, int eX, int eZ) {
+        
+    }
+
+    @Override
     public IChunk remove(int dimension) {
         synchronized(dimensions){
             return getChunks(dimension).remove(0);

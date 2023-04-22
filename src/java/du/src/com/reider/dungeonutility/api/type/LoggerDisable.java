@@ -1,5 +1,7 @@
 package com.reider.dungeonutility.api.type;
 
+import org.mozilla.javascript.ScriptableObject;
+
 public class LoggerDisable implements ILogger {
     @Override
     public void debug(String text) {
@@ -33,5 +35,20 @@ public class LoggerDisable implements ILogger {
     @Override
     public void updateDebug(String key, String text, boolean force) {
 
+    }
+
+    @Override
+    public boolean canEnable(String key) {
+        return true;
+    }
+
+    @Override
+    public void setEnable(String key, boolean enable) {
+
+    }
+
+    @Override
+    public void setAdditionSetting(ScriptableObject setting) {
+        
     }
 }

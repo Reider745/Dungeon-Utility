@@ -4,20 +4,12 @@ import com.reider.Debug;
 import com.reider.dungeonutility.struct.generation.StructurePieceController;
 import com.reider.dungeonutility.struct.generation.types.IChunkManager;
 import com.reider.dungeonutility.struct.generation.types.api.IChunk;
-import com.zhekasmirnov.horizon.runtime.logger.Logger;
-import com.zhekasmirnov.innercore.api.NativeAPI;
 
 public class ChunkClearMembory extends Thread {
-    public long time = 3000l;
-    public long limit = 60 * 1000l;
-
-    public void setTime(long time){
-        this.time = time;
-    }
-
-    public void setLimit(long limit){
-        this.limit = limit;
-    }
+    public static boolean enable = true;
+    public static long time = 3000l;
+    public static long limit = 60 * 1000l;
+    public static int pace = 64;
 
     public ChunkClearMembory(){
         this.start();
@@ -40,6 +32,10 @@ public class ChunkClearMembory extends Thread {
     public void run() {
         while(true){
             try{
+                if(!enable){
+                    sleep(time);
+                    continue;
+                }
                 long start = System.currentTimeMillis();
                 IChunkManager manager = StructurePieceController.getChunkManager();
                 int[] dimensions = manager.getDimensions();
@@ -47,23 +43,20 @@ public class ChunkClearMembory extends Thread {
                     int count = manager.getCount(dimension);
                     if(count == 0)
                         continue;
-                    if(count <= 64)
-                        optimization(manager, manager.remove(dimension));
-                    else if(count <= 128)
-                        for(int i = 0;i < 64;i++)
-                            optimization(manager, manager.remove(dimension));
-                    else if(count <= 512)
-                        for(int i = 0;i < 256;i++)
-                            optimization(manager, manager.remove(dimension));
-                    else if(count <= 1024)
-                        for(int i = 0;i < 512;i++)
-                            optimization(manager, manager.remove(dimension));
-                    else
+                    boolean critical = true;
+                    for(int i = 0;i < 4;i++)
+                        if(count < pace*i){
+                            for(int a = 0;a < Math.max(1, pace*(i-1));a++)
+                                optimization(manager, manager.remove(dimension));
+                            critical = false;
+                            break;
+                        }
+                    if(critical){
                         for(int i = 0;i < count;i++)
                             optimization(manager, manager.remove(dimension));
-                    
+                    }
                 }
-                Debug.get().updateСhart("chunk_clear_manager", "ChunkClear time", (int) (System.currentTimeMillis()-start));
+                Debug.get().updateСhart("chunk_clear_manager", "Chunk сlear time", (int) (System.currentTimeMillis()-start));
                 Debug.get().updateСhart("chunk_clear_manager_chunks", "Chunks", manager.getCount());
                 sleep(time);
             }catch(Exception e){

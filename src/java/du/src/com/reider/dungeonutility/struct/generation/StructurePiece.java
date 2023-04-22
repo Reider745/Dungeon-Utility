@@ -10,7 +10,6 @@ import org.mozilla.javascript.ScriptableObject;
 import com.reider.Debug;
 import com.reider.dungeonutility.struct.StructureUtility;
 import com.reider.dungeonutility.struct.StructureUtility.Size;
-import com.reider.dungeonutility.struct.generation.types.IChunkManager;
 import com.reider.dungeonutility.struct.generation.types.IGenerationDescription;
 import com.reider.dungeonutility.struct.generation.types.IGenerationType;
 import com.reider.dungeonutility.struct.generation.types.IStructurePiece;
@@ -45,6 +44,7 @@ public class StructurePiece implements IStructurePiece {
 
             this.start = new ChunkPos(dimension, (int) Math.floor((pos.x + size[0].min) / 16), (int) Math.floor((pos.z + size[2].min) / 16));
             this.end = new ChunkPos(dimension, (int) Math.floor((pos.x + size[0].max) / 16), (int) Math.floor((pos.z + size[2].max) / 16));
+            StructurePieceController.getChunkManager().setNotClear(dimension, start.x, start.z, end.x, end.z);
 
             this.time = System.currentTimeMillis();
         }
@@ -59,16 +59,7 @@ public class StructurePiece implements IStructurePiece {
 
         public boolean canSpawn(NativeBlockSource region){
             if(region.getDimension() != dimension) return false;
-            long start_time = System.currentTimeMillis();
-            IChunkManager manager = StructurePieceController.getChunkManager();
-            for(int X = start.x;X <= end.x;X++)
-                for(int Z = start.z;Z <= end.z;Z++)
-                    if(!manager.isChunckLoaded(dimension, X, Z)){ 
-                        Debug.get().debug("canSpawn time: "+(System.currentTimeMillis()-start_time));
-                        return false;
-                    }
-            Debug.get().debug("canSpawn time: "+(System.currentTimeMillis()-start_time));
-            return true;
+            return StructurePieceController.getChunkManager().canSpawn(dimension, start.x, start.z, end.x, end.z);
         }
 
         public void spawn(NativeBlockSource region){
@@ -114,12 +105,14 @@ public class StructurePiece implements IStructurePiece {
                     stru.spawn(region);
                 else if(!stru.description.canClearStructure() || System.currentTimeMillis() - stru.time <= stru.description.getTimeClearToMembory())
                     newList.add(stru);
-
+            int size = spawnedStructures.size();
             spawnedStructures.clear();
             for(SpawnedStructure stru : newList)
                 spawnedStructures.add(stru);
+            if(size != spawnedStructures.size())
+                Debug.get().updateСhart("structures_queue", "Structures queue", spawnedStructures.size());
         }
-        Debug.get().debug("Generation logic time: "+(System.currentTimeMillis() - start));
+        Debug.get().updateСhart("generation", "Generation time ", (int) (System.currentTimeMillis() - start));
     }
 
     public void generationStructure(IGenerationDescription description, int x, int z,Random random, NativeBlockSource region, Scriptable packet){
@@ -128,7 +121,6 @@ public class StructurePiece implements IStructurePiece {
         if(type == null) return;
         int[] counts = description.getCount();
         int count = counts[random.nextInt(counts.length)];
-        Debug.get().updateDebug("count", "count: "+count);
         for(int i = 0;i < count;i++)
             if(random.nextInt(description.getChance()) <= 1) {
                 Vector3 pos = type.getPosition(x, z, random, dimension, region);
@@ -145,7 +137,7 @@ public class StructurePiece implements IStructurePiece {
                     if(res)
                         return;
                 }
-                pos = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
+                
                 double distant = description.getDistance();
                 if(distant != 0) {
                     WorldStructure nearest = StructurePieceController.getStorage().getNearestStructure(pos,dimension, description.getName(), description.checkName());
@@ -154,6 +146,8 @@ public class StructurePiece implements IStructurePiece {
                 }
                 if(!(type.isGeneration(pos, random, dimension, region) && description.isGeneration(pos, random, dimension, region)) || (description.isSet() && !description.getStructure().isSetStructure((int)pos.x, (int)pos.y, (int)pos.z, region)))
                     return;
+                
+                pos = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
 
                 IStructureStorage storage = StructurePieceController.getStorage();
                 if(description.isPoolStructure(pos, random, dimension, region))
@@ -161,14 +155,20 @@ public class StructurePiece implements IStructurePiece {
                     
                 if(description.canLegacySpawn())
                     spawnStructure(description, pos, region, packet, random, dimension);
-                else
-                    addGenStructure(new SpawnedStructure(this, description, pos, region, packet, random, dimension));
+                else{
+                    SpawnedStructure stru = new SpawnedStructure(this, description, pos, region, packet, random, dimension);
+                    if(stru.canSpawn(region))
+                        stru.spawn(region);
+                    else
+                        addGenStructure(stru);
+                }
             }
     }
 
     public void addGenStructure(SpawnedStructure stru){
         synchronized(spawnedStructures){
             spawnedStructures.add(stru);
+            Debug.get().updateСhart("structures_queue", "Structures queue", spawnedStructures.size());
         }
     }
 

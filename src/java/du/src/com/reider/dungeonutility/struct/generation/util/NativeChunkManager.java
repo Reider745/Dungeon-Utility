@@ -5,14 +5,16 @@ import com.reider.dungeonutility.struct.generation.types.api.IChunk;
 import com.reider.dungeonutility.struct.generation.types.api.NativeChunk;
 
 public class NativeChunkManager implements IChunkManager {
-
     private static native int[] nativeGetDimensions();
     private static native boolean nativeIsChunckLoaded(int dimension, int x, int z);
+    private static native boolean nativeCanSpawn(int dimension, int sX, int sZ, int eX, int eZ);
     private static native long nativeRemove(int dimension);
     private static native void nativeAdd(long ptr);
     private static native int nativeGetCount();
     private static native int nativeGetCountByDimension(int dimension);
     private static native void nativeClear();
+    private static native void nativeSetNotClear(int dimension, int sX, int sZ, int eX, int eZ);
+    private static native long nativeAt(int dimension, int x, int z);
 
     @Override
     public int[] getDimensions() {
@@ -22,7 +24,10 @@ public class NativeChunkManager implements IChunkManager {
     }
 
     public IChunk at(int dimension, int x, int z){
-        return null;
+        long ptr = nativeAt(dimension, x, z);
+        if(ptr == 0)
+            return null;
+        return new NativeChunk(ptr);
     }
 
     @Override
@@ -48,6 +53,20 @@ public class NativeChunkManager implements IChunkManager {
     public boolean isChunckLoaded(int dimension, int x, int z) {
         synchronized(this){
             return nativeIsChunckLoaded(dimension, x, z);
+        }
+    }
+
+    @Override
+    public void setNotClear(int dimension, int sX, int sZ, int eX, int eZ) {
+        synchronized(this){
+            nativeSetNotClear(dimension, sX, sZ, eX, eZ);
+        }
+    }
+
+    @Override
+    public boolean canSpawn(int dimension, int sX, int sZ, int eX, int eZ) {
+        synchronized(this){
+            return nativeCanSpawn(dimension, sX, sZ, eX, eZ);
         }
     }
 

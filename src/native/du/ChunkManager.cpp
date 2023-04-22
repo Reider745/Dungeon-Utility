@@ -3,7 +3,6 @@
 
 std::map<int, std::vector<Chunk*>*> dimensions;
 
-
 std::vector<int> ChunkManager::getDimensions(){
     std::vector<int> result;
 	for(auto it = dimensions.begin(); it != dimensions.end(); ++it)
@@ -50,6 +49,61 @@ bool ChunkManager::isChunckLoaded(int dimension, int x, int z){
     return false;
 }
 
+bool ChunkManager::canSpawn(int dimension, int sX, int sZ, int eX, int eZ){
+    for(int x = sX;x <= eX;x++)
+        for(int z = sZ;z <= eZ;z++)
+            if(!ChunkManager::isChunckLoaded(dimension, x, z))
+                return false;
+    return true;
+}
+
+Chunk* ChunkManager::at(int dimension, int x, int z){
+    std::vector<Chunk*>* chunks = getChunks(dimension);
+    for(auto it = chunks->begin(); it != chunks->end(); ++it){
+        Chunk* chunk = *it;
+        if(chunk->x == x && chunk->z == z)
+            return chunk;
+    }
+    return nullptr;
+}
+
+std::vector<std::string> chunks;
+
+Chunk::Chunk(int dimension, int x, int z, jlong time): dimension(dimension), x(x), z(z), time(time){
+    std::string str;
+    str += dimension;
+    str += ":";
+    str += x;
+    str += ":";
+    str += z;
+    for(auto it = chunks.begin();it != chunks.end();++it){
+        if(*it == str){
+            this->clear = false;
+            return;
+        }
+    }
+    this->clear = true;
+}
+
+void ChunkManager::setNotClear(int dimension, int sX, int sZ, int eX, int eZ){
+    for(int x = sX;x <= eX;x++)
+        for(int z = sZ;z <= eZ;z++){
+            Chunk* chunk = ChunkManager::at(dimension, x, z);
+            if(chunk == nullptr){
+                std::string str;
+                str += dimension;
+                str += ":";
+                str += x;
+                str += ":";
+                str += z;
+                chunks.push_back(str);
+                continue;
+            }
+            chunk->clear = false;
+            continue;
+        }
+}
+
 Chunk* ChunkManager::remove(int dimension){
     std::vector<Chunk*>* chunks = getChunks(dimension);
     if(chunks->size() > 0)
@@ -85,12 +139,12 @@ extern "C" {
 
     JNIEXPORT jboolean JNICALL Java_com_reider_dungeonutility_struct_generation_types_api_NativeChunk_nativeCanClear
     (JNIEnv* env, jobject clz, jlong chunk) {
-        return JNI_FALSE;
+        return ((Chunk*) chunk)->clear;
     }
 
     JNIEXPORT void JNICALL Java_com_reider_dungeonutility_struct_generation_types_api_NativeChunk_nativeSetCanClear
     (JNIEnv* env, jobject clz, jlong chunk, jboolean value) {
-
+        ((Chunk*) chunk)->clear = (value == JNI_TRUE);
     }
 
     JNIEXPORT void JNICALL Java_com_reider_dungeonutility_struct_generation_types_api_NativeChunk_nativeFree
@@ -119,12 +173,28 @@ extern "C" {
 
     JNIEXPORT jboolean JNICALL Java_com_reider_dungeonutility_struct_generation_util_NativeChunkManager_nativeIsChunckLoaded
     (JNIEnv* env, jobject clz, jint dimension, jint x, jint z) {
-        return ChunkManager::isChunckLoaded(dimension, x, z) == JNI_TRUE;
+        return ChunkManager::isChunckLoaded(dimension, x, z);
     }
+
+    JNIEXPORT jboolean JNICALL Java_com_reider_dungeonutility_struct_generation_util_NativeChunkManager_nativeCanSpawn
+    (JNIEnv* env, jobject clz, jint dimension, jint sX, jint sZ, jint eX, jint eZ) {
+        return ChunkManager::canSpawn(dimension, sX, sZ, eX, eZ);
+    }
+
+    JNIEXPORT void JNICALL Java_com_reider_dungeonutility_struct_generation_util_NativeChunkManager_nativeSetNotClear
+    (JNIEnv* env, jobject clz, jint dimension, jint sX, jint sZ, jint eX, jint eZ) {
+        ChunkManager::setNotClear(dimension, sX, sZ, eX, eZ);
+    }
+
 
     JNIEXPORT jlong JNICALL Java_com_reider_dungeonutility_struct_generation_util_NativeChunkManager_nativeRemove
     (JNIEnv* env, jobject clz, jint dimension) {
         ChunkManager::remove(dimension);
+    }
+
+    JNIEXPORT jlong JNICALL Java_com_reider_dungeonutility_struct_generation_util_NativeChunkManager_nativeAt
+    (JNIEnv* env, jobject clz, jint dimension, jint x, jint z) {
+        return (jlong) ChunkManager::at(dimension, x, z);
     }
 
     JNIEXPORT void JNICALL Java_com_reider_dungeonutility_struct_generation_util_NativeChunkManager_nativeAdd

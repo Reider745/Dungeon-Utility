@@ -7,8 +7,6 @@ import com.reider.dungeonutility.struct.generation.StructurePieceController;
 import com.reider.dungeonutility.struct.generation.thread.algorithms.Base;
 import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
-import com.zhekasmirnov.innercore.api.log.DialogHelper;
-import com.zhekasmirnov.horizon.runtime.logger.Logger;
 
 public class Algorithms extends Thread {
     public ArrayList<Base> algorithms = new ArrayList<>();
@@ -17,7 +15,7 @@ public class Algorithms extends Thread {
         algorithms.add(base);
     }
 
-    public ArrayList<Vector3> list_pos = new ArrayList<>();
+    public ArrayList<Vector3> list = new ArrayList<>();
     public int length_pre = -1;
     public long time = 2000l;
 
@@ -48,10 +46,6 @@ public class Algorithms extends Thread {
         while(true){
             try {
                 long start = System.currentTimeMillis();
-                ArrayList<Vector3> list;
-                synchronized(list_pos){
-                    list = (ArrayList<Vector3>) list_pos.clone();
-                }
                 if(list.size() == 0){
                     sleep(time);
                     continue;
@@ -78,6 +72,7 @@ public class Algorithms extends Thread {
                 }
 
                 Debug.get().updateСhart("algorithms", "Algorithms time:", (int) (System.currentTimeMillis()-start));
+                Debug.get().updateСhart("structures", "Structures:", StructurePieceController.getStorage().getStructures().length);
                 sleep(time);
             } catch (Exception e){
                 Debug.get().error(e);
@@ -86,8 +81,8 @@ public class Algorithms extends Thread {
     }
 
     public void addPos(Vector3 pos){
-        synchronized(list_pos){
-            list_pos.add(pos);
+        synchronized(list){
+            list.add(pos);
         }
     }
 }
