@@ -9,12 +9,12 @@ ModAPI.addAPICallback("RuntimeSetting", (api) => {
 	const Setting = api.Setting;
 
 	const config = new ConfigStorage(__dir__+"runtime_config.json")
-        .put("chunk_manager_type", "native")
+        // .put("chunk_manager_type", "native")
 
-		.put("chunk_clear", true)
-		.put("chunk_clear_time", 60)
-		.put("chunk_clear_limit", 60)
-		.put("chunk_clear_pace", 64)
+		// .put("chunk_clear", true)
+		// .put("chunk_clear_time", 60)
+		// .put("chunk_clear_limit", 60)
+		// .put("chunk_clear_pace", 64)
 		
 		.put("debug_enable", false)
 		.put("debug_text_size", 15)
@@ -22,21 +22,21 @@ ModAPI.addAPICallback("RuntimeSetting", (api) => {
 		.put("chart_height", 45)
 		.put("chart_width", 100)
 		.put("algorithms_debug", true)
-		.put("chunk_clear_debug", true)
-		.put("chunks_debug", true)
+		// .put("chunk_clear_debug", true)
+		// .put("chunks_debug", true)
 		.put("structures_debug", true)
 		.put("generation_debug", true)
 		.put("structures_queue", true);
 
     const builder = new BuilderConfig(config)
-		.addSectionDivider("Chunk manager")
-		.addMultipleChoice("Type", "chunk_manager_type", ["java", "native"])
+		// .addSectionDivider("Chunk manager")
+		// .addMultipleChoice("Type", "chunk_manager_type", ["java", "native"])
 
-		.addSectionDivider("ChunkClear")
-		.addCheckBox("Enable", "chunk_clear")
-		.addSlider("Time", "chunk_clear_time", 20, 400, 1)
-		.addSlider("Limit time", "chunk_clear_limit", 30, 120, 1)
-		.addSlider("Pace", "chunk_clear_pace", 8, 128, 1)
+		//.addSectionDivider("ChunkClear")
+		//.addCheckBox("Enable", "chunk_clear")
+		//.addSlider("Time", "chunk_clear_time", 20, 400, 1)
+		//.addSlider("Limit time", "chunk_clear_limit", 30, 120, 1)
+		//.addSlider("Pace", "chunk_clear_pace", 8, 128, 1)
 		
 		.addSectionDivider("Debug")
 		.addCheckBox("Enable", "debug_enable")
@@ -45,8 +45,8 @@ ModAPI.addAPICallback("RuntimeSetting", (api) => {
 		.addSlider("Chart height", "chart_height", 40, 150, 1)
 		.addSlider("Chart width", "chart_width", 80, 200, 1)
 		.addCheckBox("Algorithms", "algorithms_debug")
-		.addCheckBox("Chunk clear", "chunk_clear_debug")
-		.addCheckBox("Chunks", "chunks_debug")
+		//.addCheckBox("Chunk clear", "chunk_clear_debug")
+		//.addCheckBox("Chunks", "chunks_debug")
 		.addCheckBox("Structures", "structures_debug")
 		.addCheckBox("Generation", "generation_debug")
 		.addCheckBox("Structures queue", "structures_queue");
@@ -55,8 +55,8 @@ ModAPI.addAPICallback("RuntimeSetting", (api) => {
 		let debug = config.get("debug_enable", false) ? new LoggerEnable() : new LoggerDisable();
         
 		debug.setEnable("algorithms", config.get("algorithms_debug", true));
-		debug.setEnable("chunk_clear_manager", config.get("chunk_clear_debug", true));
-		debug.setEnable("chunk_clear_manager_chunks", config.get("chunks_debug", true));
+		//debug.setEnable("chunk_clear_manager", config.get("chunk_clear_debug", true));
+		//debug.setEnable("chunk_clear_manager_chunks", config.get("chunks_debug", true));
 		debug.setEnable("structures", config.get("structures_debug", true));
 		debug.setEnable("generation", config.get("generation_debug", true));
 		debug.setEnable("structures_queue", config.get("structures_queue_debug", true));
@@ -70,12 +70,12 @@ ModAPI.addAPICallback("RuntimeSetting", (api) => {
 
 		DebugDu.set(debug);
 
-		ChunkClearMembory.enable = config.get("chunk_clear", true);
-		ChunkClearMembory.time = config.get("chunk_clear_time", 60)/20*1000;
-		ChunkClearMembory.limit = config.get("chunk_clear_limit", 60)*1000;
-		ChunkClearMembory.pace = config.get("chunk_clear_pace", 64);
+		// ChunkClearMembory.enable = config.get("chunk_clear", true);
+		// ChunkClearMembory.time = config.get("chunk_clear_time", 60)/20*1000;
+		// ChunkClearMembory.limit = config.get("chunk_clear_limit", 60)*1000;
+		// ChunkClearMembory.pace = config.get("chunk_clear_pace", 64);
 
-        StructurePieceController.setTypeChunkManager(config.get("chunk_manager_type", "native"));
+        //StructurePieceController.setTypeChunkManager(config.get("chunk_manager_type", "native"));
 	}
 
     configUpdate(config.build(), config, builder);

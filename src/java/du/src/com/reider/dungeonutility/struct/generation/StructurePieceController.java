@@ -64,7 +64,7 @@ public class StructurePieceController {
         getPiece().generation(x, z, random, dimension);
     }
 
-    public static ChunkClearMembory chunckClearMembory = new ChunkClearMembory();
+    //public static ChunkClearMembory chunckClearMembory = new ChunkClearMembory();
     public static Algorithms algorithms = new Algorithms();
 
     public static CriticalRelease criticalRelease = new CriticalRelease();

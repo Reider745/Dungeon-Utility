@@ -44,7 +44,7 @@ public class StructurePiece implements IStructurePiece {
 
             this.start = new ChunkPos(dimension, (int) Math.floor((pos.x + size[0].min) / 16), (int) Math.floor((pos.z + size[2].min) / 16));
             this.end = new ChunkPos(dimension, (int) Math.floor((pos.x + size[0].max) / 16), (int) Math.floor((pos.z + size[2].max) / 16));
-            StructurePieceController.getChunkManager().setNotClear(dimension, start.x, start.z, end.x, end.z);
+            //StructurePieceController.getChunkManager().setNotClear(dimension, start.x, start.z, end.x, end.z);
 
             this.time = System.currentTimeMillis();
         }
@@ -56,10 +56,22 @@ public class StructurePiece implements IStructurePiece {
         public boolean canChunk(ChunkPos pos){
             return canChunk(pos.x, pos.z);
         }
-
+        public boolean isChunckLoaded(NativeBlockSource region, int x, int z){
+            int id = region.getBlockId(z, 244, z);
+            region.setBlock(z, 244, z, 1);
+            if(region.getBlockId(z, 244, z) == id)
+                return false;
+            region.setBlock(z, 244, z, id);
+            return true;
+        }
         public boolean canSpawn(NativeBlockSource region){
             if(region.getDimension() != dimension) return false;
-            return StructurePieceController.getChunkManager().canSpawn(dimension, start.x, start.z, end.x, end.z);
+            NativeBlockSource bs = NativeBlockSource.getDefaultForDimension(dimension);
+            for(int X = start.x;X <= end.x;X++)
+                for(int Z = start.z;Z <= end.z;Z++)
+                    if(!isChunckLoaded(bs, X, Z))
+                        return false;
+            return true;
         }
 
         public void spawn(NativeBlockSource region){
@@ -84,7 +96,7 @@ public class StructurePiece implements IStructurePiece {
     @Override
     public void generation(int x, int z, Random random, int dimension) {
         long start = System.currentTimeMillis();
-        StructurePieceController.getChunkManager().add(dimension, x, z);
+        //StructurePieceController.getChunkManager().add(dimension, x, z);
         NativeBlockSource region = NativeBlockSource.getCurrentWorldGenRegion();
         Scriptable object =  new ScriptableObject() {
             @Override

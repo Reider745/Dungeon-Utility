@@ -1,18 +1,3 @@
-/*let StructurePieceJava = WRAP_JAVA("com.reider.dungeonutility.struct.generation.StructurePiece");
-let WorldStructure = WRAP_JAVA("com.reider.dungeonutility.struct.generation.WorldStructure");
-let OverWorld = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.OverWorld");
-let DefaultType = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.Default");
-let Nether = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.Nether");
-let DefaultDescription = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.DefaultGeneration");
-let Vector3 = WRAP_JAVA("com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3");
-
-/*try{
-	StructurePieceJava.setCriticalReleaseSetting(__config__.get("critical_release.enable") == true, Number(__config__.get("critical_release.active")), Number(__config__.get("critical_release.radius")));
-	StructurePieceJava.setClearingClustersSetting(__config__.get("critical_release.enable") == true, Number(__config__.get("critical_release.active")), Number(__config__.get("critical_release.radius")));
-}catch(e){
-	alert(e);
-}*/
-
 const StructurePieceController = WRAP_JAVA("com.reider.dungeonutility.struct.generation.StructurePieceController");
 const DefaultDescription = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.api.DefaultGeneration");
 const WorldStructure = WRAP_JAVA("com.reider.dungeonutility.struct.generation.types.api.WorldStructure");
@@ -131,62 +116,7 @@ Saver.addSavesScope("DungeonUtility", function(scope){
 			dimension: Number(object.dimension)
 		});
 	}
-	/*let size = StructurePieceJava.structures.size();
-	for(let i = 0;i < size;i++){
-		let object = StructurePieceJava.structures.get(i);
-		arr.push({
-			name: String(object.name),
-			pos: {
-				x: Number(object.pos.x),
-				y: Number(object.pos.y),
-				z: Number(object.pos.z)
-			},
-			dimension: Number(object.dimension)
-		});
-	}*/
 	return {
 		structures: arr
 	};
 });
-
-/*let structure = new StructureDescriptionJS();
-for(let x = 0;x < 16;x++)
-	for(let y = 0;y < 16;y++)
-		for(let z = 0;z < 16;z++)
-			structure.addBlock(x, y, z, new BlockState(1, 0));
-const dimension = new Dimensions.CustomDimension("test", 1979)
-	dimension.setGenerator(new Dimensions.newGenerator(
-		{
-			layers: [
-			{
-			minY: 2,
-			maxY: 75,
-			yConversion: [[0, 0]],
-			material: {base: 9}
-			},
-			{
-			minY: 0,
-			maxY: 82,
-			yConversion: [[.7, 1], [1, -0.5]],
-			material: {base:1, surface: {id:3, data: 0, width:4}, cover: 3},
-			noise: {
-			octaves: {count: 4, scale: 20}
-			}
-			},
-			{
-			minY: 0,
-			maxY: 1,
-			yConversion: [[0, 0]],
-			material: {base: 7}
-			}
-			]
-			}));
-Callback.addCallback("ItemUse", function(coords, item, block, is, player){
-	Dimensions.transfer(player, dimension.id);
-});
-StructurePiece.register(StructurePiece.getDefault({
-	dimension: dimension.id,
-	distance: 40,
-	chance: 2,
-	structure: new Structure.advanced(structure.getDescription())
-}));*/

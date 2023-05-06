@@ -4,7 +4,7 @@
 			"name": "Dungeon Utility",
 			"description": "Dungeon Utility - мод библиотека для создания структур",
 			"author": "Reider ___",
-			"version": "relese 6.3.0",
+			"version": "relese 6.3.1",
 			"icon": "src/icon.png"
 		},
 		"api": "CoreEngine"
