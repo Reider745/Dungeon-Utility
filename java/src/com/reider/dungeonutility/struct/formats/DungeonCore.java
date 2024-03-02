@@ -31,7 +31,7 @@ public class DungeonCore implements LoaderTypeInterface {
                 if(value instanceof Number)
                     state = new BlockState(((Number) value).intValue(), StructureLoader.getHashMapToJson(list.getJSONObject(2)));
                 else if(value instanceof String)
-                    state = new BlockState(((int) (StructureLoader.BlockID.get((String) value, StructureLoader.BlockID))), StructureLoader.getHashMapToJson(list.getJSONObject(2)));
+                    state = new BlockState(StructureLoader.getIdBlock((String) value), StructureLoader.getHashMapToJson(list.getJSONObject(2)));
 
                 if(list.length() >= 4) {
                     JSONArray extra = list.getJSONArray(3);
@@ -86,7 +86,7 @@ public class DungeonCore implements LoaderTypeInterface {
                 json.put(list);
             }
         }catch (JSONException e) {
-            Logger.debug(e.getMessage(), StructureLoader.logger_name);
+            Logger.debug(StructureLoader.logger_name, ICLog.getStackTrace(e));
         }
         
         return json.toString();

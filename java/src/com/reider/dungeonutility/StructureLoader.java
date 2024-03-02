@@ -5,6 +5,7 @@ import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.log.ICLog;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import com.zhekasmirnov.innercore.utils.FileTools;
@@ -45,7 +46,7 @@ public class StructureLoader {
                 try {
                     debugStructureFormat(path+t+".stru", u, structure);
                 } catch (Exception e) {
-                    Logger.error(logger_name, "Failed debug format "+t+"\n"+e.getMessage());
+                    Logger.error(logger_name, "Failed debug format "+t+"\n"+ICLog.getStackTrace(e));
                 }
             }
         });
@@ -179,7 +180,7 @@ public class StructureLoader {
                 getStructurePoolByName(data.pool).loadRuntime(data.name, data.path, data.type, data.compile);
                 Logger.debug(logger_name, "load: "+data.name+", type: "+data.type+", time: "+(System.currentTimeMillis()-start));
             }catch (Exception e){
-                Logger.debug(logger_name, "failed load "+data.name+" "+e.getMessage());
+                Logger.debug(logger_name, "failed load "+data.name+"\n"+ICLog.getStackTrace(e));
             }
 
         }

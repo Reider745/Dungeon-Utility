@@ -84,7 +84,7 @@ public class Structures implements LoaderTypeInterface {
             json.put("version", 3);
             json.put("structure", list);
         }catch (JSONException e) {
-            Logger.debug(e.getMessage(), StructureLoader.logger_name);
+            Logger.debug(StructureLoader.logger_name, ICLog.getStackTrace(e));
         }
 
         return json.toString();

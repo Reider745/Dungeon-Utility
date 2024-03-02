@@ -23,7 +23,7 @@ public class DungeonUtility implements LoaderTypeInterface {
 
         BlockState state = null;
         if(list.length() >= 2 && !(list.get(1) instanceof Number))
-            state = new BlockState(StructureLoader.getIdBlock(datas[0]), StructureLoader.getHashMapToJson((JSONObject) list.get(1)));
+            state = new BlockState(StructureLoader.getIdBlock(datas[0]), StructureLoader.getHashMapToJson(list.getJSONObject(1)));
         else if(list.length() >= 2 && list.get(1) instanceof Number)
             state = new BlockState(StructureLoader.getIdBlock(datas[0]), ((Number) list.get(1)).intValue());
         else if(list.length() == 1)
@@ -31,7 +31,7 @@ public class DungeonUtility implements LoaderTypeInterface {
 
         BlockState state_extra = null;
         if(list.length() >= 3 && !(list.get(2) instanceof Number))
-            state_extra = new BlockState(StructureLoader.getIdBlock(datas[1]), StructureLoader.getHashMapToJson((JSONObject) list.get(2)));
+            state_extra = new BlockState(StructureLoader.getIdBlock(datas[1]), StructureLoader.getHashMapToJson(list.getJSONObject(2)));
         else if(list.length() >= 3 && list.get(2) instanceof Number)
             state_extra = new BlockState(StructureLoader.getIdBlock(datas[1]), ((Number) list.get(2)).intValue());
 
@@ -117,7 +117,7 @@ public class DungeonUtility implements LoaderTypeInterface {
                 json.put(datas);
             }
         }catch (JSONException e) {
-            Logger.debug(e.getMessage(), StructureLoader.logger_name);
+            Logger.debug(StructureLoader.logger_name, ICLog.getStackTrace(e));
         }
         return json.toString();
     }
