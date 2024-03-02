@@ -1,57 +1,59 @@
 {
-	"global": {
-		"info": {
-			"name": "Dungeon Utility",
-			"description": "Dungeon Utility - мод библиотека для создания структур",
-			"author": "Reider ___",
-			"version": "relese 6.3.1",
-			"icon": "src/icon.png"
-		},
-		"api": "CoreEngine"
-	},
-	"make": {
-		"debugAbi": "armeabi-v7a",
-		"abis": [
-			"armeabi-v7a",
-			"x86"
-		],
-		"linkNative": [
-			"minecraftpe",
-			"innercore",
-			"nativejs"
-		],
-		"excludeFromRelease": [],
-		"pushTo": "storage/emulated/0/games/horizon/packs/innercore-test-b113-performance-beta-v2/modpacks/YouTube/mods/DungeonUtility",
-		"ndkPath": "D:\\visual-studio-code\\ndk"
-	},
 	"resources": [
 		{
-			"path": "src/assets",
+			"path": "assets",
 			"type": "resource_directory"
-		}
-	],
-	"compile": [
-		{
-			"source": "src/native/*",
-			"type": "native"
-		},
-		{
-			"source": "src/java/*",
-			"type": "java"
 		}
 	],
 	"sources": [
 		{
-			"source": "src/dev",
+			"source": "dev",
 			"target": "main.js",
 			"type": "main",
 			"language": "typescript"
 		},
 		{
-			"source": "src/launcher.js",
+			"source": "launcher.js",
 			"type": "launcher",
 			"language": "javascript"
 		}
 	],
-	"additional": []
+	"compile": [
+		{
+			"source": "native",
+			"type": "native"
+		},
+		{
+			"source": "java",
+			"type": "java"
+		}
+	],
+	"additional": [
+		{
+			"source": "config.json",
+			"targetDir": "."
+		},
+		{
+			"source": "runtime_config.json",
+			"targetDir": "."
+		},
+		{
+			"source":"README.md",
+			"targetDir":"./output"
+		}
+	],
+	"info": {
+		"name": "Dungeon Utility",
+		"description": "Dungeon Utility - мод библиотека для создания структур",
+		"author": "Reider ___",
+		"version": "relese 6.4.0",
+		"icon": "mod_icon.png"	
+	},
+	"api": "CoreEngine",
+	"linkNative": [
+		"minecraftpe",
+		"innercore",
+		"nativejs"
+	],
+	"excludeFromRelease": []
 }

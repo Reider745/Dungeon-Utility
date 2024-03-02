@@ -1,0 +1,18 @@
+{
+	"chunk_manager_type": "native",
+	"chunk_clear": true,
+	"chunk_clear_time": 60,
+	"chunk_clear_limit": 60,
+	"chunk_clear_pace": 64,
+	"debug_enable": false,
+	"debug_text_size": 15,
+	"debug_chart_info": 30,
+	"chart_height": 45,
+	"chart_width": 100,
+	"algorithms_debug": false,
+	"chunk_clear_debug": false,
+	"chunks_debug": false,
+	"structures_debug": false,
+	"generation_debug": false,
+	"structures_queue": false
+}
