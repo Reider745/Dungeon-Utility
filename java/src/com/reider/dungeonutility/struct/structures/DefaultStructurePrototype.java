@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import org.mozilla.javascript.Scriptable;
-
 import com.reider.dungeonutility.api.StructurePrototypeInterface;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.items.ItemGeneration;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap;
 
 public class DefaultStructurePrototype implements StructurePrototypeInterface {
     boolean isItems;
@@ -26,9 +25,11 @@ public class DefaultStructurePrototype implements StructurePrototypeInterface {
         if(random_cache != null)
             return random_cache;
         Random random = null;
-        if(packet instanceof Scriptable){
-            Scriptable self = (Scriptable) packet;
-            Object rand = self.get("random", self);
+
+        if(ScriptObjectWrap.isScriptObj(packet)){
+            ScriptObjectWrap scriptObjectWrap = ScriptObjectWrap.create(packet);
+            
+            Object rand = scriptObjectWrap.getJavaObj("random");
             if(rand instanceof Random)
                 random = (Random) rand;
         }else

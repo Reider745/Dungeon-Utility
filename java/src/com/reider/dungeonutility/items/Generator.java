@@ -55,11 +55,16 @@ public class Generator {
         public NativeItemInstanceExtra getExtra() {
             return extra;
         }
+
+        private int rand_pre = 0;
+
         public int getCount(Random random){
-            return random.nextInt(getMax()-getMin()+1)+getMin();
+            int rand = random.nextInt(getMax()-getMin()+1)+getMin();
+            return rand;
         }
-        public ItemInstance getItemInstance(Random random){
-            return new ItemInstance(getId(), getCount(random), getData(), getExtra());
+
+        public Object getItemInstance(Random random){
+            return ItemInstance.make(getId(), getCount(random), getData(), getExtra());
         }
     }
     public ArrayList<ItemGen> items = new ArrayList<>();
@@ -72,10 +77,10 @@ public class Generator {
 	        public void after(Vector3 pos, NativeBlockSource region, Object packet){
 
             }
-	        public boolean isGenerate(Vector3 pos, float random, int slot, ItemInstance item, NativeBlockSource region, Random rand, Object packet){
+	        public boolean isGenerate(Vector3 pos, float random, int slot, Object item, NativeBlockSource region, Random rand, Object packet){
                 return true;
             }
-	        public void generate(Vector3 pos, float random, int slot, ItemInstance item, NativeBlockSource region, Random rand, Object packet){
+	        public void generate(Vector3 pos, float random, int slot, Object item, NativeBlockSource region, Random rand, Object packet){
                 
             }
         };
@@ -102,9 +107,9 @@ public class Generator {
 					float rand = random.nextFloat();
 					if(rand <= item.getChance()){
 						int slot = random.nextInt(container.getSize());
-                        ItemInstance instance = item.getItemInstance(random);
+                        Object instance = item.getItemInstance(random);
 						if(prot.isGenerate(pos, rand, slot, instance, region, random,packet))
-							container.setSlot(slot, item.getId(), instance.getCount(), item.getData(), item.getExtra());
+							container.setSlot(slot, item.getId(), item.rand_pre, item.getData(), item.getExtra());
 						prot.generate(pos, rand, slot, instance, region, random, packet);
 					}
 				}

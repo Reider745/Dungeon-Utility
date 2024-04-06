@@ -1,7 +1,5 @@
 package com.reider.dungeonutility.api.type;
 
-import org.mozilla.javascript.ScriptableObject;
-
 public interface ILogger {
     void debug(String text);
     void open();
@@ -12,5 +10,5 @@ public interface ILogger {
     void error(Exception e);
     boolean canEnable(String key);
     void setEnable(String key, boolean enable);
-    void setAdditionSetting(ScriptableObject setting);
+    void setAdditionSetting(Object setting);
 }

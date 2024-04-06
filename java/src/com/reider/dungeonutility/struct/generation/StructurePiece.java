@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-
 import com.reider.Debug;
 import com.reider.dungeonutility.struct.StructureUtility;
 import com.reider.dungeonutility.struct.StructureUtility.Size;
@@ -18,6 +15,7 @@ import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.runtime.other.WorldGen.ChunkPos;
+import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap;
 
 public class StructurePiece implements IStructurePiece {
     public static class SpawnedStructure {
@@ -98,16 +96,13 @@ public class StructurePiece implements IStructurePiece {
         long start = System.currentTimeMillis();
         //StructurePieceController.getChunkManager().add(dimension, x, z);
         NativeBlockSource region = NativeBlockSource.getCurrentWorldGenRegion();
-        Scriptable object =  new ScriptableObject() {
-            @Override
-            public String getClassName() {
-                return "object";
-            }
-        };
+        ScriptObjectWrap object = ScriptObjectWrap.createNewEmptyObject();
 
-        object.put("random", object, random);
+        object.setJavaObj("random", random);
+
+        Object jsPacket = object.passToScript();
         for(IGenerationDescription stru : structures)
-            generationStructure(stru, x, z, random, region, object);
+            generationStructure(stru, x, z, random, region, jsPacket);
 
         synchronized(spawnedStructures){
             ArrayList<SpawnedStructure> newList = new ArrayList<>();
@@ -127,7 +122,7 @@ public class StructurePiece implements IStructurePiece {
         Debug.get().updateСhart("generation", "Generation time ", (int) (System.currentTimeMillis() - start));
     }
 
-    public void generationStructure(IGenerationDescription description, int x, int z,Random random, NativeBlockSource region, Scriptable packet){
+    public void generationStructure(IGenerationDescription description, int x, int z,Random random, NativeBlockSource region, Object packet){
         int dimension = region.getDimension();
         IGenerationType type = types.get(description.getType());
         if(type == null) return;

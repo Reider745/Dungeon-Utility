@@ -3,16 +3,12 @@ package com.reider.dungeonutility.items;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.function.BiConsumer;
-
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
 
 import com.reider.dungeonutility.NativeAPI;
-import com.reider.dungeonutility.items.Generator.ItemGen;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.Callback;
-import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
+import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap;
+import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap.ScriptFunctionImpl;
 
 public class ItemGeneration {
     public static HashMap<String, Generator> generators = new HashMap<>();
@@ -25,14 +21,16 @@ public class ItemGeneration {
     }
     public static void register(String name, Generator generator){
         generators.put(name, generator);
-        Callback.addCallback("ModsLoaded", new ScriptableFunctionImpl(){
+        Callback.addCallback(name, generator, 0);
+        Callback.addCallback("ModsLoaded", ScriptObjectWrap.createJavaFunction(new ScriptFunctionImpl() {
             @Override
-            public Object call(Context arg0, Scriptable arg1, Scriptable arg2, Object[] arg3) {
+            public Object call(Object[] arg0) {
                 for(Generator.ItemGen item : integrations)
                     ItemGeneration.addItem(name, item);
                 return null;
             }
-        }, 0);
+            
+        }), 0);
     }
     public static void setItems(String name, ArrayList<Generator.ItemGen> items){
         generators.get(name).items = items;

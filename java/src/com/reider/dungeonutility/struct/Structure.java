@@ -5,13 +5,12 @@ import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.StructurePrototype;
 import com.reider.dungeonutility.api.StructurePrototypeInterface;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
-import org.mozilla.javascript.Scriptable;
 
 public class Structure {
-    public static void setStructure(StructureDescription stru, int x, int y, int z, NativeBlockSource region, Scriptable packat){
+    public static void setStructure(StructureDescription stru, int x, int y, int z, NativeBlockSource region, Object packat){
         stru.set(x, y, z, region);
     }
-    public static void build(StructureDescription stru, int x, int y, int z, NativeBlockSource region, long slp, Scriptable packat){
+    public static void build(StructureDescription stru, int x, int y, int z, NativeBlockSource region, long slp, Object packat){
         stru.build(x, y, z, region, slp);
     }
     public static Boolean isStructure(StructureDescription stru, int x, int y, int z, NativeBlockSource region){

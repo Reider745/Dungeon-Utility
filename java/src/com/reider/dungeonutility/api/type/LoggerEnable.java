@@ -1,17 +1,13 @@
 package com.reider.dungeonutility.api.type;
 
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
-import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.api.mod.ui.window.UIWindow;
-import com.zhekasmirnov.innercore.api.mod.util.ScriptableFunctionImpl;
+import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap;
+import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap.ScriptFunctionImpl;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -49,7 +45,7 @@ public class LoggerEnable implements ILogger {
     public static int X = 0;
     public static int GREEN = Color.argb(.5f, .0f, 1f, .0f);
 
-    private UIWindow window = new UIWindow(ScriptableObjectHelper.createEmpty());
+    private UIWindow window = new UIWindow(ScriptObjectWrap.createNewEmptyObject());
 
 
     private HashMap<String, Integer> postions = new HashMap<>();
@@ -60,23 +56,18 @@ public class LoggerEnable implements ILogger {
     private int WIDTH_CHART = 100;
     private HashMap<String, Boolean> enables = new HashMap<>();
 
-    private int convert(Object v){
-        if(v instanceof Double)
-            return (int) ((double) v);
-        else 
-            return (int) v;
-    }
-
     @Override
-    public void setAdditionSetting(ScriptableObject setting) {
-        if(setting.has("text_size", setting))
-            TEXT_SIZE = convert(setting.get("text_size"));
-        if(setting.has("chart_info", setting))
-            STORAGE = convert(setting.get("chart_info"));
-        if(setting.has("chart_height", setting))
-            CHART = convert(setting.get("chart_height"));
-        if(setting.has("chart_width", setting))
-            WIDTH_CHART = convert(setting.get("chart_width"));
+    public void setAdditionSetting(Object setting) {
+        ScriptObjectWrap scriptObjectWrap = ScriptObjectWrap.create(setting);
+
+        if(scriptObjectWrap.hasKey("text_size"))
+            TEXT_SIZE = scriptObjectWrap.getInt("text_size", TEXT_SIZE);
+        if(scriptObjectWrap.hasKey("chart_info"))
+            STORAGE = scriptObjectWrap.getInt("chart_info", STORAGE);
+        if(scriptObjectWrap.hasKey("chart_height"))
+            CHART = scriptObjectWrap.getInt("chart_height", CHART);
+        if(scriptObjectWrap.hasKey("chart_width"))
+            WIDTH_CHART = scriptObjectWrap.getInt("chart_width", WIDTH_CHART);
     }
 
     @Override
@@ -101,9 +92,11 @@ public class LoggerEnable implements ILogger {
         window.setTouchable(false);
         window.setBackgroundColor(Color.argb(0, 0, 0, 0));
 
-        ScriptableObject content = window.getContent();
-        content.put("drawing", content, ScriptableObjectHelper.createEmptyArray());
-        content.put("elements", content, ScriptableObjectHelper.createEmpty());
+        Object content = window.getContent();
+
+        ScriptObjectWrap obj = ScriptObjectWrap.create(content);
+        obj.setScriptObj("drawing", ScriptObjectWrap.createNewEmptyArray());
+        obj.setScriptObj("elements", ScriptObjectWrap.createNewEmptyObject());
     }
     
     @Override
@@ -141,22 +134,25 @@ public class LoggerEnable implements ILogger {
     public void updateDebug(String key, String text, boolean force) {
         if(!canEnable(key)) return;
         synchronized(window){
-            ScriptableObject text_element = ScriptableObjectHelper.createEmpty();
-            ScriptableObject font = ScriptableObjectHelper.createEmpty();
-            ScriptableObject content = window.getContent();
+            
+            ScriptObjectWrap text_element = ScriptObjectWrap.createNewEmptyObject();
+            ScriptObjectWrap font = ScriptObjectWrap.createNewEmptyObject();
+            Object content = window.getContent();
 
-            font.put("size", font, TEXT_SIZE);
-            font.put("color", font, GREEN);
+            ScriptObjectWrap _content = ScriptObjectWrap.create(content);
 
-            text_element.put("type", text_element, "text");
-            text_element.put("text", text_element, text);
-            text_element.put("x", text_element, X);
-            text_element.put("y", text_element, getY(key, TEXT_SIZE));
-            text_element.put("font", text_element, font);
+            font.setInt("size", TEXT_SIZE);
+            font.setInt("color", GREEN);
 
-            ScriptableObject elements = (ScriptableObject) content.get("elements");
-            elements.put(key, elements, text_element);
-            content.put("elements", content, elements);
+            text_element.setString("type", "text");
+            text_element.setString("text", text);
+            text_element.setInt("x", X);
+            text_element.setInt("y", getY(key, TEXT_SIZE));
+            text_element.setScriptObj("font", font);
+
+            ScriptObjectWrap elements = _content.getScriptObj("elements");
+            elements.setScriptObj(key, text_element);
+            _content.setScriptObj("elements", elements);
             window.setContent(content);
 
             if(force)
@@ -206,16 +202,17 @@ public class LoggerEnable implements ILogger {
         int width = WIDTH_CHART/STORAGE;
 
         synchronized(window){
-            ScriptableObject content = window.getContent();
-            ScriptableObject elements = (ScriptableObject) content.get("elements");
+            Object content = window.getContent();
+            ScriptObjectWrap _content = ScriptObjectWrap.create(content);
+            ScriptObjectWrap elements = _content.getScriptObj("elements");
 
-            ScriptableObject element = ScriptableObjectHelper.createEmpty();
-            element.put("type", element, "custom");
+            ScriptObjectWrap element = ScriptObjectWrap.createNewEmptyObject();
+            element.setString("type", "custom");
 
-            ScriptableObject custom = ScriptableObjectHelper.createEmpty();
-            element.put("onDraw", element, new ScriptableFunctionImpl(){
+            ScriptObjectWrap custom = ScriptObjectWrap.createNewEmptyObject();
+            element.setScriptObj("onDraw", ScriptObjectWrap.createJavaFunction(new ScriptFunctionImpl() {
                 @Override
-                public Object call(Context context, Scriptable arg1, Scriptable arg2, Object[] args) {
+                public Object call(Object[] args) {
                     Canvas canvas = (Canvas) args[1];
                     float scale = (float) args[2];
                     Paint paint = new Paint();
@@ -233,11 +230,13 @@ public class LoggerEnable implements ILogger {
                         );
                     return null;
                 }
-            });
-            element.put("custom", element, custom);
+                
+            }));
+
+            element.setScriptObj("custom", custom);
             
-            elements.put(key, elements, element);
-            content.put("elements", content, elements);
+            elements.setScriptObj(key, element);
+            _content.setScriptObj("elements", elements);
 
             window.setContent(content);
             window.forceRefresh();

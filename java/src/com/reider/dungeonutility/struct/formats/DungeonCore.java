@@ -40,7 +40,10 @@ public class DungeonCore implements LoaderTypeInterface {
                     if(value instanceof Number)
                         stateExtra = new BlockState(((Number) value).intValue(), StructureLoader.getHashMapToJson(extra.getJSONObject(1)));
                     else if(extra.get(0) instanceof String)
-                        stateExtra = new BlockState(((int) (StructureLoader.BlockID.get((String) extra.get(0), StructureLoader.BlockID))), StructureLoader.getHashMapToJson(extra.getJSONObject(1)));
+                        stateExtra = new BlockState(
+                            (int) StructureLoader.getIdBlock((String) extra.get(0)), 
+                            StructureLoader.getHashMapToJson(extra.getJSONObject(1))
+                        );
 
                 }
 

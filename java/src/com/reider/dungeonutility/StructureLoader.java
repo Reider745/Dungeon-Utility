@@ -12,8 +12,6 @@ import com.zhekasmirnov.innercore.utils.FileTools;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
 
 import java.io.*;
 import java.util.*;
@@ -56,13 +54,7 @@ public class StructureLoader {
     public static HashMap<String, StructurePool> pools = new HashMap<>();
     public static final String default_pool = "default";
     public static final String logger_name = "DungeonUtility";
-    public static ScriptableObject ids = new ScriptableObject() {
-        @Override
-        public String getClassName() {
-            return "DungeonUtility";
-        }
-    };
-    public static Scriptable BlockID;
+
 
     private static boolean structure_optimization;
 
@@ -95,11 +87,7 @@ public class StructureLoader {
             return 0;
         if(isNumber(id))
             return Integer.parseInt(id);
-        Object value = BlockID.get(id, BlockID);
-        if(value instanceof Number)
-            return ((Number) value).intValue();
-        Logger.debug("Error get id: "+id);
-        return 0;
+        return IDRegistry.genBlockID(id);
     }
     public static Object getIdBlock(int id){
         if(id > 8000)
@@ -159,8 +147,6 @@ public class StructureLoader {
 
     static {
         new StructurePool(default_pool, true);
-        IDRegistry.injectAPI(ids);
-        BlockID = (Scriptable) ids.get("BlockID");
     }
 
     private static boolean stopTick = false;

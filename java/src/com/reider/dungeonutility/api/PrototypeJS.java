@@ -3,39 +3,35 @@ package com.reider.dungeonutility.api;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
-import org.mozilla.javascript.Context;
-import org.mozilla.javascript.Function;
-import org.mozilla.javascript.ScriptableObject;
-import org.mozilla.javascript.annotations.JSConstructor;
+import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap;
 
-public class PrototypeJS implements StructurePrototypeInterface{
-    private static Context context = Context.enter();
-    private static ScriptableObject scope = context.initStandardObjects();
 
-    public Function setBlockFunc;
-    public Function isSetBlockFunc;
-    public Function afterFunc;
-    public Function beforeFunc;
-    @JSConstructor
-    public PrototypeJS(Function isSetBlock, Function setBlock, Function beforeFunc, Function afterFunc){
-        this.isSetBlockFunc = isSetBlock;
-        this.setBlockFunc = setBlock;
-        this.afterFunc = afterFunc;
-        this.beforeFunc = beforeFunc;
+public class PrototypeJS implements StructurePrototypeInterface {
+    public ScriptObjectWrap setBlockFunc;
+    public ScriptObjectWrap isSetBlockFunc;
+    public ScriptObjectWrap afterFunc;
+    public ScriptObjectWrap beforeFunc;
+
+    public PrototypeJS(Object isSetBlock, Object setBlock, Object beforeFunc, Object afterFunc){
+        
+        this.isSetBlockFunc = ScriptObjectWrap.create(isSetBlock);
+        this.setBlockFunc = ScriptObjectWrap.create(setBlock);
+        this.afterFunc = ScriptObjectWrap.create(afterFunc);
+        this.beforeFunc = ScriptObjectWrap.create(beforeFunc);
     }
     @Override
     public Boolean isBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
-        return (Boolean) isSetBlockFunc.call(context, scope, scope, new Object[] {orgPos, data, region, packet});
+        return isSetBlockFunc.invokeAsBooleanFunc(null, new Object[] {orgPos, data, region, packet}, true);
     }
     @Override
     public void setBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
-        setBlockFunc.call(context, scope, scope, new Object[] {orgPos, data, region, packet});
+        setBlockFunc.invokeAsVoidFunc(null, new Object[] {orgPos, data, region, packet});
     }
     @Override
     public void after(int x, int y, int z, NativeBlockSource region, Object packet){
-        afterFunc.call(context, scope, scope, new Object[] {x, y, z, region, packet});
+        afterFunc.invokeAsVoidFunc(afterFunc, new Object[] {x, y, z, region, packet});
     }
     public void before(int x, int y, int z, NativeBlockSource region, Object packet){
-        beforeFunc.call(context, scope, scope, new Object[] {x, y, z, region, packet});
+        beforeFunc.invokeAsVoidFunc(null, new Object[] {x, y, z, region, packet});
     }
 }
