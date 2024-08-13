@@ -1,0 +1,21 @@
+plugins {
+	id "com.github.johnrengelman.shadow" version "7.1.0"
+	id "java"
+}
+
+dependencies {
+	implementation fileTree (dir: "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath", include: '*.jar')
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = ["java/src"]
+			buildDir = "C:\\vs\\toolchainnew\\toolchain\\toolchain\\build\\DungeonUtiltity-6a95e\\gradle\\classes\\${project.name}"
+		}
+		resources {
+			srcDirs = []
+		}
+		compileClasspath += files("C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\android-support-multidex.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\android-support-v4.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\android-support-v7-recyclerview.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\android.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\horizon-classes.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\inner.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\json-io.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\rhino.jar")
+	}
+}

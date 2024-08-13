@@ -3,3 +3,6 @@ tsconfig.json
 dev/tsconfig.json
 *.icmod
 java/.gradle
+.gradle
+gradle
+bin

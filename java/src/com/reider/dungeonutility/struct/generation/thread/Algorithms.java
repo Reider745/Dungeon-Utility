@@ -26,19 +26,20 @@ public class Algorithms extends Thread {
     public void setTime(long time){
         this.time = time;
     }
-    
+
+    private static final WorldStructure[] EMPTY_WORLD_STRUCTURE = new WorldStructure[0];
 
     public void algorithmsOptimization(Vector3 pos){
-        WorldStructure[] structures = StructurePieceController.getStorage().getStructures();
+        final WorldStructure[] structures = StructurePieceController.getStorage().getStructures();
 
         for(Base base : algorithms)
             base.run(pos, structures);
 
-        ArrayList<WorldStructure> result = new ArrayList<>();
+        final ArrayList<WorldStructure> result = new ArrayList<>();
         for(WorldStructure stru : structures)
             if(stru != null)
                 result.add(stru);
-        StructurePieceController.getStorage().setStructures(structures);
+        StructurePieceController.getStorage().setStructures(result.toArray(EMPTY_WORLD_STRUCTURE));
     }
     
     @Override

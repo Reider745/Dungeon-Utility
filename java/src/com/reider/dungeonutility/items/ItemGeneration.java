@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+import com.reider.dungeonutility.DUBoot;
 import com.reider.dungeonutility.NativeAPI;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI.Callback;
-import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap;
-import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap.ScriptFunctionImpl;
 
 public class ItemGeneration {
     public static HashMap<String, Generator> generators = new HashMap<>();
@@ -21,16 +20,12 @@ public class ItemGeneration {
     }
     public static void register(String name, Generator generator){
         generators.put(name, generator);
-        Callback.addCallback(name, generator, 0);
-        Callback.addCallback("ModsLoaded", ScriptObjectWrap.createJavaFunction(new ScriptFunctionImpl() {
-            @Override
-            public Object call(Object[] arg0) {
-                for(Generator.ItemGen item : integrations)
-                    ItemGeneration.addItem(name, item);
-                return null;
-            }
-            
-        }), 0);
+        DUBoot.getPackVersionApi()
+                .addCallback("ModsLoaded", args -> {
+                    for(Generator.ItemGen item : integrations)
+                        ItemGeneration.addItem(name, item);
+                    return null;
+                });
     }
     public static void setItems(String name, ArrayList<Generator.ItemGen> items){
         generators.get(name).items = items;

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Random;
 
 import com.reider.Debug;
+import com.reider.dungeonutility.DUBoot;
+import com.reider.dungeonutility.multiversions.js_types.IJsObject;
 import com.reider.dungeonutility.struct.StructureUtility;
 import com.reider.dungeonutility.struct.StructureUtility.Size;
 import com.reider.dungeonutility.struct.generation.types.IGenerationDescription;
@@ -15,7 +17,6 @@ import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.runtime.other.WorldGen.ChunkPos;
-import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap;
 
 public class StructurePiece implements IStructurePiece {
     public static class SpawnedStructure {
@@ -55,20 +56,23 @@ public class StructurePiece implements IStructurePiece {
             return canChunk(pos.x, pos.z);
         }
         public boolean isChunckLoaded(NativeBlockSource region, int x, int z){
-            int id = region.getBlockId(z, 244, z);
+            /*int id = region.getBlockId(z, 244, z);
             region.setBlock(z, 244, z, 1);
             if(region.getBlockId(z, 244, z) == id)
                 return false;
-            region.setBlock(z, 244, z, id);
+            region.setBlock(z, 244, z, id);*/
             return true;
         }
         public boolean canSpawn(NativeBlockSource region){
-            if(region.getDimension() != dimension) return false;
+            if(region.getDimension() != dimension)
+                return false;
+
             NativeBlockSource bs = NativeBlockSource.getDefaultForDimension(dimension);
             for(int X = start.x;X <= end.x;X++)
                 for(int Z = start.z;Z <= end.z;Z++)
                     if(!isChunckLoaded(bs, X, Z))
                         return false;
+
             return true;
         }
 
@@ -96,7 +100,7 @@ public class StructurePiece implements IStructurePiece {
         long start = System.currentTimeMillis();
         //StructurePieceController.getChunkManager().add(dimension, x, z);
         NativeBlockSource region = NativeBlockSource.getCurrentWorldGenRegion();
-        ScriptObjectWrap object = ScriptObjectWrap.createNewEmptyObject();
+        IJsObject object = DUBoot.getPackVersionApi().createObjectEmpty();
 
         object.setJavaObj("random", random);
 

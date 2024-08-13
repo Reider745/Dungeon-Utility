@@ -3,5 +3,5 @@
     "library-dirs": [],
     "verbose": true,
     "options": [],
-    "boot-classes": []
+    "boot-classes": ["com.reider.dungeonutility.DUBoot"]
 }

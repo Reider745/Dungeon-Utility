@@ -1,4 +1,5 @@
 {
+	"$schema": "https://raw.githubusercontent.com/zheka2304/innercore-mod-toolchain/develop/toolchain/schemas/make.schema.json",
 	"resources": [
 		{
 			"path": "assets",

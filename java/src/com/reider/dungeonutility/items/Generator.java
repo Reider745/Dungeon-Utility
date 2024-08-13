@@ -3,6 +3,7 @@ package com.reider.dungeonutility.items;
 import java.util.ArrayList;
 import java.util.Random;
 
+import com.reider.dungeonutility.DUBoot;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
@@ -11,14 +12,9 @@ import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 
 public class Generator {
     public static class ItemGen {
-        int id;
-        int data;
-        float chance;
-        int min;
-        int max;
-        int slotMin;
-        int slotMax;
-        NativeItemInstanceExtra extra;
+        private final int id, data, min, max, slotMin, slotMax;
+        private final float chance;
+        private final NativeItemInstanceExtra extra;
 
         public ItemGen(int id, int data, float chance, int min, int max, int slotMin, int slotMax, NativeItemInstanceExtra extra){
             this.id = id;
@@ -60,11 +56,13 @@ public class Generator {
 
         public int getCount(Random random){
             int rand = random.nextInt(getMax()-getMin()+1)+getMin();
+            this.rand_pre = rand;
             return rand;
         }
 
         public Object getItemInstance(Random random){
-            return ItemInstance.make(getId(), getCount(random), getData(), getExtra());
+            return DUBoot.getPackVersionApi()
+                    .makeItemInstance(getId(), getCount(random), getData(), getExtra());
         }
     }
     public ArrayList<ItemGen> items = new ArrayList<>();
