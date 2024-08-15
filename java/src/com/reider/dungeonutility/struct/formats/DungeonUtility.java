@@ -10,6 +10,8 @@ import com.zhekasmirnov.innercore.api.log.ICLog;
 import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +39,7 @@ public class DungeonUtility implements LoaderTypeInterface {
 
         NativeCompoundTag tag = null;
         if(list.length() >= 4)
-            tag = CompoundTagJson.parse(list.getJSONObject(3));
+            tag = CompoundTagJson.parse(list.getJSONObject(3), new HashMap<>(), null);
         
         return BlockData.createData(
             StructureLoader.getInt(datas[2]),
@@ -111,7 +113,7 @@ public class DungeonUtility implements LoaderTypeInterface {
                         datas.put(0);
                     if(datas.length() == 2)
                         datas.put(0);
-                    datas.put(CompoundTagJson.getMapTag(data.tag));
+                    datas.put(CompoundTagJson.getMapTag(data.tag, new HashMap<>(), new AtomicReference<>(0)));
                 }
                 
                 json.put(datas);

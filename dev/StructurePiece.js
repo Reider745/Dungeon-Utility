@@ -9,28 +9,20 @@ Network.addClientPacket("message", function(text){
 
 Network.addServerPacket("DungeonUtility.optimization", function(client){
 	let player = client.getPlayerUid();
-	if(player == Player.get()){
+	if(new PlayerActor(player).isOperator()){
 		let pos = Entity.getPosition(player);
 		StructurePieceJava.algorithmsOptimization(new Vector3(pos.x, pos.y, pos.z));
 		let client = Network.getClientForPlayer(player);
-		if(client)
-			client.send("message", {
-				text: "Вами была произведена принудительная оптимизация структур."
-			});
+		client && client.send("message", {
+			text: "Вами была произведена принудительная оптимизация структур."
+		});
 	}else{
 		let client = Network.getClientForPlayer(player);
-		if(client)
-			client.send("message", {
-				text: "У вас нет доступа к очистке"
-			});
+		client && client.send("message", {
+			text: "У вас нет доступа к очистке"
+		});
 	}
 });
-
-if(!Game.isDedicatedServer())
-	Callback.addCallback("NativeCommand", function(cmd){
-		if(cmd == "/optimization")
-			Network.sendToServer("DungeonUtility.optimization", {});
-	});
 
 Callback.addCallback("GenerateChunk", function(x, z, rand, id){
 	StructurePieceController.getPiece().generation(x, z, rand, id);

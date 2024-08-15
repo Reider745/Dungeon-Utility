@@ -24,6 +24,10 @@ function StructurePool(name, global){
 		pool.setStructure(name, stru);
 		return this;
 	}
+	this.setPathStructures = function (path){
+		pool.setPathStructures(path);
+		return this;
+	}
 	this.get = function(name){
 		return pool.getStructure(name);
 	}
@@ -42,7 +46,7 @@ function StructurePool(name, global){
 		return this;
 	}
 	this.load = function(path, name, type, compile){
-		pool.load(name, path, type||"DungeonUtility", !!compile);
+		pool.load(name, path||"", type||"DungeonUtility", !!compile);
 		return this;
 	}
 	this.copy = function(name1, name2, prot){
@@ -73,6 +77,11 @@ function StructurePool(name, global){
 		}
 	}
 }
+
+/*new StructurePool("test")
+	.setPathStructures(__dir__+"assets/structures")
+	.load("nether/test_nether")//path - __dir__+"assets/structures/nether/test_nether.struct", name - test_nether
+	.load("aboba");//path - __dir__+"assets/structures/aboba.struct", name - aboba*/
 
 let StructureLoader = {
 	getStructurePoolByName(name){

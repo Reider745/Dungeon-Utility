@@ -13,11 +13,17 @@ import java.util.HashMap;
 public class StructurePool {
     private HashMap<String, StructureDescription> structures;
     private String pool;
+    private String path = null;
+
     public StructurePool(String name, boolean global){
         structures = new HashMap();
         if(global)
             StructureLoader.pools.put(name, this);
         this.pool = name;
+    }
+
+    public void setPathStructures(String path){
+        this.path = path;
     }
 
     public StructurePool(String name){
@@ -55,6 +61,11 @@ public class StructurePool {
     }
 
     public void load(String name, String path, String type, Boolean compile){
+        if(path.isEmpty()){
+            final String[] dirs = name.replaceAll("\\\\\\\\", "/").split("/");
+            load(dirs[dirs.length-1], this.path+"/"+name+".struct", type, compile);
+            return;
+        }
         StructureLoader.load(pool, name, path, type, compile);
     }
 
