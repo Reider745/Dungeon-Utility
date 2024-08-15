@@ -24,11 +24,9 @@ Network.addServerPacket("DungeonUtility.optimization", function(client){
 	}
 });
 
-Callback.addCallback("GenerateChunk", function(x, z, rand, id){
-	StructurePieceController.getPiece().generation(x, z, rand, id);
-});
-Callback.addCallback("GenerateCustomDimensionChunk", function(x, z, rand, id){
-	StructurePieceController.getPiece().generation(x, z, rand, id);
+Callback.addCallback("NativeCommand", function(cmd){
+	if(cmd == "/optimization")
+		Network.sendToServer("DungeonUtility.optimization", {});
 });
 
 let listPiece = [];
