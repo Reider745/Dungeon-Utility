@@ -67,11 +67,11 @@ public class StructurePiece implements IStructurePiece {
             if(region.getDimension() != dimension)
                 return false;
 
-            NativeBlockSource bs = NativeBlockSource.getDefaultForDimension(dimension);
+            /*NativeBlockSource bs = NativeBlockSource.getDefaultForDimension(dimension);
             for(int X = start.x;X <= end.x;X++)
                 for(int Z = start.z;Z <= end.z;Z++)
                     if(!isChunckLoaded(bs, X, Z))
-                        return false;
+                        return false;*/
 
             return true;
         }

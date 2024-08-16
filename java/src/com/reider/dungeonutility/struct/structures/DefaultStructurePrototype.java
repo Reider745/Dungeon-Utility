@@ -14,14 +14,16 @@ import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 
 public class DefaultStructurePrototype implements StructurePrototypeInterface {
-    boolean isItems;
-    String name;
-    HashMap<Integer, ArrayList<BlockData>> blocks;
+    private final String name;
+    private final HashMap<Integer, ArrayList<BlockData>> blocks;
 
     public DefaultStructurePrototype(boolean isItems, String name, StructureDestructibility blocks){
-        this.isItems = isItems;
         this.name = name;
         this.blocks = blocks.getMap();
+    }
+
+    public DefaultStructurePrototype(String name, StructureDestructibility blocks){
+        this(false, name, blocks);
     }
 
     Random random_cache = null;
@@ -37,17 +39,19 @@ public class DefaultStructurePrototype implements StructurePrototypeInterface {
             Object rand = scriptObjectWrap.getJavaObj("random");
             if(rand instanceof Random)
                 random = (Random) rand;
+            else
+                random = new Random();
         }else
             random = new Random();
         random_cache = random;
         return random;
     }
 
-    public void before(int x, int y, int z, NativeBlockSource region, Object packet){
+    @Override
+    public void before(int x, int y, int z, NativeBlockSource region, Object packet){}
 
-    }
-
-    public Boolean isBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
+    @Override
+    public boolean isBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
         ArrayList<BlockData> array = blocks.get(data.getData().state.id);
         if(array != null){
             Random random = getRandom(packet);
@@ -57,10 +61,12 @@ public class DefaultStructurePrototype implements StructurePrototypeInterface {
         return true;
     }
 
+    @Override
     public void setBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
         ItemGeneration.fill(name, ((int) orgPos.x)+data.x,((int) orgPos.y)+data.y, ((int) orgPos.z)+data.z, getRandom(packet), region, packet);
     }
 
+    @Override
     public void after(int x, int y, int z, NativeBlockSource region, Object packet){
 
     }

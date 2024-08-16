@@ -23,7 +23,7 @@ public class PrototypeJS implements StructurePrototypeInterface {
         this.beforeFunc = version.createForFunction(beforeFunc);
     }
     @Override
-    public Boolean isBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
+    public boolean isBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
         Object bool = isSetBlockFunc.call(new Object[] {orgPos, data, region, packet});
         if(bool instanceof Boolean)
             return ((Boolean) bool);

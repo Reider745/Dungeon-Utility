@@ -11,14 +11,14 @@ ModAPI.registerAPI("DungeonUtility", {
 	StructurePool: StructurePool,
 	StructurePiece: StructurePiece,
 	StructureDestructibility: StructureDestructibility,
-	//StructurePrivate: StructurePrivate,
+    DefaultGenerationDescription: DefaultGenerationDescription,
 	requireGlobal(command){
 		return eval(command);
 	},
 	getDir(){
 		return __dir__;
 	},
-	version: 4
+	version: 5
 });
 
 // command
@@ -129,4 +129,44 @@ Callback.addCallback("NativeCommand", (cmd) => {
 	}catch(e){
 		Game.message(e);
 	}
+});
+
+
+
+Callback.addCallback("StructureLoadOne", () => {
+    let pool = new StructurePool("test");
+
+    pool.put("mystructure", new StructureDescriptionJS()
+        .addBlock(0, 0, 0, new BlockState(VanillaBlockID.stonebrick, 0))
+        .addBlock(0, 1, 0, new BlockState(VanillaBlockID.stonebrick, 1))
+        .addBlock(0, 2, 0, new BlockState(VanillaBlockID.chest, 0))
+        .getDescription());
+
+    ItemGeneration.newGenerator("generationTest");
+    ItemGeneration.addItem("generationTest", VanillaItemID.iron_chestplate, .5);
+    ItemGeneration.addItem("generationTest", VanillaItemID.diamond, .5);
+    ItemGeneration.addItem("generationTest", VanillaItemID.gold_ingot, .5);
+        
+    pool.setGlobalPrototype("mystructure", Structure.getPrototypeDefault("generationTest"))
+
+    pool.put("wood", new StructureDescriptionJS()
+        .addBlock(0, 0, 0, new BlockState(VanillaBlockID.log, 0))
+        .addBlock(0, 1, 0, new BlockState(VanillaBlockID.log, 0))
+        .addBlock(0, 2, 0, new BlockState(VanillaBlockID.leaves, 0))
+        .addBlock(0, 3, 0, new BlockState(VanillaBlockID.log, 0))
+        .addBlock(0, 4, 0, new BlockState(VanillaBlockID.leaves, 0))
+        .getDescription());
+
+    let mystructure = new Structure.advanced(pool.get("mystructure"))
+    new DefaultGenerationDescription(mystructure, 1)
+        .setGenerationParams(0, 0, 10)
+        .setDistance(60, "mystucture")//Расстояние между этой структурой будет минимум 60
+        .setSurface(true, [VanillaBlockID.grass, VanillaBlockID.dirt])
+        .register()
+
+    let wood = new Structure.advanced(pool.get("wood"))
+    new DefaultGenerationDescription(wood, 1)
+        .setGenerationParams(0, 0, 2, 0, [1, 2, 3])// 1, 2, 3 - Количество деревьев которые будут спавнится в чанке
+        .setStorage(false)// Не сохраняем список структур
+        .register();
 });

@@ -6,6 +6,7 @@ import java.util.Random;
 import com.reider.dungeonutility.DUBoot;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
 import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
@@ -55,7 +56,10 @@ public class Generator {
         private int rand_pre = 0;
 
         public int getCount(Random random){
-            int rand = random.nextInt(getMax()-getMin()+1)+getMin();
+            int rand = getMax();
+            try {
+                rand = random.nextInt(rand-getMin()+1)+getMin();
+            }catch (Exception ignore){}
             this.rand_pre = rand;
             return rand;
         }
@@ -65,8 +69,12 @@ public class Generator {
                     .makeItemInstance(getId(), getCount(random), getData(), getExtra());
         }
     }
+
     public ArrayList<ItemGen> items = new ArrayList<>();
-    IPrototype prot;
+    private IPrototype prot;
+    public boolean infinityFill = true;
+
+
     public Generator(){
         prot = new IPrototype() {
             public void before(Vector3 pos, NativeBlockSource region, Object packet){
@@ -93,25 +101,43 @@ public class Generator {
     public IPrototype getPrototype(){
         return prot;
     }
+
+    public boolean fillContainer(NativeBlockSource region, Vector3 pos, NativeTileEntity container, Random random, Object packet){
+        boolean empty = true;
+
+        for (ItemGen item : items) {
+            int countSlot = item.getSlotMax();
+            try {
+                countSlot = random.nextInt(countSlot - item.getSlotMin()) + item.getSlotMin();
+            } catch (Exception ignore) {}
+
+            for (int c = 0; c < countSlot; c++) {
+                float rand = random.nextFloat();
+
+                if (rand <= item.getChance()) {
+                    int slot = random.nextInt(container.getSize());
+                    Object instance = item.getItemInstance(random);
+                    if (prot.isGenerate(pos, rand, slot, instance, region, random, packet))
+                        container.setSlot(slot, item.getId(), item.rand_pre, item.getData(), item.getExtra());
+                    prot.generate(pos, rand, slot, instance, region, random, packet);
+
+                    empty = false;
+                }
+            }
+        }
+
+        return empty;
+    }
+
     public void fill(int x, int y, int z, Random random, NativeBlockSource region, Object packet){
-        NativeTileEntity container = region.getBlockEntity(x, y, z);
+        final NativeTileEntity container = region.getBlockEntity(x, y, z);
 		if(container != null){
-            Vector3 pos = new Vector3(x, y, z);
+            final Vector3 pos = new Vector3(x, y, z);
 			prot.before(pos, region, packet);
-			for(int i = 0; i < items.size();i++){
-                ItemGen item = items.get(i);
-				int countSlot = random.nextInt(item.getSlotMax()-item.getSlotMin())+item.getSlotMin();
-				for(int c = 0;c < countSlot;c++){
-					float rand = random.nextFloat();
-					if(rand <= item.getChance()){
-						int slot = random.nextInt(container.getSize());
-                        Object instance = item.getItemInstance(random);
-						if(prot.isGenerate(pos, rand, slot, instance, region, random,packet))
-							container.setSlot(slot, item.getId(), item.rand_pre, item.getData(), item.getExtra());
-						prot.generate(pos, rand, slot, instance, region, random, packet);
-					}
-				}
-			}
+
+            while (fillContainer(region, pos, container, random, packet) && infinityFill){}
+
+
 			prot.after(pos, region, packet);
 		}
     }

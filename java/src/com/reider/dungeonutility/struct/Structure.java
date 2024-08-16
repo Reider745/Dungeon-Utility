@@ -13,10 +13,10 @@ public class Structure {
     public static void build(StructureDescription stru, int x, int y, int z, NativeBlockSource region, long slp, Object packat){
         stru.build(x, y, z, region, slp);
     }
-    public static Boolean isStructure(StructureDescription stru, int x, int y, int z, NativeBlockSource region){
+    public static boolean isStructure(StructureDescription stru, int x, int y, int z, NativeBlockSource region){
         return stru.isStructure(x, y, z, region);
     }
-    public static Boolean isSetStructure(StructureDescription stru, int x, int y, int z, NativeBlockSource region){
+    public static boolean isSetStructure(StructureDescription stru, int x, int y, int z, NativeBlockSource region){
         return stru.isSetStructure(x, y, z, region);
     }
     public static void destroy(StructureDescription stru, int x, int y, int z, NativeBlockSource region){
@@ -31,18 +31,18 @@ public class Structure {
 
     private StructureDescription stru;
     private StructurePrototypeInterface prot;
-    private Boolean useGlobalProt;
+    private boolean useGlobalProt;
     public Structure(StructureDescription stru){
         this.stru = stru;
         prot = new StructurePrototype();
         useGlobalProt = true;
     }
 
-    public void setUseGlobalPrototype(Boolean useGlobalProt) {
+    public void setUseGlobalPrototype(boolean useGlobalProt) {
         this.useGlobalProt = useGlobalProt;
     }
 
-    public Boolean isUseGlobalPrototype() {
+    public boolean isUseGlobalPrototype() {
         return useGlobalProt;
     }
 
@@ -61,10 +61,10 @@ public class Structure {
     }
 
 
-    public Boolean isStructure(int x, int y, int z, NativeBlockSource region) {
+    public boolean isStructure(int x, int y, int z, NativeBlockSource region) {
         return stru.isStructure(x, y, z, region);
     }
-    public Boolean isSetStructure(int x, int y, int z, NativeBlockSource region){
+    public boolean isSetStructure(int x, int y, int z, NativeBlockSource region){
         return stru.isSetStructure(x, y, z, region);
     }
 

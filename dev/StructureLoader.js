@@ -67,7 +67,13 @@ function StructurePool(name, global){
 		StructureUtilityJava.registerRotations(StructureLoader.getStructure(stru), stru, rotates);
 	}
 	this.setGlobalPrototype = function(name, obj){
-		obj.isBlock = obj.isBlock || function(){return true};
+		try{
+			obj.isBlock = obj.isBlock || function(){return true};
+		}catch(e){}
+		try {
+			pool.setGlobalPrototype(name, obj);
+			return;
+		} catch (error) {}
 		try{
 			Callback.addCallback("StructureLoad", function(){
 				pool.setGlobalPrototype(name, obj);

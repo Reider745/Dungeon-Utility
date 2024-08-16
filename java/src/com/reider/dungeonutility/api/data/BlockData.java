@@ -5,7 +5,7 @@ import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
 import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 
-public class BlockData {
+public class BlockData implements Cloneable {
     public BlockData(int x, int y, int z, BlockState block, BlockState extra, NativeCompoundTag tag){
         this.x = x;
         this.y = y;
@@ -38,6 +38,12 @@ public class BlockData {
     public BlockData copy(){
         return new BlockData(this);
     }
+
+    @Override
+    protected BlockData clone(){
+        return this.copy();
+    }
+
     public void set(int X, int Y, int Z, NativeBlockSource region){
         region.setBlock(X + x, Y + y, Z + z, state);
         if(stateExtra != null)
@@ -46,7 +52,7 @@ public class BlockData {
         if(tile != null && tag != null)
             tile.setCompoundTag(tag);
     }
-    public Boolean isBlock(int X, int Y, int Z, NativeBlockSource region){
+    public boolean isBlock(int X, int Y, int Z, NativeBlockSource region){
         return state.equals(region.getBlock(X + x, Y + y, Z + z)) && stateExtra.equals(region.getExtraBlock(X + x, Y + y, Z + z));
     }
     public String getName(){
@@ -56,15 +62,15 @@ public class BlockData {
         return new BlockData(x, y, z, state == null ? new BlockState(0, 0) : state, stateExtra == null ? new BlockState(0, 0) : stateExtra, tag == null ? new NativeCompoundTag() : tag);
     }
 
-    public Boolean isState(){
+    public boolean isState(){
         return state != null;
     }
 
-    public Boolean isExtra(){
+    public boolean isExtra(){
         return stateExtra != null;
     }
 
-    public Boolean isTag(){
+    public boolean isTag(){
         return tag != null;
     }
 

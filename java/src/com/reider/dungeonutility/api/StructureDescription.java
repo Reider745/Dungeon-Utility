@@ -5,7 +5,7 @@ import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 
-public class StructureDescription {
+public class StructureDescription implements Cloneable{
     public StructureDescription(BlockData[] blocks, StructurePrototypeInterface prot){
         this.blocks = blocks;
         this.prot = prot;
@@ -21,7 +21,7 @@ public class StructureDescription {
     public StructureDescription copy(){
         return new StructureDescription(this);
     }
-    public void set(int x, int y, int z, NativeBlockSource region, StructurePrototypeInterface addProt, Boolean use, Object packet){
+    public void set(int x, int y, int z, NativeBlockSource region, StructurePrototypeInterface addProt, boolean use, Object packet){
         if(!use) {
             addProt.before(x, y, z, region, packet);
             for (BlockData block : blocks) {
@@ -43,7 +43,7 @@ public class StructureDescription {
             prot.after(x, y, z, region, packet);
         }
     }
-    public void build(int x, int y, int z, NativeBlockSource region, StructurePrototypeInterface addProt, Boolean use, Object packet, long slp) throws InterruptedException{
+    public void build(int x, int y, int z, NativeBlockSource region, StructurePrototypeInterface addProt, boolean use, Object packet, long slp) throws InterruptedException{
         if(!use) {
             addProt.before(x, y, z, region, packet);
             for (BlockData block : blocks) {
@@ -77,7 +77,7 @@ public class StructureDescription {
             build(x, y, z, region, new StructurePrototype(), true, new Object(), spl);
         }catch (InterruptedException e){}
     }
-    public Boolean isSetStructure(int x, int y, int z, NativeBlockSource region){
+    public boolean isSetStructure(int x, int y, int z, NativeBlockSource region){
         for(BlockData block : blocks){
             BlockState state = region.getBlock(x+ block.x, y+ block.y,z+ block.z);
             if(state.id != 0 || block.getData().state.id == state.id)
@@ -85,7 +85,7 @@ public class StructureDescription {
         }
         return true;
     }
-    public Boolean isStructure(int x, int y, int z, NativeBlockSource region){
+    public boolean isStructure(int x, int y, int z, NativeBlockSource region){
         for(BlockData block : blocks)
             if(!block.isBlock(x, y, z, region))
                 return false;

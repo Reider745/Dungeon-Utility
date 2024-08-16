@@ -3,6 +3,7 @@ package com.reider.dungeonutility;
 import com.reider.dungeonutility.api.LoaderTypeInterface;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.data.BlockData;
+import com.reider.dungeonutility.struct.formats.*;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
@@ -145,8 +146,16 @@ public class StructureLoader {
         return result;
     }
 
+    private static HashMap<String, LoaderTypeInterface> types = new  HashMap<String, LoaderTypeInterface>();
+
     static {
         new StructurePool(default_pool, true);
+
+        registerType("DungeonAPI", new DungeonAPI());
+        registerType("DungeonAPI_V2", new DungeonAPI_V2());
+        registerType("DungeonCore", new DungeonCore());
+        registerType("Structures", new Structures());
+        registerType("DungeonUtility", new DungeonUtility());
     }
 
     private static boolean stopTick = false;
@@ -203,8 +212,6 @@ public class StructureLoader {
         } catch (Exception e) {}
         return text;
     }
-
-    private static HashMap<String, LoaderTypeInterface> types = new  HashMap<String, LoaderTypeInterface>();
     private static ArrayList<StructurePreLoad> preLoads = new ArrayList<StructurePreLoad>();
 
     public static void registerType(String name, LoaderTypeInterface type){

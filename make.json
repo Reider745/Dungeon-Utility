@@ -29,6 +29,10 @@
 			"type": "java"
 		}
 	],
+	"declarations": [
+		"declarations/JavaDungeonUtility.d.ts",
+		"declarations/RuntimeSetting.d.ts"
+	],
 	"additional": [
 		{
 			"source": "config.json",

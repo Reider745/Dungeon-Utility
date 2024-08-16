@@ -45,8 +45,8 @@ let ItemGeneration = {
 	addItem(name, id, random, count, data, extra){
 		count = count || {};
 		count.min = count.min || 1;
-		count.max = count.max || 2;
-		count.slotMax = count.slotMax || 2;
+		count.max = count.max || 1;
+		count.slotMax = count.slotMax || 1;
 		count.slotMin = count.slotMin || 1;
 		ItemGenerationJava.addItem(name, new GeneratorJava.ItemGen(id, data||0, random||1, count.min, count.max, count.slotMin, count.slotMax, extra ? extra : null));
 	},
@@ -57,6 +57,12 @@ let ItemGeneration = {
 		count.slotMax = count.slotMax || 2;
 		count.slotMin = count.slotMin || 1;
 		ItemGenerationJava.setItemIntegration(new GeneratorJava.ItemGen(id, data||0, random||1, count.min, count.max, count.slotMin, count.slotMax, extra ? extra : null));
+	},
+	setFillEmpty(name, value){
+		ItemGenerationJava.setFillEmpty(name, value);
+	},
+	isFillEmpty(name){
+		return ItemGenerationJava.isFillEmpty(name);
 	},
 	setPrototype(name, obj){
 		if(!obj.before) obj.before = function(pos, region, packet){}

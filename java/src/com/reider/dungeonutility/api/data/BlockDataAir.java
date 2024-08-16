@@ -14,7 +14,7 @@ public class BlockDataAir extends BlockData {
     }
 
     @Override
-    public Boolean isBlock(int X, int Y, int Z, NativeBlockSource region) {
+    public boolean isBlock(int X, int Y, int Z, NativeBlockSource region) {
         return region.getBlock(X + x, Y + y, Z + z).id == 0 && region.getExtraBlock(X + x, Y + y, Z + z).id == 0;
     }
 

@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
+import com.reider.dungeonutility.DUBoot;
 import com.reider.dungeonutility.struct.generation.thread.Algorithms;
 import com.reider.dungeonutility.struct.generation.thread.ChunkClearMembory;
 import com.reider.dungeonutility.struct.generation.thread.algorithms.ClearingClusters;
@@ -15,9 +16,15 @@ import com.reider.dungeonutility.struct.generation.types.IStructureStorage;
 import com.reider.dungeonutility.struct.generation.types.api.Default;
 import com.reider.dungeonutility.struct.generation.types.api.Nether;
 import com.reider.dungeonutility.struct.generation.types.api.OverWorld;
+import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
 import com.reider.dungeonutility.struct.generation.util.ChunkManager;
 import com.reider.dungeonutility.struct.generation.util.NativeChunkManager;
 import com.reider.dungeonutility.struct.generation.util.StructureStorage;
+import com.zhekasmirnov.innercore.api.runtime.saver.ObjectSaver;
+import com.zhekasmirnov.innercore.api.runtime.saver.ObjectSaverRegistry;
+import com.zhekasmirnov.innercore.api.runtime.saver.world.WorldDataScopeRegistry;
+import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap;
+import org.json.JSONArray;
 
 public class StructurePieceController {
     public static HashMap<String, IStructurePiece> pieces = new HashMap<>();
@@ -84,5 +91,38 @@ public class StructurePieceController {
 
         algorithms.addAlgoritm(criticalRelease);
         algorithms.addAlgoritm(clearingClusters);
+
+        DUBoot.getPackVersionApi().addCallback("LevelLeft", args -> {
+            getStorage().clear();
+            getChunkManager().clear();
+            return null;
+        });
+
+        WorldDataScopeRegistry.getInstance().addScope("du.StructureStorage", new WorldDataScopeRegistry.SaverScope() {
+            @Override
+            public void readJson(Object o) throws Exception {
+                if(o == null) return;
+                if(o instanceof JSONArray){
+                    final JSONArray array = (JSONArray) o;
+                    final IStructureStorage storage = getStorage();
+
+                    for(int i = 0;i < array.length();i++){
+                        storage.add(new WorldStructure(array.getJSONObject(i)));
+                    }
+                    return;
+                }
+                throw new RuntimeException("Not support read "+o.getClass());
+            }
+
+            @Override
+            public Object saveAsJson() throws Exception {
+                final JSONArray array = new JSONArray();
+
+                for(WorldStructure structure : getStorage().getStructures())
+                    array.put(structure.toJSON());
+
+                return null;
+            }
+        });
     }
 }

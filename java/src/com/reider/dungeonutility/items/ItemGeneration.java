@@ -18,6 +18,12 @@ public class ItemGeneration {
     public static void setItemIntegration(Generator.ItemGen item){
         integrations.add(item);
     }
+    public static void setFillEmpty(String name, boolean value){
+        generators.get(name).infinityFill = value;
+    }
+    public static boolean isFillEmpty(String name){
+        return generators.get(name).infinityFill;
+    }
     public static void register(String name, Generator generator){
         generators.put(name, generator);
         DUBoot.getPackVersionApi()

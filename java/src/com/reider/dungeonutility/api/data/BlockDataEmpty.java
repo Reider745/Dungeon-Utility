@@ -13,7 +13,7 @@ public class BlockDataEmpty extends BlockData{
     public void set(int X, int Y, int Z, NativeBlockSource region) {}
 
     @Override
-    public Boolean isBlock(int X, int Y, int Z, NativeBlockSource region) {
+    public boolean isBlock(int X, int Y, int Z, NativeBlockSource region) {
         return true;
     }
 

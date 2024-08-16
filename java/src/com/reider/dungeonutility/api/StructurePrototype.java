@@ -10,7 +10,7 @@ public class StructurePrototype implements StructurePrototypeInterface {
 
     }
     @Override
-    public Boolean isBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
+    public boolean isBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
         return true;
     }
     @Override

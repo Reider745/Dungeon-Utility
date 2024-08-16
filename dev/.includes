@@ -1,15 +1,13 @@
 header.js
 
 StructureLoader.js
-StructureType.js
-Structures.js
+Structures.ts
 StructureUtility.js
 VisualStructure.js
 ItemGeneration.js
 StructureIntegration.js
 StructureDescription.js
-StructurePrivate.js
-StructurePiece.js
+StructurePiece.ts
 
 RuntimeSetting.ts
 
