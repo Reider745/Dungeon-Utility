@@ -1,6 +1,6 @@
-package com.reider.dungeonutility.api;
+package com.reider.dungeonutility.struct.prototypes;
 
-import com.reider.dungeonutility.DUBoot;
+import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.multiversions.IPackVersion;
 import com.reider.dungeonutility.multiversions.js_types.IJsFunctionImpl;
@@ -8,14 +8,14 @@ import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 
 
-public class PrototypeJS implements StructurePrototypeInterface {
+public class PrototypeJS implements IStructurePrototype {
     public IJsFunctionImpl setBlockFunc;
     public IJsFunctionImpl isSetBlockFunc;
     public IJsFunctionImpl afterFunc;
     public IJsFunctionImpl beforeFunc;
 
     public PrototypeJS(Object isSetBlock, Object setBlock, Object beforeFunc, Object afterFunc){
-        final IPackVersion version = DUBoot.getPackVersionApi();
+        final IPackVersion version = DungeonUtilityMain.getPackVersionApi();
 
         this.isSetBlockFunc = version.createForFunction(isSetBlock);
         this.setBlockFunc = version.createForFunction(setBlock);

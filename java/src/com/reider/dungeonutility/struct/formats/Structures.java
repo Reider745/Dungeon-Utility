@@ -1,8 +1,8 @@
 package com.reider.dungeonutility.struct.formats;
 
-import com.reider.dungeonutility.StructureLoader;
-import com.reider.dungeonutility.api.LoaderTypeInterface;
+import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.api.StructureDescription;
+import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Structures implements LoaderTypeInterface {
+public class Structures extends LoaderType {
     @Override
     public StructureDescription read(String file, String path) {
         ArrayList<BlockData> blocks = new ArrayList<>();
@@ -30,14 +30,14 @@ public class Structures implements LoaderTypeInterface {
                 if(value instanceof Number)
                     state = new BlockState(((Number) value).intValue(), 0);
                 else if(value instanceof String)
-                    state = new BlockState(StructureLoader.getIdBlock((String) value), 0);
+                    state = new BlockState(Utils.getIdBlock((String) value), 0);
                 else if(value instanceof JSONObject) {
                     JSONObject obj = ((JSONObject) value);
                     Object id = obj.get("id");
                     if (id instanceof Number)
                         state = new BlockState(((Number) id).intValue(), ((Number) obj.get("data")).intValue());
                     else
-                        state = new BlockState(StructureLoader.getIdBlock((String) id), ((Double) obj.get("data")).intValue());
+                        state = new BlockState(Utils.getIdBlock((String) id), ((Double) obj.get("data")).intValue());
                 }
 
                 blocks.add(BlockData.createData(
@@ -48,7 +48,7 @@ public class Structures implements LoaderTypeInterface {
                 ));
             }
         }catch (JSONException e) {
-            Logger.debug(StructureLoader.logger_name, ICLog.getStackTrace(e));
+            Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));
             throw new RuntimeException(e.getMessage());
         }
         return new StructureDescription(blocks.toArray(new BlockData[blocks.size()]));
@@ -56,7 +56,7 @@ public class Structures implements LoaderTypeInterface {
 
     @Override
     public boolean isLoadRuntime() {
-        return true;
+        return false;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class Structures implements LoaderTypeInterface {
                 datas.put(data.z);
 
                 JSONObject block_data = new JSONObject();
-                block_data.put("id", StructureLoader.getIdBlock(data.state.id));
+                block_data.put("id", Utils.getIdBlock(data.state.id));
                 block_data.put("data", data.state.data);
 
                 datas.put(block_data);
@@ -84,7 +84,7 @@ public class Structures implements LoaderTypeInterface {
             json.put("version", 3);
             json.put("structure", list);
         }catch (JSONException e) {
-            Logger.debug(StructureLoader.logger_name, ICLog.getStackTrace(e));
+            Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));
         }
 
         return json.toString();

@@ -52,8 +52,15 @@ public class BlockData implements Cloneable {
         if(tile != null && tag != null)
             tile.setCompoundTag(tag);
     }
+
+    protected boolean checkState(BlockState state1, BlockState state2){
+        return (state2.runtimeId == -1 || state1.runtimeId == -1) ?
+                (state1.id == state2.id && state1.data == state2.data) :
+                state1.runtimeId == state2.runtimeId;
+    }
+
     public boolean isBlock(int X, int Y, int Z, NativeBlockSource region){
-        return state.equals(region.getBlock(X + x, Y + y, Z + z)) && stateExtra.equals(region.getExtraBlock(X + x, Y + y, Z + z));
+        return checkState(region.getBlock(X + x, Y + y, Z + z), state) && checkState(region.getExtraBlock(X + x, Y + y, Z + z), stateExtra);
     }
     public String getName(){
         return "BlockData";

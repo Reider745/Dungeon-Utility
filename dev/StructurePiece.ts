@@ -263,11 +263,3 @@ namespace StructurePiece {
             .del(x, y, z);
 	}
 };
-
-// Example
-/*
-Callback.addCallback("StructureLoadOne", () => {
-    StructurePiece.register(new DefaultGenerationDescription(new Structure.advanced("aboba"), 100)
-        .build());
-});*/
-// TODO: Saver

@@ -1,6 +1,4 @@
-header.js
-
-StructureLoader.js
+StructureLoader.ts
 Structures.ts
 StructureUtility.js
 VisualStructure.js

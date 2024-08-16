@@ -1,12 +1,14 @@
 package com.reider.dungeonutility.api;
 
 import com.reider.dungeonutility.api.data.BlockData;
+import com.reider.dungeonutility.struct.prototypes.StructurePrototypeEmpty;
+import com.reider.dungeonutility.struct.prototypes.IStructurePrototype;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 
 public class StructureDescription implements Cloneable{
-    public StructureDescription(BlockData[] blocks, StructurePrototypeInterface prot){
+    public StructureDescription(BlockData[] blocks, IStructurePrototype prot){
         this.blocks = blocks;
         this.prot = prot;
     }
@@ -14,14 +16,14 @@ public class StructureDescription implements Cloneable{
         this(stru.blocks.clone(), stru.prot);
     }
     public StructureDescription(BlockData[] blocks){
-        this(blocks, new StructurePrototype());
+        this(blocks, new StructurePrototypeEmpty());
     }
     public BlockData[] blocks;
-    public StructurePrototypeInterface prot;
+    public IStructurePrototype prot;
     public StructureDescription copy(){
         return new StructureDescription(this);
     }
-    public void set(int x, int y, int z, NativeBlockSource region, StructurePrototypeInterface addProt, boolean use, Object packet){
+    public void set(int x, int y, int z, NativeBlockSource region, IStructurePrototype addProt, boolean use, Object packet){
         if(!use) {
             addProt.before(x, y, z, region, packet);
             for (BlockData block : blocks) {
@@ -43,7 +45,7 @@ public class StructureDescription implements Cloneable{
             prot.after(x, y, z, region, packet);
         }
     }
-    public void build(int x, int y, int z, NativeBlockSource region, StructurePrototypeInterface addProt, boolean use, Object packet, long slp) throws InterruptedException{
+    public void build(int x, int y, int z, NativeBlockSource region, IStructurePrototype addProt, boolean use, Object packet, long slp) throws InterruptedException{
         if(!use) {
             addProt.before(x, y, z, region, packet);
             for (BlockData block : blocks) {
@@ -70,11 +72,11 @@ public class StructureDescription implements Cloneable{
         }
     }
     public void set(int x, int y, int z, NativeBlockSource region){
-        set(x, y, z, region, new StructurePrototype(), true, new Object());
+        set(x, y, z, region, new StructurePrototypeEmpty(), true, new Object());
     }
     public void build(int x, int y, int z, NativeBlockSource region, long spl){
         try {
-            build(x, y, z, region, new StructurePrototype(), true, new Object(), spl);
+            build(x, y, z, region, new StructurePrototypeEmpty(), true, new Object(), spl);
         }catch (InterruptedException e){}
     }
     public boolean isSetStructure(int x, int y, int z, NativeBlockSource region){

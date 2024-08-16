@@ -1,6 +1,6 @@
 package com.reider.dungeonutility.struct.generation.thread;
 
-import com.reider.Debug;
+import com.reider.dungeonutility.logger.Debug;
 import com.reider.dungeonutility.struct.generation.StructurePieceController;
 import com.reider.dungeonutility.struct.generation.types.IChunkManager;
 import com.reider.dungeonutility.struct.generation.types.api.IChunk;

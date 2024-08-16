@@ -1,14 +1,13 @@
 package com.reider.dungeonutility.struct.formats;
 
-import com.reider.dungeonutility.StructureLoader;
-import com.reider.dungeonutility.api.LoaderTypeInterface;
 import com.reider.dungeonutility.api.StructureDescription;
+import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 
 import java.util.ArrayList;
 
-public class DungeonAPI implements LoaderTypeInterface {
+public class DungeonAPI extends LoaderType {
     @Override
     public StructureDescription read(String file, String path) {
         ArrayList<BlockData> blocks = new ArrayList<>();
@@ -20,7 +19,7 @@ public class DungeonAPI implements LoaderTypeInterface {
                     Integer.parseInt(data[2]),
                     Integer.parseInt(data[3]),
                     Integer.parseInt(data[4]),
-                    new BlockState(StructureLoader.getIdBlock(data[0]), Integer.parseInt(data[1]))
+                    new BlockState(Utils.getIdBlock(data[0]), Integer.parseInt(data[1]))
             ));
         }
 
@@ -29,7 +28,7 @@ public class DungeonAPI implements LoaderTypeInterface {
 
     @Override
     public boolean isLoadRuntime() {
-        return true;
+        return false;
     }
 
     @Override
@@ -37,7 +36,7 @@ public class DungeonAPI implements LoaderTypeInterface {
         String str = "";
         for(int i = 0;i < stru.blocks.length;i++){
             BlockData data = stru.blocks[i].getData();
-            str += StructureLoader.getIdBlock(data.state.id) + "." + data.state.data + "." + data.x + "." + data.y + "." + data.z;
+            str += Utils.getIdBlock(data.state.id) + "." + data.state.data + "." + data.x + "." + data.y + "." + data.z;
             if(i != stru.blocks.length - 1)
                 str+=":";
         }

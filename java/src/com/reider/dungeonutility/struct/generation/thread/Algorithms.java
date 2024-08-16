@@ -2,7 +2,7 @@ package com.reider.dungeonutility.struct.generation.thread;
 
 import java.util.ArrayList;
 
-import com.reider.Debug;
+import com.reider.dungeonutility.logger.Debug;
 import com.reider.dungeonutility.struct.generation.StructurePieceController;
 import com.reider.dungeonutility.struct.generation.thread.algorithms.Base;
 import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;

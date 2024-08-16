@@ -1,10 +1,11 @@
 package com.reider.dungeonutility.struct;
 
-import com.reider.dungeonutility.StructureLoader;
+import com.reider.dungeonutility.struct.loaders.StructureLoader;
 import com.reider.dungeonutility.api.StructureDescription;
-import com.reider.dungeonutility.api.StructurePrototype;
-import com.reider.dungeonutility.api.StructurePrototypeInterface;
+import com.reider.dungeonutility.struct.prototypes.StructurePrototypeEmpty;
+import com.reider.dungeonutility.struct.prototypes.IStructurePrototype;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.innercore.api.NativeAPI;
 
 public class Structure {
     public static void setStructure(StructureDescription stru, int x, int y, int z, NativeBlockSource region, Object packat){
@@ -22,19 +23,19 @@ public class Structure {
     public static void destroy(StructureDescription stru, int x, int y, int z, NativeBlockSource region){
         stru.destroy(x, y, z, region);
     }
-    public static void setGlobalPrototype(String name, StructurePrototypeInterface prot){
-        StructureLoader.getStructurePool(StructureLoader.default_pool).setGlobalPrototype(name, prot);
+    public static void setGlobalPrototype(String name, IStructurePrototype prot){
+        StructureLoader.default_pool.setGlobalPrototype(name, prot);
     }
-    public static StructurePrototypeInterface getGlobalPrototype(String name){
+    public static IStructurePrototype getGlobalPrototype(String name){
         return StructureLoader.getStructure(name).prot;
     }
 
     private StructureDescription stru;
-    private StructurePrototypeInterface prot;
+    private IStructurePrototype prot;
     private boolean useGlobalProt;
     public Structure(StructureDescription stru){
         this.stru = stru;
-        prot = new StructurePrototype();
+        prot = new StructurePrototypeEmpty();
         useGlobalProt = true;
     }
 
@@ -46,10 +47,10 @@ public class Structure {
         return useGlobalProt;
     }
 
-    public void setPrototype(StructurePrototypeInterface prot){
+    public void setPrototype(IStructurePrototype prot){
         this.prot = prot;
     }
-    public StructurePrototypeInterface getPrototype(){
+    public IStructurePrototype getPrototype(){
         return prot;
     }
 

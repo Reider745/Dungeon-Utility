@@ -7,7 +7,7 @@ ModAPI.registerAPI("DungeonUtility", {
 	StructureRotation: StructureRotationJS,
 	BlockData: BlockData,
 	StructureIntegration: StructureIntegration,
-	StructureDescription: StructureDescriptionJS,
+	StructureDescription: StructureDescription,
 	StructurePool: StructurePool,
 	StructurePiece: StructurePiece,
 	StructureDestructibility: StructureDestructibility,
@@ -89,7 +89,7 @@ Callback.addCallback("NativeCommand", (cmd) => {
                 if(!origin)
                     Game.message(EColor.RED+"WARNING: Центр структуры не был установлен!");
 
-                StructureLoader.setStructure(args[2], new StructureDescription(StructureUtility.getStructureByPos(coordinates, origin || coordinates[1], args[3] == "true")));
+                StructureLoader.setStructure(args[2], new StructureDescriptionJava(StructureUtility.getStructureByPos(coordinates, origin || coordinates[1], args[3] == "true")));
                 StructureLoader.save(__dir__+"output/"+args[2]+".struct", args[2], args[5] || "DungeonUtility", args[4] == "true")
 
                 if(args[6])//Сжатие структуры с мощью алгоритма хаффмана
@@ -132,8 +132,8 @@ Callback.addCallback("NativeCommand", (cmd) => {
 });
 
 
-
-Callback.addCallback("StructureLoadOne", () => {
+// EXAMPLE
+/*Callback.addCallback("StructureLoadOne", () => {
     let pool = new StructurePool("test");
 
     pool.put("mystructure", new StructureDescriptionJS()
@@ -169,4 +169,4 @@ Callback.addCallback("StructureLoadOne", () => {
         .setGenerationParams(0, 0, 2, 0, [1, 2, 3])// 1, 2, 3 - Количество деревьев которые будут спавнится в чанке
         .setStorage(false)// Не сохраняем список структур
         .register();
-});
+});*/

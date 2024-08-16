@@ -1,6 +1,6 @@
 const StructureJava = WRAP_JAVA("com.reider.dungeonutility.struct.Structure");
-const DefaultStructurePrototype = WRAP_JAVA("com.reider.dungeonutility.struct.structures.DefaultStructurePrototype");
-const StructureDestructibilityJava = WRAP_JAVA("com.reider.dungeonutility.struct.structures.StructureDestructibility");
+const DefaultStructurePrototype = WRAP_JAVA("com.reider.dungeonutility.struct.prototypes.DefaultStructurePrototype");
+const StructureDestructibilityJava = WRAP_JAVA("com.reider.dungeonutility.struct.prototypes.StructureDestructibility");
 
 function getRegion(): BlockSource {
     return BlockSource.getCurrentWorldGenRegion();
@@ -31,50 +31,50 @@ namespace Structure {
 		return new DefaultStructurePrototype(obj.name ? obj.name : null, obj.blocks);
 	}
 
-    export function setStructure(name: string, x: number, y: number, z: number, region?: BlockSource, packet?: any): void {
+    export function setStructure(name: STRUCTURE, x: number, y: number, z: number, region?: BlockSource, packet?: any): void {
 		StructureJava.setStructure(StructureLoader.getStructure(name), x, y,z, region||getRegion(), packet||{});
 	}
 
-    export function set(name: string, x: number, y: number, z: number, region?: BlockSource, packet?: any): void {
+    export function set(name: STRUCTURE, x: number, y: number, z: number, region?: BlockSource, packet?: any): void {
 		setStructure(name, x, y,z, region, packet);
 	}
 
-    export function build(name: string, x: number, y: number, z: number, sleep: number, region?: BlockSource, packet?: any): void {
+    export function build(name: STRUCTURE, x: number, y: number, z: number, sleep: number, region?: BlockSource, packet?: any): void {
 		StructureJava.build(StructureLoader.getStructure(name), x, y,z, region||getRegion(), sleep, packet||{});
 	}
 
-    export function isStructure(name: string, x: number, y: number, z: number, region?: BlockSource): boolean {
+    export function isStructure(name: STRUCTURE, x: number, y: number, z: number, region?: BlockSource): boolean {
 		return StructureJava.isStructure(StructureLoader.getStructure(name), x, y, z, region||getRegion());
 	}
 
-    export function is(name: string, x: number, y: number, z: number, region?: BlockSource): boolean {
+    export function is(name: STRUCTURE, x: number, y: number, z: number, region?: BlockSource): boolean {
         return isStructure(name, x, y, z, region);
 	}
 
-    export function isSetStructure(name: string, x: number, y: number, z: number, region?: BlockSource): boolean {
+    export function isSetStructure(name: STRUCTURE, x: number, y: number, z: number, region?: BlockSource): boolean {
 		return StructureJava.isStructure(StructureLoader.getStructure(name), x, y, z, region||getRegion());
 	}
 
-    export function isSet(name: string, x: number, y: number, z: number, region?: BlockSource): boolean {
+    export function isSet(name: STRUCTURE, x: number, y: number, z: number, region?: BlockSource): boolean {
         return isSetStructure(name, x, y, z, region);
 	}
 
-    export function canSet(name: string, x: number, y: number, z: number, region?: BlockSource): boolean {
+    export function canSet(name: STRUCTURE, x: number, y: number, z: number, region?: BlockSource): boolean {
         return isSetStructure(name, x, y, z, region);
 	}
 
-    export function destroy(name: string, x: number, y: number, z: number, region?: BlockSource): void {
+    export function destroy(name: STRUCTURE, x: number, y: number, z: number, region?: BlockSource): void {
 		StructureJava.destroy(StructureLoader.getStructure(name), x||0, y||0, z||0, region||getRegion());
 	}
 
     export class advanced {
         public readonly stru: JavaStructure;
 
-        constructor(name: string | JavaStructureDescription){
-            if(name instanceof StructureDescription)
+        constructor(name: STRUCTURE){
+            if(name instanceof StructureDescriptionJava)
                 this.stru = new StructureJava(name);
             else{
-                this.stru = new StructureJava(new StructureDescription([]));
+                this.stru = new StructureJava(new StructureDescriptionJava([]));
                 if(StructureLoader.isLoad(name))
                     this.stru.setStructure(StructureLoader.getStructure(name));
                 else{
@@ -97,7 +97,7 @@ namespace Structure {
 			return this.stru.isUseGlobalPrototype();
 		}
 
-        public setProt(obj: StructurePrototypeInterface): advanced{
+        public setProt(obj: IStructurePrototype): advanced{
 			try{
 				obj.isBlock = obj.isBlock || function(){return true};
 			}catch(e){}
@@ -105,7 +105,7 @@ namespace Structure {
 			return this;
 		}
 
-        public getPrototype(): StructurePrototypeInterface {
+        public getPrototype(): IStructurePrototype {
             return this.stru.getPrototype();
         }
 
@@ -152,7 +152,7 @@ namespace Structure {
         
         /** @deprecated */
         public setStruct(name: string): advanced {
-			this.stru.setStructure(new StructureDescription(Structure.getStructure(name)));
+			this.stru.setStructure(new StructureDescriptionJava(Structure.getStructure(name)));
 			return this;
 		}
 
@@ -188,7 +188,7 @@ namespace Structure {
 	}
 
     /** @deprecated */
-    export function setGlobalPrototype(name: string, obj: StructurePrototypeInterface){
+    export function setGlobalPrototype(name: string, obj: IStructurePrototype){
         try{
             obj.isBlock = obj.isBlock || function(){return true};
         }catch(e){}

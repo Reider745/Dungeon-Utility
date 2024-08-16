@@ -4,7 +4,6 @@ import com.reider.dungeonutility.multiversions.IPackVersion;
 import com.reider.dungeonutility.multiversions.js_types.IJsFunctionImpl;
 import com.reider.dungeonutility.multiversions.notwrap.PackNotWrap;
 import com.reider.dungeonutility.multiversions.wrap.PackWrap;
-import com.reider.dungeonutility.struct.generation.StructurePiece;
 import com.reider.dungeonutility.struct.generation.StructurePieceController;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
@@ -14,10 +13,11 @@ import org.mozilla.javascript.Wrapper;
 import java.util.HashMap;
 import java.util.Random;
 
-public class DUBoot {
+public class DungeonUtilityMain {
     private static IPackVersion packVersion;
+    public static final String logger_name = "DungeonUtility";
 
-    public static void boot(HashMap<?, ?> args){
+    static {
         try {
             Class.forName("com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap");
             packVersion = new PackWrap();
@@ -31,8 +31,10 @@ public class DUBoot {
             }
         }
 
-        Logger.info(StructureLoader.logger_name, "end load..., Compatibility mode: "+packVersion.getClass());
+        Logger.info(logger_name, "end load..., Compatibility mode: "+packVersion.getClass());
+    }
 
+    public static void boot(HashMap<?, ?> args){
         IJsFunctionImpl func = _args -> {
             Object random = _args[2];
             try{
@@ -53,7 +55,7 @@ public class DUBoot {
         packVersion.addCallback("GenerateChunk", func);
         packVersion.addCallback("GenerateCustomDimensionChunk", func);
 
-        Logger.info(StructureLoader.logger_name, "Added callback generation");
+        Logger.info(logger_name, "Added callback generation");
     }
 
     public static IPackVersion getPackVersionApi(){

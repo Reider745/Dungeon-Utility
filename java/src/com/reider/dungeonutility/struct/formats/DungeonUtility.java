@@ -1,8 +1,8 @@
 package com.reider.dungeonutility.struct.formats;
 
-import com.reider.dungeonutility.StructureLoader;
-import com.reider.dungeonutility.api.LoaderTypeInterface;
+import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.api.StructureDescription;
+import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
@@ -15,36 +15,35 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
-public class DungeonUtility implements LoaderTypeInterface {
+public class DungeonUtility extends LoaderType {
     private static char symbol = '.';
 
     public static BlockData parseBlock(JSONArray list) throws JSONException{
-        String[] datas = StructureLoader.split(list.getString(0), symbol);
+        String[] datas = Utils.split(list.getString(0), symbol);
 
         BlockState state = null;
         if(list.length() >= 2 && !(list.get(1) instanceof Number))
-            state = new BlockState(StructureLoader.getIdBlock(datas[0]), StructureLoader.getHashMapToJson(list.getJSONObject(1)));
+            state = new BlockState(Utils.getIdBlock(datas[0]), Utils.getHashMapToJson(list.getJSONObject(1)));
         else if(list.length() >= 2 && list.get(1) instanceof Number)
-            state = new BlockState(StructureLoader.getIdBlock(datas[0]), ((Number) list.get(1)).intValue());
+            state = new BlockState(Utils.getIdBlock(datas[0]), ((Number) list.get(1)).intValue());
         else if(list.length() == 1)
-            state = new BlockState(StructureLoader.getIdBlock(datas[0]), 0);
+            state = new BlockState(Utils.getIdBlock(datas[0]), 0);
 
         BlockState state_extra = null;
         if(list.length() >= 3 && !(list.get(2) instanceof Number))
-            state_extra = new BlockState(StructureLoader.getIdBlock(datas[1]), StructureLoader.getHashMapToJson(list.getJSONObject(2)));
+            state_extra = new BlockState(Utils.getIdBlock(datas[1]), Utils.getHashMapToJson(list.getJSONObject(2)));
         else if(list.length() >= 3 && list.get(2) instanceof Number)
-            state_extra = new BlockState(StructureLoader.getIdBlock(datas[1]), ((Number) list.get(2)).intValue());
+            state_extra = new BlockState(Utils.getIdBlock(datas[1]), ((Number) list.get(2)).intValue());
 
         NativeCompoundTag tag = null;
         if(list.length() >= 4)
             tag = CompoundTagJson.parse(list.getJSONObject(3), new HashMap<>(), null);
         
         return BlockData.createData(
-            StructureLoader.getInt(datas[2]),
-            StructureLoader.getInt(datas[3]),
-            StructureLoader.getInt(datas[4]),
+                Utils.getInt(datas[2]),
+                Utils.getInt(datas[3]),
+                Utils.getInt(datas[4]),
             state,
             state_extra,
             tag
@@ -60,7 +59,7 @@ public class DungeonUtility implements LoaderTypeInterface {
             for(int i = 0;i < json.length();i++)
                 blocks.add(parseBlock(json.getJSONArray(i)));
         }catch (JSONException e) {
-            Logger.debug(StructureLoader.logger_name, ICLog.getStackTrace(e));
+            Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));
             throw new RuntimeException(e.getMessage());
         }
         return new StructureDescription(blocks.toArray(new BlockData[blocks.size()]));
@@ -79,11 +78,11 @@ public class DungeonUtility implements LoaderTypeInterface {
                 BlockData data = block.getData();
                 String str = "";
                 if(data.state.id != 0)
-                    str+=StructureLoader.getIdBlock(data.state.id)+".";
+                    str+=Utils.getIdBlock(data.state.id)+".";
                 else
                     str+=".";
                 if(data.stateExtra.id != 0)
-                    str+=StructureLoader.getIdBlock(data.stateExtra.id)+".";
+                    str+=Utils.getIdBlock(data.stateExtra.id)+".";
                 else
                     str+=".";
 
@@ -101,7 +100,7 @@ public class DungeonUtility implements LoaderTypeInterface {
                 JSONArray datas = new JSONArray();
                 datas.put(str);
                 if(data.state.getNamedStates().size() != 0)
-                    datas.put(StructureLoader.getJsonForHashMap(data.state.getNamedStates()));
+                    datas.put(Utils.getJsonForHashMap(data.state.getNamedStates()));
 
                 if(data.stateExtra.getNamedStates().size() != 0){
                     if(datas.length() == 1)
@@ -119,7 +118,7 @@ public class DungeonUtility implements LoaderTypeInterface {
                 json.put(datas);
             }
         }catch (JSONException e) {
-            Logger.debug(StructureLoader.logger_name, ICLog.getStackTrace(e));
+            Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));
         }
         return json.toString();
     }

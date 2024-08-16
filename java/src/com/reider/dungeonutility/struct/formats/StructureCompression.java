@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class StructureCompile {
+public class StructureCompression {
     public static TreeMap<Character, Integer> countFrequency(String text) {
         TreeMap<Character, Integer> freqMap = new TreeMap<>();
         for (int i = 0; i < text.length(); i++) {
@@ -208,7 +208,7 @@ public class StructureCompile {
         saveToFile(file, frequencies2, content);
     }
 
-    public static void compile(String path, String content){
+    public static void compression(String path, String content){
         TreeMap<Character, Integer> frequencies = countFrequency(content);
         ArrayList<CodeTreeNode> codeTreeNodes = new ArrayList<>();
         for(Character c: frequencies.keySet()) {
@@ -226,7 +226,7 @@ public class StructureCompile {
         saveToFile(new File(path), frequencies, encoded.toString());
     }
 
-    public static String decompile(String path) {
+    public static String decompression(String path) {
         File file = new File(path);
         ArrayList<CodeTreeNode> codeTreeNodes = new ArrayList<>();
         TreeMap<Character, Integer> frequencies2 = new TreeMap<>();

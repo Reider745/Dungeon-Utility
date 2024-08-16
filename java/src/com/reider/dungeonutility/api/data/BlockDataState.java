@@ -15,7 +15,7 @@ public class BlockDataState extends BlockData{
 
     @Override
     public boolean isBlock(int X, int Y, int Z, NativeBlockSource region) {
-        return region.getBlock(X + x, Y + y, Z + z).equals(state);
+        return checkState(region.getBlock(X + x, Y + y, Z + z), state);
     }
 
     @Override

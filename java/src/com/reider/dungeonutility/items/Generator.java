@@ -3,13 +3,11 @@ package com.reider.dungeonutility.items;
 import java.util.ArrayList;
 import java.util.Random;
 
-import com.reider.dungeonutility.DUBoot;
+import com.reider.dungeonutility.DungeonUtilityMain;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
-import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.NativeItemInstanceExtra;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
-import com.zhekasmirnov.innercore.api.commontypes.ItemInstance;
 
 public class Generator {
     public static class ItemGen {
@@ -65,7 +63,7 @@ public class Generator {
         }
 
         public Object getItemInstance(Random random){
-            return DUBoot.getPackVersionApi()
+            return DungeonUtilityMain.getPackVersionApi()
                     .makeItemInstance(getId(), getCount(random), getData(), getExtra());
         }
     }

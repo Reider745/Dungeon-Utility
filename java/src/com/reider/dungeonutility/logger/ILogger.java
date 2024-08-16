@@ -1,4 +1,4 @@
-package com.reider.dungeonutility.api.type;
+package com.reider.dungeonutility.logger;
 
 public interface ILogger {
     void debug(String text);

@@ -5,9 +5,8 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
-import com.reider.dungeonutility.DUBoot;
+import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.struct.generation.thread.Algorithms;
-import com.reider.dungeonutility.struct.generation.thread.ChunkClearMembory;
 import com.reider.dungeonutility.struct.generation.thread.algorithms.ClearingClusters;
 import com.reider.dungeonutility.struct.generation.thread.algorithms.CriticalRelease;
 import com.reider.dungeonutility.struct.generation.types.IChunkManager;
@@ -20,10 +19,7 @@ import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
 import com.reider.dungeonutility.struct.generation.util.ChunkManager;
 import com.reider.dungeonutility.struct.generation.util.NativeChunkManager;
 import com.reider.dungeonutility.struct.generation.util.StructureStorage;
-import com.zhekasmirnov.innercore.api.runtime.saver.ObjectSaver;
-import com.zhekasmirnov.innercore.api.runtime.saver.ObjectSaverRegistry;
 import com.zhekasmirnov.innercore.api.runtime.saver.world.WorldDataScopeRegistry;
-import com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap;
 import org.json.JSONArray;
 
 public class StructurePieceController {
@@ -92,7 +88,7 @@ public class StructurePieceController {
         algorithms.addAlgoritm(criticalRelease);
         algorithms.addAlgoritm(clearingClusters);
 
-        DUBoot.getPackVersionApi().addCallback("LevelLeft", args -> {
+        DungeonUtilityMain.getPackVersionApi().addCallback("LevelLeft", args -> {
             getStorage().clear();
             getChunkManager().clear();
             return null;

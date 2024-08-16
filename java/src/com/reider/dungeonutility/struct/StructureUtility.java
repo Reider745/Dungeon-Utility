@@ -1,8 +1,9 @@
 package com.reider.dungeonutility.struct;
 
-import com.reider.dungeonutility.StructureLoader;
+import com.reider.dungeonutility.struct.loaders.StructureLoader;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.api.StructureDescription;
+import com.reider.dungeonutility.struct.loaders.StructurePool;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.NativeTileEntity;
@@ -64,18 +65,18 @@ public class StructureUtility {
     public static StructureDescription rotate(StructureDescription stru, StructureRotation rotate){
         return rotate(stru, rotate.ordinal());
     }
-    public static void registerRotations(String savePool, StructureDescription stru, String name, int[] rotates){
+    public static void registerRotations(StructurePool savePool, StructureDescription stru, String name, int[] rotates){
         for(int i : rotates) {
-            StructureLoader.getStructurePool(savePool).setStructure(name + "_" + i, rotate(stru, i));
+            savePool.setStructure(name + "_" + i, rotate(stru, i));
             AdaptedScriptAPI.Logger.Log("register rotate - " + name + "_" + i, "Dungeon Utility");
         }
     }
     public static void registerRotations(StructureDescription stru, String name, int[] rotates){
         registerRotations(StructureLoader.default_pool, stru, name, rotates);
     }
-    public static void registerRotations(String savePool, StructureDescription stru, String name, StructureRotation[] rotates) {
+    public static void registerRotations(StructurePool savePool, StructureDescription stru, String name, StructureRotation[] rotates) {
         for (StructureRotation i : rotates) {
-            StructureLoader.getStructurePool(savePool).setStructure(name + "_" + i, rotate(stru, i));
+            savePool.setStructure(name + "_" + i, rotate(stru, i));
             AdaptedScriptAPI.Logger.Log("register rotate - " + name + "_" + i.name(), "Dungeon Utility");
         }
     }
@@ -91,16 +92,16 @@ public class StructureUtility {
     public static String[] getAllStructureName(){
         return StructureLoader.getAllStructureName();
     }
-    public static void copy(String pool, String name1, String name2, StructureCopy copy) {
+    public static void copy(StructurePool pool, String name1, String name2, IStructureCopy copy) {
         StructureDescription stru = StructureLoader.getStructure(name1);
         BlockData[] blocks = stru.blocks;
         ArrayList<BlockData> newBlocks = new ArrayList<BlockData>();
         for(BlockData block : blocks)
             newBlocks.add(copy.copyBlock(block));
-        StructureLoader.getStructurePool(pool).setStructure(name2, new StructureDescription(getBlocksByArrayList(newBlocks), copy.copyPrototype(stru.prot)));
+        pool.setStructure(name2, new StructureDescription(getBlocksByArrayList(newBlocks), copy.copyPrototype(stru.prot)));
         AdaptedScriptAPI.Logger.Log("copy " + name1 + ", create " + name2, "DungeonUtility");
     }
-    public static void copy(String name1, String name2, StructureCopy c){
+    public static void copy(String name1, String name2, IStructureCopy c){
         copy(StructureLoader.default_pool, name1, name2, c);
     }
     public static int getBlockIndex(StructureDescription stru, int x, int y, int z) {

@@ -1,6 +1,6 @@
 package com.reider.dungeonutility.struct;
 
-import com.reider.dungeonutility.StructureLoader;
+import com.reider.dungeonutility.struct.loaders.StructureLoader;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.UtilAnimation;
 import com.reider.dungeonutility.api.data.BlockData;

@@ -1,11 +1,10 @@
-package com.reider.dungeonutility.struct.structures;
+package com.reider.dungeonutility.struct.prototypes;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import com.reider.dungeonutility.DUBoot;
-import com.reider.dungeonutility.api.StructurePrototypeInterface;
+import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.items.ItemGeneration;
 import com.reider.dungeonutility.multiversions.IPackVersion;
@@ -13,7 +12,7 @@ import com.reider.dungeonutility.multiversions.js_types.IJsObject;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 
-public class DefaultStructurePrototype implements StructurePrototypeInterface {
+public class DefaultStructurePrototype implements IStructurePrototype {
     private final String name;
     private final HashMap<Integer, ArrayList<BlockData>> blocks;
 
@@ -32,7 +31,7 @@ public class DefaultStructurePrototype implements StructurePrototypeInterface {
             return random_cache;
         Random random = null;
 
-        final IPackVersion version = DUBoot.getPackVersionApi();
+        final IPackVersion version = DungeonUtilityMain.getPackVersionApi();
         if(version.canJSObject(packet)){
             IJsObject scriptObjectWrap = version.createObject(packet);
             
@@ -48,9 +47,6 @@ public class DefaultStructurePrototype implements StructurePrototypeInterface {
     }
 
     @Override
-    public void before(int x, int y, int z, NativeBlockSource region, Object packet){}
-
-    @Override
     public boolean isBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
         ArrayList<BlockData> array = blocks.get(data.getData().state.id);
         if(array != null){
@@ -64,10 +60,5 @@ public class DefaultStructurePrototype implements StructurePrototypeInterface {
     @Override
     public void setBlock(Vector3 orgPos, BlockData data, NativeBlockSource region, Object packet){
         ItemGeneration.fill(name, ((int) orgPos.x)+data.x,((int) orgPos.y)+data.y, ((int) orgPos.z)+data.z, getRandom(packet), region, packet);
-    }
-
-    @Override
-    public void after(int x, int y, int z, NativeBlockSource region, Object packet){
-
     }
 }

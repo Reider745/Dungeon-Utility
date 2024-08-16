@@ -11,6 +11,7 @@ public enum StructureRotation {
     DEGREES_90_DOWN,
     DEGREES_180_DOWN,
     DEGREES_270_DOWN;
+
     public static StructureRotation[] getAll(){
         return new StructureRotation[] {DEFAULT, DEGREES_90, DEGREES_180, DEGREES_270, DEFAULT_DOWN, DEGREES_90_DOWN, DEGREES_180_DOWN, DEGREES_270_DOWN};
     }

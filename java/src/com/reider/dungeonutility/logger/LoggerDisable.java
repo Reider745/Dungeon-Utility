@@ -1,4 +1,4 @@
-package com.reider.dungeonutility.api.type;
+package com.reider.dungeonutility.logger;
 
 public class LoggerDisable implements ILogger {
     @Override

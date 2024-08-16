@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
-import com.reider.Debug;
-import com.reider.dungeonutility.DUBoot;
+import com.reider.dungeonutility.logger.Debug;
+import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.multiversions.js_types.IJsObject;
 import com.reider.dungeonutility.struct.StructureUtility;
 import com.reider.dungeonutility.struct.StructureUtility.Size;
@@ -100,7 +100,7 @@ public class StructurePiece implements IStructurePiece {
         long start = System.currentTimeMillis();
         //StructurePieceController.getChunkManager().add(dimension, x, z);
         NativeBlockSource region = NativeBlockSource.getCurrentWorldGenRegion();
-        IJsObject object = DUBoot.getPackVersionApi().createObjectEmpty();
+        IJsObject object = DungeonUtilityMain.getPackVersionApi().createObjectEmpty();
 
         object.setJavaObj("random", random);
 

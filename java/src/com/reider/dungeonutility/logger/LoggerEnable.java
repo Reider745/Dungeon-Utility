@@ -1,12 +1,12 @@
-package com.reider.dungeonutility.api.type;
+package com.reider.dungeonutility.logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.reider.dungeonutility.DUBoot;
+import com.reider.dungeonutility.DungeonUtilityMain;
+import com.reider.dungeonutility.logger.ILogger;
 import com.reider.dungeonutility.multiversions.IPackVersion;
 import com.reider.dungeonutility.multiversions.js_types.IJsObject;
-import com.reider.dungeonutility.multiversions.js_types.IJsPass;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
 import com.zhekasmirnov.innercore.api.mod.ui.window.UIWindow;
@@ -63,7 +63,7 @@ public class LoggerEnable implements ILogger {
 
     @Override
     public void setAdditionSetting(Object setting) {
-        final IJsObject scriptObjectWrap = DUBoot.getPackVersionApi().createObject(setting);
+        final IJsObject scriptObjectWrap = DungeonUtilityMain.getPackVersionApi().createObject(setting);
 
         TEXT_SIZE = scriptObjectWrap.getInt("text_size", TEXT_SIZE);
         STORAGE = scriptObjectWrap.getInt("chart_info", STORAGE);
@@ -94,7 +94,7 @@ public class LoggerEnable implements ILogger {
         window.setDynamic(false);
         window.setBackgroundColor(Color.argb(0, 0, 0, 0));
 
-        final IPackVersion version = DUBoot.getPackVersionApi();
+        final IPackVersion version = DungeonUtilityMain.getPackVersionApi();
 
         IJsObject content = version.createObjectEmpty();
 
@@ -142,7 +142,7 @@ public class LoggerEnable implements ILogger {
     private void updateDebug(String key, String text) {
         if(!canEnable(key)) return;
 
-        final IPackVersion version = DUBoot.getPackVersionApi();
+        final IPackVersion version = DungeonUtilityMain.getPackVersionApi();
         IJsObject text_element = version.createObjectEmpty();
         IJsObject font = version.createObjectEmpty();
         IJsObject content = version.getContent(window);
@@ -205,7 +205,7 @@ public class LoggerEnable implements ILogger {
             updateDebug(key+"_title", title);
             updateDebug(key+"_info", "min: "+info.min+", max: "+ info.max + ", avg: "+info.avg);
 
-            final IPackVersion version = DUBoot.getPackVersionApi();
+            final IPackVersion version = DungeonUtilityMain.getPackVersionApi();
 
             IJsObject content = version.getContent(window);
             IJsObject elements = (IJsObject) content.getScriptObj("elements");

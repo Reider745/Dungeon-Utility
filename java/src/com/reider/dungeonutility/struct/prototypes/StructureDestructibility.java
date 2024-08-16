@@ -1,4 +1,4 @@
-package com.reider.dungeonutility.struct.structures;
+package com.reider.dungeonutility.struct.prototypes;
 
 import java.util.ArrayList;
 import java.util.HashMap;

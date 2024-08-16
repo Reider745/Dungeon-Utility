@@ -1,6 +1,6 @@
-function StructureDescriptionJS(stru_name){
+function StructureDescription(stru_name){
 	if(stru_name == undefined || stru_name == null)
-		var stru = new StructureDescription([]);
+		var stru = new StructureDescriptionJava([]);
 	else
 		var stru = StructureLoader.getStructure(stru_name);
 	let cache = false;

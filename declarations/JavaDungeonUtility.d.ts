@@ -71,18 +71,18 @@ declare class JavaBlockData extends java.lang.Object {
 
 declare class JavaStructureDescription extends java.lang.Object  {
     public blocks: JavaBlockData[];
-    public prot: StructurePrototypeInterface;
+    public prot: IStructurePrototype;
 
-    constructor(blocks: JavaBlockData[], prot: StructurePrototypeInterface);
+    constructor(blocks: JavaBlockData[], prot: IStructurePrototype);
     constructor(blocks: JavaBlockData[]);
     constructor(stru: JavaStructureDescription);
 
     clone(): JavaStructureDescription;
 
-    set(x: number, y: number, z: number, region: BlockSource, addProt: StructurePrototypeInterface, use: boolean, packet: any);
+    set(x: number, y: number, z: number, region: BlockSource, addProt: IStructurePrototype, use: boolean, packet: any);
     set(x: number, y: number, z: number, region: BlockSource);
 
-    build(x: number, y: number, z: number, region: BlockSource, addProt: StructurePrototypeInterface, use: boolean, packet: any, sleep: number);
+    build(x: number, y: number, z: number, region: BlockSource, addProt: IStructurePrototype, use: boolean, packet: any, sleep: number);
     build(x: number, y: number, z: number, region: BlockSource, sleep: number);
 
     isSetStructure(x: number, y: number, z: number, region: BlockSource): boolean;
@@ -90,7 +90,7 @@ declare class JavaStructureDescription extends java.lang.Object  {
     destroy(x: number, y: number, z: number, region: BlockSource): boolean;
 }
 
-declare interface StructurePrototypeInterface {
+declare interface IStructurePrototype {
     before(x: number, y: number, z: number, region: BlockSource, packet: any): void;
     isBlock(orgPos: JavaVector3, data: JavaBlockData, region: BlockSource, packet: any): boolean;
     setBlock(orgPos: JavaVector3, data: JavaBlockData, region: BlockSource, packet: any): void;
@@ -104,7 +104,7 @@ declare class JavaStructureDestructibility extends java.lang.Object {
     public getMap(): java.util.HashMap<java.lang.Integer, java.util.ArrayList<JavaBlockData>>;
 }
 
-declare class JavaDefaultStructurePrototype extends java.lang.Object implements StructurePrototypeInterface {
+declare class JavaDefaultStructurePrototype extends java.lang.Object implements IStructurePrototype {
     constructor(item_generation_name: string, blocks: JavaStructureDestructibility);
 
     public before(x: number, y: number, z: number, region: BlockSource, packet: any): void;
@@ -125,17 +125,17 @@ declare class JavaStructure {
     /** @deprecated */
     static destroy(stru: JavaStructureDescription, x: number, y: number, z: number, region: BlockSource): boolean;
     /** @deprecated */
-    static setGlobalPrototype(name: string, prot: StructurePrototypeInterface): boolean;
+    static setGlobalPrototype(name: string, prot: IStructurePrototype): boolean;
     /** @deprecated */
-    static getGlobalPrototype(name: string): StructurePrototypeInterface;
+    static getGlobalPrototype(name: string): IStructurePrototype;
 
     constructor(stru: JavaStructureDescription);
 
     setUseGlobalPrototype(value: boolean): void;
     isUseGlobalPrototype(): boolean;
 
-    setPrototype(prot: StructurePrototypeInterface): void;
-    getPrototype(): StructurePrototypeInterface;
+    setPrototype(prot: IStructurePrototype): void;
+    getPrototype(): IStructurePrototype;
 
     getStructure(): JavaStructureDescription;
     setStructure(stru: JavaStructureDescription): void;
@@ -274,5 +274,152 @@ declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.Structure"): 
 declare function WRAP_JAVA(path: "com.reider.dungeonutility.api.StructureDescription"): typeof JavaStructureDescription;
 declare function WRAP_JAVA(path: "com.reider.dungeonutility.api.data.BlockData"): typeof JavaBlockData;
 declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.generation.types.api.DefaultGeneration"): typeof JavaDefaultGeneration;
-declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.structures.DefaultStructurePrototype"): typeof JavaDefaultStructurePrototype;
-declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.structures.StructureDestructibility"): typeof JavaStructureDestructibility;
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.prototypes.DefaultStructurePrototype"): typeof JavaDefaultStructurePrototype;
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.prototypes.StructureDestructibility"): typeof JavaStructureDestructibility;
+
+interface ILogger {
+    debug(text: string): void;
+    open(): void;
+    close(): void;
+    updateСhart(key: string, title: string, value: number): void;
+    error(error: java.lang.Exception): void;
+    canEnable(key: string): boolean;
+    setEnable(key: string, enable: boolean): void;
+    setAdditionSetting(setting: {[key: string]: number}): void;
+}
+
+declare class JavaLoggerDisable extends java.lang.Object implements ILogger {
+    public setAdditionSetting(setting: { [key: string]: number; }): void;
+    public debug(text: string): void;
+    public open(): void;
+    public close(): void;
+    public updateСhart(key: string, title: string, value: number): void;
+    public error(error: java.lang.Exception): void;
+    public canEnable(key: string): boolean;
+    public setEnable(key: string, enable: boolean): void;
+}
+
+declare class JavaLoggerEnable extends java.lang.Object implements ILogger {
+    public setAdditionSetting(setting: { [key: string]: number; }): void;
+    public debug(text: string): void;
+    public open(): void;
+    public close(): void;
+    public updateСhart(key: string, title: string, value: number): void;
+    public error(error: java.lang.Exception): void;
+    public canEnable(key: string): boolean;
+    public setEnable(key: string, enable: boolean): void;
+}
+
+declare class JavaDebug {
+    static get(): ILogger;
+    static set(logger: ILogger): void;
+}
+
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.logger.Debug"): typeof JavaDebug;
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.logger.LoggerDisable"): typeof JavaLoggerDisable;
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.logger.LoggerEnable"): typeof JavaLoggerEnable;
+
+type ROTATION = number;
+
+declare namespace JavaStructureRotation {
+    export const DEFAULT: ROTATION;
+    export const DEGREES_90: ROTATION;
+    export const DEGREES_180: ROTATION;
+    export const DEGREES_270: ROTATION;
+    export const DEFAULT_DOWN: ROTATION;
+    export const DEGREES_90_DOWN: ROTATION;
+    export const DEGREES_180_DOWN: ROTATION;
+    export const DEGREES_270_DOWN: ROTATION;
+
+    export function getAll(): ROTATION[];
+    export function getAllY(): ROTATION[];
+    export function getAllYDown(): ROTATION[];
+
+    export function getRandomName(rotations: ROTATION[], random: Random): string;
+    export function getRandomName(rotations: ROTATION[]): string;
+}
+
+
+
+
+
+
+
+
+
+type FILE_FORMATS = "DungeonAPI" | "DungeonAPI_V2" | "DungeonCore" | "Structures" | "DungeonUtility";
+
+declare class JavaStructureRegisterLoader {
+    public add(name: string, path: string, type: FILE_FORMATS, compression: boolean): void;
+    public loaded(): void;
+}
+
+interface IStructureCopy {
+    copyBlock(block: JavaBlockData): JavaBlockData;
+    copyPrototype(prot: IStructurePrototype): IStructurePrototype;
+}
+
+declare class JavaStructurePool {
+    constructor(name: string, global: boolean);
+    constructor(name: string);
+
+    public getName(): string;
+    public getLoader(): JavaStructureRegisterLoader;
+    public setPathStructures(path: string): void;
+    public getStructure(name: string): JavaStructureDescription;  
+    public setStructure(name: string, structure: JavaStructureDescription): void;
+    public getStructures(): java.util.HashMap<string, JavaStructureDescription>;
+    public getAllStructure(): string[];
+
+    public load(name: string, path: string, type: FILE_FORMATS, compression: boolean): void;
+    public loadRuntime(name: string, path: string, type: FILE_FORMATS, compression: boolean): void;
+    public isLoad(name: string): boolean;
+    public deLoad(name: string): void;
+
+    public copy(name1: string, name2: string, controller: IStructureCopy): void;
+    public registerRotations(stru: JavaStructureDescription, name: string, rotates: ROTATION[]): void;
+    public setGlobalPrototype(name: string, structure: IStructurePrototype): void;
+}
+
+declare namespace JavaStructureLoader {
+    export function getStructurePoolByName(name: string): Nullable<JavaStructurePool>;
+    export function getStructurePool(name: string): JavaStructurePool;
+    export function getAllPool(): string[];
+    export function getAllStructureAndPool(): java.util.HashMap<string, string[]>;
+    export function registerPool(pool: JavaStructurePool): void;
+
+    /** @deprecated */
+    export function load(name: string, path: string, type: FILE_FORMATS, compression: boolean): void;
+    /** @deprecated */
+    export function loadRuntime(name: string, path: string, type: FILE_FORMATS, compression: boolean): void;
+    /** @deprecated */
+    export function getStructure(name: string): JavaStructureDescription;
+    /** @deprecated */
+    export function isStructureLoad(name: string): boolean;
+    /** @deprecated */
+    export function getAllStructureName(): string[];
+    /** @deprecated */
+    export function deLoad(name: string): void;
+}
+
+declare class JavaStructureCompression {
+    static compression(path: string, content: string): void;
+    static decompression(path: string): string;
+}
+
+interface ILoaderType {
+    read(file: string, path: string): void;
+    save(stru: JavaStructureDescription): string;
+    isLoadRuntime(): boolean;
+}
+
+declare class JavaLoaderType {
+    static registerType(name: string, type: ILoaderType): void
+    static getType(name: string): ILoaderType;
+    static getTypes(): string[];
+}
+
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.loaders.StructurePool"): typeof JavaStructurePool;
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.loaders.StructureLoader"): typeof JavaStructureLoader;
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.formats.StructureCompression"): typeof JavaStructureCompression;
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.formats.LoaderType"): typeof JavaLoaderType;

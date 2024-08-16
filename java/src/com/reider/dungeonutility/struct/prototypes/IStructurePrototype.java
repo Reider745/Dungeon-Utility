@@ -1,10 +1,10 @@
-package com.reider.dungeonutility.api;
+package com.reider.dungeonutility.struct.prototypes;
 
 import com.reider.dungeonutility.api.data.BlockData;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 
-public interface StructurePrototypeInterface {
+public interface IStructurePrototype {
     default void before(int x, int y, int z, NativeBlockSource region, Object packet){
 
     }
