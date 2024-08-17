@@ -15,15 +15,16 @@ import org.json.JSONException;
 
 public class DungeonCore extends LoaderType {
     private static char symbol = '.';
+
     @Override
-    public StructureDescription read(String file, String path) {
-        ArrayList<BlockData> blocks = new ArrayList<>();
+    public StructureDescription read(byte[] bytes, String path) {
+        final ArrayList<BlockData> blocks = new ArrayList<>();
         
         try{
-            JSONArray json = new JSONArray(file);
+            final JSONArray json = new JSONArray(new String(bytes));
             for(int i = 0;i < json.length();i++){
-                JSONArray list = json.getJSONArray(i);
-                String[] datas = Utils.split(list.getString(1), symbol);
+                final JSONArray list = json.getJSONArray(i);
+                final String[] datas = Utils.split(list.getString(1), symbol);
                 BlockState state = null;
                 BlockState stateExtra = null;
 
@@ -69,20 +70,23 @@ public class DungeonCore extends LoaderType {
     }
 
     @Override
-    public String save(StructureDescription stru) {
-        JSONArray json = new JSONArray();
+    public byte[] save(StructureDescription stru) {
+        final JSONArray json = new JSONArray();
         try{
             for (BlockData bl : stru.blocks){
-                BlockData data = bl.getData();
-                JSONArray list = new JSONArray();
+                final BlockData data = bl.getData();
+                final JSONArray list = new JSONArray();
+
                 list.put(Utils.getIdBlock(data.state.id));
                 list.put(data.state.data+"."+data.x+"."+ data.y+"."+ data.z);
                 list.put(Utils.getJsonForHashMap(data.state.getNamedStates()));
 
                 if(bl.stateExtra != null){
-                    JSONArray extra = new JSONArray();
+                    final JSONArray extra = new JSONArray();
+
                     extra.put(Utils.getIdBlock(data.stateExtra.id));
                     extra.put(Utils.getJsonForHashMap(data.stateExtra.getNamedStates()));
+
                     list.put(extra);
                 }
 
@@ -92,6 +96,6 @@ public class DungeonCore extends LoaderType {
             Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));
         }
         
-        return json.toString();
+        return json.toString().getBytes();
     }
 }

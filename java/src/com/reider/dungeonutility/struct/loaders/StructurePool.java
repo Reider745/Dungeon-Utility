@@ -1,5 +1,6 @@
 package com.reider.dungeonutility.struct.loaders;
 
+import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.struct.formats.LoaderType;
@@ -8,6 +9,7 @@ import com.reider.dungeonutility.struct.IStructureCopy;
 import com.reider.dungeonutility.struct.StructureRotation;
 import com.reider.dungeonutility.struct.StructureUtility;
 import com.reider.dungeonutility.struct.formats.StructureCompression;
+import com.zhekasmirnov.horizon.runtime.logger.Logger;
 
 import java.util.HashMap;
 
@@ -22,6 +24,12 @@ public class StructurePool {
     public StructurePool(String name, boolean global){
         this.name_pool = name;
         if(global) StructureLoader.registerPool(this);
+        else
+            DungeonUtilityMain.getPackVersionApi()
+                    .addCallback("StructurePreLoad", args -> {
+                        loader.loaded();
+                        return null;
+                    });
     }
 
     public StructurePool(String name){
@@ -65,10 +73,11 @@ public class StructurePool {
     }
 
     public void loadRuntime(String name, String path, String type, boolean compression){
-        if(compression)
-            setStructure(name, LoaderType.getType(type).read(StructureCompression.decompression(path), path));
-        else
-            setStructure(name, LoaderType.getType(type).read(Utils.getTextToFile(path), path));
+        if(compression) {
+            setStructure(name, LoaderType.getType(type).read(StructureCompression.decompression(path).getBytes(), path));
+        } else {
+            setStructure(name, LoaderType.getType(type).read(Utils.readFileBytes(path), path));
+        }
     }
 
     public void load(String name, String path, String type, boolean compile){

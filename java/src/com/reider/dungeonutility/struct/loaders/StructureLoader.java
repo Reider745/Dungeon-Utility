@@ -3,6 +3,7 @@ package com.reider.dungeonutility.struct.loaders;
 import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.multiversions.IPackVersion;
+import com.reider.dungeonutility.struct.formats.LoaderType;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.runtime.Callback;
 
@@ -43,6 +44,8 @@ public class StructureLoader {
 
             Logger.debug(DungeonUtilityMain.logger_name, "end load, load time: "+(System.currentTimeMillis()-startLoad));
             Callback.invokeCallback("StructureLoad");
+
+            //LoaderType.debugFormats("/storage/emulated/0/games/");
 
             stopTick = false;
             return null;

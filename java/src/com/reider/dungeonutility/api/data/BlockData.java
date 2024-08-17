@@ -116,4 +116,16 @@ public class BlockData implements Cloneable {
     public static BlockData getBlockByCoords(int x, int y, int z, NativeBlockSource region){
         return createData(x, y, z, region.getBlock(x, y, z), region.getExtraBlock(x , y, z), null);
     }
+
+    @Override
+    public String toString() {
+        return "BlockData{" +
+                "x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                ", state=" + state +
+                ", stateExtra=" + stateExtra +
+                ", tag=" + tag +
+                '}';
+    }
 }

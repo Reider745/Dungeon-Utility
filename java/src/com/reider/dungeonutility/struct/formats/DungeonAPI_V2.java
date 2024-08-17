@@ -16,13 +16,14 @@ import org.json.JSONException;
 
 public class DungeonAPI_V2 extends LoaderType {
     @Override
-    public StructureDescription read(String file, String path) {
-        ArrayList<BlockData> blocks = new ArrayList<>();
+    public StructureDescription read(byte[] bytes, String path) {
+        final ArrayList<BlockData> blocks = new ArrayList<>();
         try {
-            JSONArray json = new JSONArray(file);
+            final JSONArray json = new JSONArray(new String(bytes));
+
             for(int i = 0;i < json.length();i++){
-                String block = json.optString(i);
-                String[] datas = block.split("\\.");
+                final String block = json.optString(i);
+                final String[] datas = block.split("\\.");
                 blocks.add(BlockData.createData(Integer.parseInt(datas[2]), Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), new BlockState(Utils.getIdBlock(datas[0]), Integer.parseInt(datas[1]))));
             }
         } catch (JSONException e) {
@@ -35,11 +36,11 @@ public class DungeonAPI_V2 extends LoaderType {
 
     @Override
     public boolean isLoadRuntime() {
-        return false;
+        return true;
     }
 
     @Override
-    public String save(StructureDescription stru) {
+    public byte[] save(StructureDescription stru) {
         String json = "[";
         for(int i = 0;i < stru.blocks.length;i++){
             BlockData data = stru.blocks[i].getData();
@@ -48,6 +49,6 @@ public class DungeonAPI_V2 extends LoaderType {
             json += "\""+ Utils.getIdBlock(data.state.id) + "." + data.state.data + "." + data.x + "." + data.y + "." + data.z+"\"";
         }
         json += "]";
-        return json;
+        return json.getBytes();
     }
 }

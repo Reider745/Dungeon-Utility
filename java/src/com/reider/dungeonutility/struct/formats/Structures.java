@@ -16,14 +16,15 @@ import org.json.JSONObject;
 
 public class Structures extends LoaderType {
     @Override
-    public StructureDescription read(String file, String path) {
-        ArrayList<BlockData> blocks = new ArrayList<>();
+    public StructureDescription read(byte[] bytes, String path) {
+        final ArrayList<BlockData> blocks = new ArrayList<>();
 
         try{
-            JSONObject json = new JSONObject(file);
-            JSONArray structure = json.getJSONArray("structure");
+            final JSONObject json = new JSONObject(new String(bytes));
+            final JSONArray structure = json.getJSONArray("structure");
+
             for(int i = 0;i < structure.length();i++){
-                JSONArray list = structure.getJSONArray(i);
+                final JSONArray list = structure.getJSONArray(i);
                 
                 Object value = list.get(3);
                 BlockState state = null;
@@ -56,28 +57,30 @@ public class Structures extends LoaderType {
 
     @Override
     public boolean isLoadRuntime() {
-        return false;
+        return true;
     }
 
     @Override
-    public String save(StructureDescription stru) {
-        JSONArray list = new JSONArray();
-        JSONObject json = new JSONObject();
+    public byte[] save(StructureDescription stru) {
+        final JSONArray list = new JSONArray();
+        final JSONObject json = new JSONObject();
 
         try{
             for(BlockData block : stru.blocks){
-                BlockData data = block.getData();
-                JSONArray datas = new JSONArray();
+                final BlockData data = block.getData();
+                final JSONArray datas = new JSONArray();
+
                 datas.put(data.x);
                 datas.put(data.y);
                 datas.put(data.z);
 
-                JSONObject block_data = new JSONObject();
+                final JSONObject block_data = new JSONObject();
                 block_data.put("id", Utils.getIdBlock(data.state.id));
                 block_data.put("data", data.state.data);
 
                 datas.put(block_data);
                 datas.put(null);
+
                 list.put(datas);
             }
 
@@ -87,6 +90,6 @@ public class Structures extends LoaderType {
             Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));
         }
 
-        return json.toString();
+        return json.toString().getBytes();
     }
 }

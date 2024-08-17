@@ -9,12 +9,13 @@ import java.util.ArrayList;
 
 public class DungeonAPI extends LoaderType {
     @Override
-    public StructureDescription read(String file, String path) {
-        ArrayList<BlockData> blocks = new ArrayList<>();
+    public StructureDescription read(byte[] bytes, String path) {
+        final String file = new String(bytes);
+        final ArrayList<BlockData> blocks = new ArrayList<>();
+        final String[] strings = file.split(":");
 
-        String[] strings = file.split(":");
         for(String str : strings){
-            String[] data = str.split("\\.");
+            final String[] data = str.split("\\.");
             blocks.add(BlockData.createData(
                     Integer.parseInt(data[2]),
                     Integer.parseInt(data[3]),
@@ -28,11 +29,11 @@ public class DungeonAPI extends LoaderType {
 
     @Override
     public boolean isLoadRuntime() {
-        return false;
+        return true;
     }
 
     @Override
-    public String save(StructureDescription stru) {
+    public byte[] save(StructureDescription stru) {
         String str = "";
         for(int i = 0;i < stru.blocks.length;i++){
             BlockData data = stru.blocks[i].getData();
@@ -40,6 +41,6 @@ public class DungeonAPI extends LoaderType {
             if(i != stru.blocks.length - 1)
                 str+=":";
         }
-        return str;
+        return str.getBytes();
     }
 }

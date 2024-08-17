@@ -4,6 +4,7 @@ const BlockData = WRAP_JAVA("com.reider.dungeonutility.api.data.BlockData");
 const StructureDescriptionJava = WRAP_JAVA("com.reider.dungeonutility.api.StructureDescription");
 const StructureCompression = WRAP_JAVA("com.reider.dungeonutility.struct.formats.StructureCompression");
 const LoaderType = WRAP_JAVA("com.reider.dungeonutility.struct.formats.LoaderType");
+const Utils = WRAP_JAVA("com.reider.dungeonutility.api.Utils");
 
 const DEFAULT_POOL_NAME = "default";
 type STRUCTURE = string | JavaStructureDescription;
@@ -141,8 +142,8 @@ namespace StructureLoader {
     /**@deprecated */
 	export function save(path: string, name: string, type?: string, compression?: boolean): void {
 		try{
-			FileTools.WriteText(path, LoaderType.getType(type||"DungeonUtility")
-                .save(StructureLoader.getStructure(name)), false)
+			Utils.writeFileBytes(path, LoaderType.getType(type||"DungeonUtility")
+				.save(StructureLoader.getStructure(name)));
 			if(compression)
 				StructureLoader.compile(path);
 		}catch(error){

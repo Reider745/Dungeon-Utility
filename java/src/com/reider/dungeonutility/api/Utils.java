@@ -1,12 +1,13 @@
 package com.reider.dungeonutility.api;
 
+import com.reider.dungeonutility.DungeonUtilityMain;
+import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.log.ICLog;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -77,16 +78,31 @@ public class Utils {
         return result;
     }
 
-    public static String getTextToFile(String path){
-        String text = "";
+    public static byte[] readFileBytes(String path){
         try {
-            Reader reader = new FileReader(path);
-            BufferedReader br = new BufferedReader(reader);
-            String line = null;
-            while((line = br.readLine())!= null)
-                text+=line;
-            br.close();
+            final File file = new File(path);
+            final FileInputStream inputStream = new FileInputStream(file);
+            final byte[] bytes = new byte[(int) file.length()];
+
+            inputStream.read(bytes);
+            inputStream.close();
+
+            return bytes;
         } catch (Exception e) {}
-        return text;
+        return new byte[]{};
+    }
+
+    public static void writeFileBytes(String path, byte[] bytes){
+        try{
+            final File file = new File(path);
+            if(!file.exists())
+                file.createNewFile();
+
+            final FileOutputStream outputStream = new FileOutputStream(file);
+            outputStream.write(bytes);
+            outputStream.close();
+        }catch (IOException e){
+            Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));
+        }
     }
 }

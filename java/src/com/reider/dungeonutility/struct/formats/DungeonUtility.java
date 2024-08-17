@@ -51,11 +51,11 @@ public class DungeonUtility extends LoaderType {
     }
 
     @Override
-    public StructureDescription read(String file, String path) {
-        ArrayList<BlockData> blocks = new ArrayList<>();
+    public StructureDescription read(byte[] bytes, String path) {
+        final ArrayList<BlockData> blocks = new ArrayList<>();
         
         try{
-            JSONArray json = new JSONArray(file);
+            final JSONArray json = new JSONArray(new String(bytes));
             for(int i = 0;i < json.length();i++)
                 blocks.add(parseBlock(json.getJSONArray(i)));
         }catch (JSONException e) {
@@ -71,8 +71,8 @@ public class DungeonUtility extends LoaderType {
     }
 
     @Override
-    public String save(StructureDescription stru) {
-        JSONArray json = new JSONArray();
+    public byte[] save(StructureDescription stru) {
+        final JSONArray json = new JSONArray();
         try{
             for(BlockData block : stru.blocks){
                 BlockData data = block.getData();
@@ -120,6 +120,7 @@ public class DungeonUtility extends LoaderType {
         }catch (JSONException e) {
             Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));
         }
-        return json.toString();
+
+        return json.toString().getBytes();
     }
 }

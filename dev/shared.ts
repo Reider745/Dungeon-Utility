@@ -66,6 +66,8 @@ Network.addServerPacket("dungeonutility.command.set", (client, data: PacketSet) 
     }
 });
 
+const CompatibilityBase = WRAP_JAVA("com.reider.dungeonutility.struct.formats.du_v2.compatibility.CompatibilityBase");
+
 Callback.addCallback("NativeCommand", (cmd) => {
     let args = cmd.split(" ")
     if(args[0] == "/du"){
@@ -124,6 +126,12 @@ Callback.addCallback("NativeCommand", (cmd) => {
                 Network.sendToServer("dungeonutility.command.set", packet);
                 Game.prevent();
                 Game.message(EColor.GREEN + "Отправлено серверу на обработку");
+            }else if(args[1] == "du2"){// Отображает структуру в более человеческом формате
+                const base = new CompatibilityBase(new java.util.HashMap());
+                base.parseZones(java.nio.ByteBuffer.wrap(Utils.readFileBytes(__dir__+"output/"+args[2]+".struct")));
+                Game.message(String(base.toString()));
+                Utils.writeFileBytes(__dir__+"output/"+args[2 ]+".struct.txt", base.toString().getBytes() as number[]);
+                Game.prevent();
             }
 		}
 	}catch(e){

@@ -2,24 +2,25 @@ package com.reider.dungeonutility.struct.formats;
 
 import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.api.StructureDescription;
+import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
+import com.reider.dungeonutility.struct.formats.du_v2.DungeonUtility_V2;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
-import com.zhekasmirnov.innercore.utils.FileTools;
-
 import java.util.HashMap;
 
 public abstract class LoaderType {
-    public abstract StructureDescription read(String file, String path);
-    public abstract String save(StructureDescription stru);
+    public abstract StructureDescription read(byte[] file, String path);
+    public abstract byte[] save(StructureDescription stru);
     public abstract boolean isLoadRuntime();
 
     public static void debugStructureFormat(String path, LoaderType loader, StructureDescription structure) throws Exception{
-        final String file = loader.save(structure);
-        FileTools.writeFileText(path, file);
+        final byte[] file = loader.save(structure);
+        Utils.writeFileBytes(path, file);
+
         StructureDescription result = loader.read(file, path);
-        FileTools.writeFileText(path+".result.stru", loader.save(result));
+        Utils.writeFileBytes(path+".result.stru", loader.save(result));
     }
 
     private static HashMap<String, LoaderType> types = new  HashMap<String, LoaderType>();
@@ -64,5 +65,8 @@ public abstract class LoaderType {
         registerType("DungeonCore", new DungeonCore());
         registerType("Structures", new Structures());
         registerType("DungeonUtility", new DungeonUtility());
+        registerType("DU", new DungeonUtility());
+        registerType("DungeonUtility_V2", new DungeonUtility_V2());
+        registerType("DU2", new DungeonUtility_V2());
     }
 }

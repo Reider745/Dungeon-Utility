@@ -408,8 +408,8 @@ declare class JavaStructureCompression {
 }
 
 interface ILoaderType {
-    read(file: string, path: string): void;
-    save(stru: JavaStructureDescription): string;
+    read(file: number[], path: string): void;
+    save(stru: JavaStructureDescription): number[];
     isLoadRuntime(): boolean;
 }
 
@@ -423,3 +423,19 @@ declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.loaders.Struc
 declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.loaders.StructureLoader"): typeof JavaStructureLoader;
 declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.formats.StructureCompression"): typeof JavaStructureCompression;
 declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.formats.LoaderType"): typeof JavaLoaderType;
+
+declare namespace JavaUtils {
+    export function readFileBytes(path: string): number[];
+    export function writeFileBytes(path: string, bytes: number[]): void;
+}
+
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.api.Utils"): typeof JavaUtils;
+
+declare class JavaCompatibilityBase {
+    constructor(map: java.util.HashMap<Object, Object>);
+
+    public parseZones(buffer: java.nio.ByteBuffer): void;
+    public toString(): java.lang.String;
+}
+
+declare function WRAP_JAVA(path: "com.reider.dungeonutility.struct.formats.du_v2.compatibility.CompatibilityBase"): typeof JavaCompatibilityBase;

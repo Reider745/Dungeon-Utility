@@ -47,10 +47,12 @@
     * DungeonAPI
     * DungeonAPI_V2
 
-| Формат         | Поддержка BlockStae | Поддержка дополнительного блока | Поддержка CompountNBT |
-|----------------|---------------------|---------------------------------|-----------------------|
-| DungeonUtility | +                   | +                               | +                     |
-| DungeonCore    | +                   | +                               | -                     |
-| Structures     | -                   | -                               | -                     |
-| DungeonUtility | -                   | -                               | -                     |
-| DungeonAPI     | -                   | -                               | -                     |
+| Формат            | Поддержка BlockState | Поддержка дополнительного блока | Поддержка CompountNBT |
+|-------------------|----------------------|---------------------------------|-----------------------|
+| DungeonUtility_V2 | +                    | -                               | -                     |
+| DungeonUtility    | +                    | +                               | +                     |
+| DungeonCore       | +                    | +                               | -                     |
+| Structures        | -                    | -                               | -                     |
+| DungeonUtility    | -                    | -                               | -                     |
+| DungeonAPI        | -                    | -                               | -                     |
+| DungeonAPI_V2     | -                    | -                               | -                     |
