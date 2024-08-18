@@ -38,7 +38,7 @@ public class DungeonUtility extends LoaderType {
 
         NativeCompoundTag tag = null;
         if(list.length() >= 4)
-            tag = CompoundTagJson.parse(list.getJSONObject(3), new HashMap<>(), null);
+            tag = CompoundTagJson.parse(list.getJSONObject(3));
         
         return BlockData.createData(
                 Utils.getInt(datas[2]),
@@ -112,7 +112,7 @@ public class DungeonUtility extends LoaderType {
                         datas.put(0);
                     if(datas.length() == 2)
                         datas.put(0);
-                    datas.put(CompoundTagJson.getMapTag(data.tag, new HashMap<>(), new AtomicReference<>(0)));
+                    datas.put(CompoundTagJson.getMapTag(data.tag));
                 }
                 
                 json.put(datas);

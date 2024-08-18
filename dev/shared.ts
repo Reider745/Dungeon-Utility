@@ -128,7 +128,9 @@ Callback.addCallback("NativeCommand", (cmd) => {
                 Game.message(EColor.GREEN + "Отправлено серверу на обработку");
             }else if(args[1] == "du2"){// Отображает структуру в более человеческом формате
                 const base = new CompatibilityBase(new java.util.HashMap());
-                base.parseZones(java.nio.ByteBuffer.wrap(Utils.readFileBytes(__dir__+"output/"+args[2]+".struct")));
+                let buffer = java.nio.ByteBuffer.wrap(Utils.readFileBytes(__dir__+"output/"+args[2]+".struct"));
+                buffer.get()// version
+                base.readZones(buffer);
                 Game.message(String(base.toString()));
                 Utils.writeFileBytes(__dir__+"output/"+args[2 ]+".struct.txt", base.toString().getBytes() as number[]);
                 Game.prevent();
@@ -144,7 +146,7 @@ Callback.addCallback("NativeCommand", (cmd) => {
 /*Callback.addCallback("StructureLoadOne", () => {
     let pool = new StructurePool("test");
 
-    pool.put("mystructure", new StructureDescriptionJS()
+    pool.put("mystructure", new StructureDescription()
         .addBlock(0, 0, 0, new BlockState(VanillaBlockID.stonebrick, 0))
         .addBlock(0, 1, 0, new BlockState(VanillaBlockID.stonebrick, 1))
         .addBlock(0, 2, 0, new BlockState(VanillaBlockID.chest, 0))
@@ -157,7 +159,7 @@ Callback.addCallback("NativeCommand", (cmd) => {
         
     pool.setGlobalPrototype("mystructure", Structure.getPrototypeDefault("generationTest"))
 
-    pool.put("wood", new StructureDescriptionJS()
+    pool.put("wood", new StructureDescription()
         .addBlock(0, 0, 0, new BlockState(VanillaBlockID.log, 0))
         .addBlock(0, 1, 0, new BlockState(VanillaBlockID.log, 0))
         .addBlock(0, 2, 0, new BlockState(VanillaBlockID.leaves, 0))

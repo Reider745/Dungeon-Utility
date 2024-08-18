@@ -8,10 +8,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.util.*;
 
 public class Utils {
     private static boolean isNumber(String str){
@@ -104,5 +102,30 @@ public class Utils {
         }catch (IOException e){
             Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));
         }
+    }
+
+    //Максимальный размер строки 65536 символов
+    private static final int LIMIT_STRING = -Short.MIN_VALUE + Short.MAX_VALUE + 1;
+
+    public static void putString(ByteBuffer buffer, String str){
+        buffer.putShort((short) (Math.min(str.length(), LIMIT_STRING) + Short.MIN_VALUE));
+        final byte[] bytes = str.getBytes();
+
+        if(str.length() >= LIMIT_STRING)
+            for(int i = 0;i < LIMIT_STRING;i++)
+                buffer.put(bytes[i]);
+        else
+            buffer.put(str.getBytes());
+    }
+
+    public static String readString(ByteBuffer buffer){
+        final byte[] bytes = new byte[buffer.getShort() - Short.MIN_VALUE];
+        for(int a = 0;a < bytes.length;a++)
+            bytes[a] = buffer.get();
+        return new String(bytes);
+    }
+
+    public static int mathLength(String str){
+        return 2 + Math.min(str.getBytes().length, LIMIT_STRING);
     }
 }

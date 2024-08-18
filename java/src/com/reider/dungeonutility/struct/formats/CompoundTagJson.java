@@ -14,7 +14,7 @@ import com.zhekasmirnov.innercore.api.nbt.NbtDataType;
 
 public class CompoundTagJson {
     // Сохранение в json
-    public static Object getArray(NativeListTag tag, HashMap<Long, Object> hash, AtomicReference<Integer> id) throws JSONException{
+    private static Object getArray(NativeListTag tag, HashMap<Long, Object> hash, AtomicReference<Integer> id) throws JSONException{
         if(hash.containsKey(tag.pointer)){
             return hash.get(tag.pointer);
         }
@@ -65,7 +65,7 @@ public class CompoundTagJson {
         }
         return array;
     }
-    public static JSONArray getObject(String key, NativeCompoundTag tag, HashMap<Long, Object> hash, AtomicReference<Integer> id) throws JSONException {
+    private static JSONArray getObject(String key, NativeCompoundTag tag, HashMap<Long, Object> hash, AtomicReference<Integer> id) throws JSONException {
         JSONArray object = new JSONArray();
 
         int type = tag.getValueType(key);
@@ -107,7 +107,7 @@ public class CompoundTagJson {
         return object;
     }
 
-    public static Object getMapTag(NativeCompoundTag tag, HashMap<Long, Object> hash, AtomicReference<Integer> id) throws JSONException{
+    private static Object getMapTag(NativeCompoundTag tag, HashMap<Long, Object> hash, AtomicReference<Integer> id) throws JSONException{
         if(hash.containsKey(tag.pointer)){
             return hash.get(tag.pointer);
         }
@@ -126,9 +126,13 @@ public class CompoundTagJson {
         return object;
     }
 
+    public static JSONObject getMapTag(NativeCompoundTag tag) throws JSONException {
+        return (JSONObject) getMapTag(tag, new HashMap<>(), new AtomicReference<>(0));
+    }
+
 
     // Чтение из json
-    public static void putValue(NativeCompoundTag tag, JSONArray object, String key, HashMap<Integer, Object> hash) throws JSONException{
+    private static void putValue(NativeCompoundTag tag, JSONArray object, String key, HashMap<Integer, Object> hash) throws JSONException{
         final int type = object.getInt(1);
         if(object.isNull(0)){
             final Object res = hash.get(object.getInt(1));
@@ -175,7 +179,7 @@ public class CompoundTagJson {
         }
     }
 
-    public static NativeListTag parse(JSONArray array, HashMap<Integer, Object> hash) throws JSONException{
+    private static NativeListTag parse(JSONArray array, HashMap<Integer, Object> hash) throws JSONException{
         final NativeListTag list = new NativeListTag();
         if(array.length() == 3){
             hash.put(array.getInt(2), list);
@@ -233,7 +237,8 @@ public class CompoundTagJson {
         }
         return list;
     }
-    public static NativeCompoundTag parse(JSONObject object, HashMap<Integer, Object> hash, JSONArray parent) throws JSONException{
+
+    private static NativeCompoundTag parse(JSONObject object, HashMap<Integer, Object> hash, JSONArray parent) throws JSONException{
         final NativeCompoundTag tag = new NativeCompoundTag();
 
         if(parent != null && parent.length() == 3){
@@ -246,5 +251,9 @@ public class CompoundTagJson {
             putValue(tag, object.getJSONArray(key), key, hash);
         }
         return tag;
+    }
+
+    public static NativeCompoundTag parse(JSONObject json) throws JSONException {
+        return parse(json, new HashMap<>(), null);
     }
 }

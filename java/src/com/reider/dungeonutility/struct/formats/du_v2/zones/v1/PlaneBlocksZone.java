@@ -43,14 +43,6 @@ public class PlaneBlocksZone extends BaseZone {
     @Override
     public void addInfo(CompatibilityBase compatibility) {
         compatibility.addPlane(this);
-
-        /*System.out.println("====PlaneBlocksZone====");
-        System.out.println("z: "+z);
-        System.out.println("blocks: "+Arrays.deepToString(blocks));
-        System.out.println("height: "+blocks.length);
-        System.out.println("width: "+this.size_max);
-        System.out.println("mathLength: "+mathLength());
-        System.out.println("====END PlaneBlocksZone====");*/
     }
 
     @Override
@@ -77,8 +69,8 @@ public class PlaneBlocksZone extends BaseZone {
         buffer.putShort(this.size_max);
 
         for (final BlockData[] line : blocks) {
-            for (int i2 = 0; i2 < line.length; i2++) {
-                statesZone.putBlock(buffer, line[i2]);
+            for (BlockData blockData : line) {
+                statesZone.putBlock(buffer, blockData);
             }
         }
     }
@@ -101,13 +93,18 @@ public class PlaneBlocksZone extends BaseZone {
         for (final BlockData[] line : blocks) {
             String line_str = "";
 
-            for (int i2 = 0; i2 < line.length; i2++) {
-                line_str += "."+statesZone.getStateForBlock(line[i2]);
+            for (BlockData blockData : line) {
+                line_str += "." + statesZone.getStateForBlock(blockData);
             }
 
             content += line_str +"\n";
         }
         return content+"\n\n";
+    }
+
+    @Override
+    public int getPriority() {
+        return -5;
     }
 }
 

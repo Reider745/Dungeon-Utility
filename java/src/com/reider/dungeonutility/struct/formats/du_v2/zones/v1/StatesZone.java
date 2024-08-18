@@ -1,35 +1,140 @@
 package com.reider.dungeonutility.struct.formats.du_v2.zones.v1;
 
 
+import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
+import com.reider.dungeonutility.struct.formats.CompoundTagJson;
 import com.reider.dungeonutility.struct.formats.du_v2.compatibility.CompatibilityBase;
 import com.reider.dungeonutility.struct.formats.du_v2.util.State;
 import com.reider.dungeonutility.struct.formats.du_v2.zones.BaseZone;
+import com.reider.dungeonutility.struct.formats.du_v2.zones.IBinaryDungeonUtility;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
+import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.log.ICLog;
+import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 
 public class StatesZone extends BaseZone {
+    private static class StorageStateBlock implements IBinaryDungeonUtility {
+        private final boolean compression;
+        private BlockState main, extra;
+        private NativeCompoundTag tag;
+        private String tagJson;
+
+        public StorageStateBlock(boolean compression, BlockState main, BlockState extra, NativeCompoundTag tag){
+            this.compression = compression;
+            this.main = main;
+            this.extra = extra;
+            this.tag = tag;
+
+            try {
+                if(tag != null)
+                    tagJson = CompoundTagJson.getMapTag(tag).toString();
+            }catch (Exception e){
+                Logger.warning(ICLog.getStackTrace(e));
+            }
+        }
+
+        public StorageStateBlock(boolean compression){
+            this.compression = compression;
+        }
+
+        @Override
+        public void read(ByteBuffer buffer) {
+            tagJson = null;
+
+            boolean isMain = buffer.get() == 1;
+            boolean isExtra = buffer.get() == 1;
+            boolean isTag = buffer.get() == 1;
+
+            if(isMain)
+                main = State.read(compression, buffer);
+            if(isExtra)
+                extra = State.read(compression, buffer);
+            if(isTag){
+                try {
+                    tag = CompoundTagJson.parse(new JSONObject(Utils.readString(buffer)));
+                }catch (JSONException e){
+                    Logger.warning("Error loaded state: "+ICLog.getStackTrace(e));
+                }
+            }
+        }
+
+        @Override
+        public void write(ByteBuffer buffer) {
+            buffer.put((byte) (main != null ? 1 : 0));
+            buffer.put((byte) (extra != null ? 1 : 0));
+            buffer.put((byte) (tagJson != null ? 1 : 0));
+
+            if(main != null)
+                State.write(compression, main, buffer);
+            if(extra != null)
+                State.write(compression, extra, buffer);
+            if(tagJson != null)
+                Utils.putString(buffer, tagJson);
+        }
+
+        @Override
+        public int mathLength() {
+            int length = 3;
+            if(main != null)
+                length += State.mathLength(compression, main);
+            if(extra != null)
+                length += State.mathLength(compression, extra);
+            if(tagJson != null)
+                length += Utils.mathLength(tagJson);
+            return length;
+        }
+
+        @Override
+        public String toString() {
+            return "StorageStateBlock{" +
+                    "compression=" + compression +
+                    ", main=" + main +
+                    ", extra=" + extra +
+                    ", tagJson='" + tagJson + '\'' +
+                    '}';
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if(obj instanceof BlockData){
+                final BlockData data = (BlockData) obj;
+                try{
+                    if((data.tag != null && tagJson != null && !tagJson.equals(CompoundTagJson.getMapTag(data.tag).toString())) || (data.tag != null && tagJson == null))
+                        return false;
+                }catch(JSONException ignore){}
+
+                return State.equals(main, data.state) && State.equals(extra, data.stateExtra);
+            }
+            return super.equals(obj);
+        }
+    }
+
+
     public static final byte ID_BYTE = 1;
     public static final byte ID_SHORT = 2;
 
     private static final short NOT_BLOCK = Byte.MIN_VALUE;
-    private static final BlockState DEF_STATE = new BlockState(0, 0);
+    private static final StorageStateBlock DEF_STATE = new StorageStateBlock(false, new BlockState(0, 0), new BlockState(0, 0), null);
 
-    private final HashMap<Short, BlockState> states = new HashMap<>();
+    private final HashMap<Short, StorageStateBlock> states = new HashMap<>();
     private byte type_states = ID_BYTE;
     private short id = NOT_BLOCK + 1;
     private int x_offset, y_offset;
     private boolean compression = false;
 
-    public short addState(BlockState block) {
+    public short addState(BlockData block) {
         for(Short id : states.keySet())
-            if(State.equals(states.get(id), block))
+            if(states.get(id).equals(block))
                 return id;
 
         final short current_id = id++;
-        states.put(current_id, block);
+        states.put(current_id, new StorageStateBlock(compression, block.state, block.stateExtra, block.tag));
         if (current_id >= Byte.MAX_VALUE)
             type_states = ID_SHORT;
         return current_id;
@@ -39,9 +144,8 @@ public class StatesZone extends BaseZone {
         if(block == null) return NOT_BLOCK;
 
         for(Short id : states.keySet())
-            if(states.get(id).equals(block.state))
+            if(states.get(id).equals(block))
                 return id;
-
         return NOT_BLOCK;
     }
 
@@ -60,7 +164,9 @@ public class StatesZone extends BaseZone {
                 id = buffer.get();
             else
                 id = buffer.getShort();
-            states.put(id, State.read(compression, buffer));
+            final StorageStateBlock stateBlock = new StorageStateBlock(compression);
+            stateBlock.read(buffer);
+            states.put(id, stateBlock);
         }
     }
 
@@ -75,7 +181,7 @@ public class StatesZone extends BaseZone {
             else
                 buffer.putShort(key);
 
-            State.write(compression, states.get(key), buffer);
+            states.get(key).write(buffer);
         }
     }
 
@@ -86,7 +192,7 @@ public class StatesZone extends BaseZone {
 
         for(Short key : states.keySet()){
             count += type_states;
-            count += State.mathLength(compression, states.get(key));
+            count += states.get(key).mathLength();
         }
 
         return count;
@@ -108,11 +214,6 @@ public class StatesZone extends BaseZone {
     @Override
     public void addInfo(CompatibilityBase compatibility) {
         compatibility.setStates(this);
-
-        /*System.out.println("====StatesZone====");
-        System.out.println("states: "+states);
-        System.out.println("mathLength: "+mathLength());
-        System.out.println("====END StatesZone====");*/
     }
 
     public void putBlock(ByteBuffer buffer, BlockData block) {
@@ -132,7 +233,8 @@ public class StatesZone extends BaseZone {
         }
 
         if(id == NOT_BLOCK) return null;
-        return BlockData.createData(x - x_offset, y - y_offset, z, states.getOrDefault(id, DEF_STATE));
+        StorageStateBlock stateBlock = states.getOrDefault(id, DEF_STATE);
+        return BlockData.createData(x - x_offset, y - y_offset, z, stateBlock.main, stateBlock.extra, stateBlock.tag);
     }
 
     @Override
@@ -143,5 +245,10 @@ public class StatesZone extends BaseZone {
             content += state + " = "+states.get(state).toString()+"\n";
         }
         return content+"\n\n";
+    }
+
+    @Override
+    public int getPriority() {
+        return 5;
     }
 }

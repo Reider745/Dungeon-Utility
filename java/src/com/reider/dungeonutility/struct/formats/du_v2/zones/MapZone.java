@@ -1,5 +1,7 @@
 package com.reider.dungeonutility.struct.formats.du_v2.zones;
 
+import com.reider.dungeonutility.api.Utils;
+
 import java.nio.ByteBuffer;
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -109,11 +111,7 @@ public abstract class MapZone extends BaseZone {
                     map.put(key, new AbstractMap.SimpleEntry<>(type, buffer.getInt()));
                     break;
                 case TYPE_STRING:
-                    final short length = buffer.getShort();
-                    final byte[] bytes = new byte[length];
-                    for(int a = 0;a < length;a++)
-                        bytes[a] = buffer.get();
-                    map.put(key, new AbstractMap.SimpleEntry<>(type, new String(bytes)));
+                    map.put(key, new AbstractMap.SimpleEntry<>(type, Utils.readString(buffer)));
                     break;
             }
         }
@@ -141,9 +139,7 @@ public abstract class MapZone extends BaseZone {
                     buffer.putInt((int) value.getValue());
                     break;
                 case TYPE_STRING:
-                    final String str = (String) value.getValue();
-                    buffer.putShort((short) str.length());
-                    buffer.put(str.getBytes());
+                    Utils.putString(buffer, (String) value.getValue());
                     break;
             }
         }
@@ -170,8 +166,7 @@ public abstract class MapZone extends BaseZone {
                     length += 4;
                     break;
                 case TYPE_STRING:
-                    length += 2;
-                    length += ((String) value.getValue()).getBytes().length;
+                    length += Utils.mathLength((String) value.getValue());
                     break;
             }
         }

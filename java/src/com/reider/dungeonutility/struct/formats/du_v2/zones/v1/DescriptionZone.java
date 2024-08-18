@@ -37,12 +37,11 @@ public class DescriptionZone extends MapZone {
     @Override
     public void addInfo(CompatibilityBase compatibility) {
         compatibility.setDescription(this);
+    }
 
-        /*System.out.println("====DescriptionZone====");
-        System.out.println("canCompressionStates: "+this.canCompressionStates());
-        System.out.println("x: "+this.getXOffset()+", y: "+this.getYOffset());
-        System.out.println("mathLength: "+mathLength());
-        System.out.println("====END DescriptionZone====");*/
+    @Override
+    public int getPriority() {
+        return 10;
     }
 
     @Override

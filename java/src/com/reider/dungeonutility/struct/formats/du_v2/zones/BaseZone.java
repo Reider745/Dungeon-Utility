@@ -7,6 +7,7 @@ public abstract class BaseZone implements IBinaryDungeonUtility {
     public abstract byte getId();
     public abstract void addInfo(CompatibilityBase compatibility);
     public void preInfo(CompatibilityBase compatibility){}
+    public abstract int getPriority();
 
     @Override
     public String toString() {

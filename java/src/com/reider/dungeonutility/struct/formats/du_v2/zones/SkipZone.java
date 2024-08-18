@@ -15,6 +15,11 @@ public class SkipZone extends BaseZone {
     public void addInfo(CompatibilityBase compatibility) {}
 
     @Override
+    public int getPriority() {
+        return 0;
+    }
+
+    @Override
     public int mathLength() {
         return 0;
     }
@@ -22,5 +27,10 @@ public class SkipZone extends BaseZone {
     @Override
     public byte getId() {
         return CompatibilityBase.EMPTY;
+    }
+
+    @Override
+    public String toString() {
+        return "====SKIP ZONE====\n";
     }
 }

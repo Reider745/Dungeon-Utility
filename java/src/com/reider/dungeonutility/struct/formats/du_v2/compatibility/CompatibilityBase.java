@@ -11,8 +11,10 @@ import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
 
 import java.nio.ByteBuffer;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 public class CompatibilityBase {
@@ -49,7 +51,7 @@ public class CompatibilityBase {
         return zone.apply(null);
     }
 
-    protected final BaseZone parseZone(ByteBuffer buffer){
+    protected final BaseZone parseZone(ByteBuffer buffer, ArrayList<Map.Entry<BaseZone, ByteBuffer>> list){
         final int position = buffer.position();
 
         if(position >= buffer.capacity())
@@ -59,26 +61,41 @@ public class CompatibilityBase {
         final int index_end = buffer.getInt();
         final int size = index_end - position;
         final BaseZone result = buildZone(id);
+        final byte[] bytesZone = new byte[size+1];
 
-        byte[] bytesZone = new byte[size+1];
         for(int i = 0;i < index_end-position;i++)
             bytesZone[i] = buffer.get();
 
-        try{
-            result.preInfo(this);
-            result.read(ByteBuffer.wrap(bytesZone));
-            result.addInfo(this);
-        }catch (Exception e){
-            Logger.debug(DungeonUtilityMain.logger_name,"Error parse zone, id:"+id+"\n"+ICLog.getStackTrace(e));
+        final Map.Entry<BaseZone, ByteBuffer> element = new AbstractMap.SimpleEntry<>(result, ByteBuffer.wrap(bytesZone));
+        for (int i = 0; i < list.size(); ++i) {
+            if (list.get(i).getKey().getPriority() < result.getPriority()) {
+                list.add(i, element);
+                return result;
+            }
         }
 
+        list.add(element);
 
         return result;
     }
 
-    public final void parseZones(ByteBuffer buffer){
+    public final void readZones(ByteBuffer buffer){
+        final ArrayList<Map.Entry<BaseZone, ByteBuffer>> list = new ArrayList<>();
+
         BaseZone zone;
-        while ((zone = this.parseZone(buffer)) != null){
+        while ((zone = this.parseZone(buffer, list)) != null){
+        }
+
+
+        for(Map.Entry<BaseZone, ByteBuffer> entry : list){
+            final BaseZone _zone = entry.getKey();
+            try{
+                _zone.preInfo(this);
+                _zone.read(entry.getValue());
+                _zone.addInfo(this);
+            }catch (Exception e){
+                Logger.debug(DungeonUtilityMain.logger_name,"Error parse zone, id:"+_zone.getId()+"\n"+ICLog.getStackTrace(e));
+            }
         }
     }
 
@@ -98,8 +115,14 @@ public class CompatibilityBase {
         return states;
     }
 
+    public byte getVersion(){
+        return Byte.MIN_VALUE;
+    }
+
     public final ByteBuffer writeZones(ArrayList<BaseZone> zones){
         ByteBuffer buffer = ByteBuffer.wrap(new byte[mathLength(zones)]);
+
+        buffer.put(getVersion());
 
         for(BaseZone zone : zones){
             final int position = buffer.position();
@@ -108,16 +131,23 @@ public class CompatibilityBase {
             buffer.put(zone.getId());
             buffer.putInt(position + length);
 
-            zone.write(buffer);
+            try{
+                zone.write(buffer);
+            }catch (Exception e){
+                Logger.error(ICLog.getStackTrace(e));
+            }
 
-            //System.out.println("Takes bytes: " + (buffer.position() - position - 5) + ", expected: "+length+", zone id: "+zone.getId());
+
+            final int takes = buffer.position() - position - 5;
+            if(takes != length)
+                Logger.warning("Takes bytes: " + takes + ", expected: " + length + ", zone id: " + zone.getId());
         }
 
         return buffer;
     }
 
     public int mathLength(ArrayList<BaseZone> zones) {
-        int count = 0;
+        int count = 1;//version
 
         for(BaseZone zone : zones){
             count += 1;
@@ -148,11 +178,12 @@ public class CompatibilityBase {
     @Override
     public String toString() {
         String content = "";
-        content += description.toString()+"\n\n\n";
-        content += states.toString()+"\n\n\n";
+        content += "version = " + getVersion() + "\n";
+        content += description+"\n\n\n";
+        content += states+"\n\n\n";
 
         for(PlaneBlocksZone plane : planes.values())
-            content += plane.toString()+"\n\n\n";
+            content += plane+"\n\n\n";
 
         return content;
     }

@@ -435,6 +435,7 @@ declare class JavaCompatibilityBase {
     constructor(map: java.util.HashMap<Object, Object>);
 
     public parseZones(buffer: java.nio.ByteBuffer): void;
+    public readZones(buffer: java.nio.ByteBuffer): void;
     public toString(): java.lang.String;
 }
 
