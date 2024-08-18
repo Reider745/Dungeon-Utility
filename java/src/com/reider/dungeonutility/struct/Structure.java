@@ -33,9 +33,10 @@ public class Structure {
     private StructureDescription stru;
     private IStructurePrototype prot;
     private boolean useGlobalProt;
+
     public Structure(StructureDescription stru){
         this.stru = stru;
-        prot = new StructurePrototypeEmpty();
+        prot = StructureDescription.EMPTY_PROTOTYPE;
         useGlobalProt = true;
     }
 

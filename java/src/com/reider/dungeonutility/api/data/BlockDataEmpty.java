@@ -5,6 +5,7 @@ public class BlockDataEmpty extends BlockData{
     public BlockDataEmpty() {
         super(0, 0, 0);
     }
+
     public BlockDataEmpty(int x, int y, int z) {
         super(x, y, z);
     }

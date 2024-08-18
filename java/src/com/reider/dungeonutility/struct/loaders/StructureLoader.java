@@ -1,6 +1,7 @@
 package com.reider.dungeonutility.struct.loaders;
 
 import com.reider.dungeonutility.DungeonUtilityMain;
+import com.reider.dungeonutility.api.StateManager;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.multiversions.IPackVersion;
 import com.reider.dungeonutility.struct.formats.LoaderType;
@@ -16,6 +17,8 @@ public class StructureLoader {
 
 
     static {
+        StateManager.init();
+
         final IPackVersion version = DungeonUtilityMain.getPackVersionApi();
 
         version.addCallback("tick", args -> {

@@ -1,6 +1,7 @@
 package com.reider.dungeonutility.struct.formats.du_v2.zones.v1;
 
 
+import com.reider.dungeonutility.api.StateManager;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.struct.formats.CompoundTagJson;
@@ -58,6 +59,7 @@ public class StatesZone extends BaseZone {
             if(isTag){
                 try {
                     tag = CompoundTagJson.parse(new JSONObject(Utils.readString(buffer)));
+                    tagJson = CompoundTagJson.getMapTag(tag).toString();
                 }catch (JSONException e){
                     Logger.warning("Error loaded state: "+ICLog.getStackTrace(e));
                 }
@@ -120,7 +122,7 @@ public class StatesZone extends BaseZone {
     public static final byte ID_SHORT = 2;
 
     private static final short NOT_BLOCK = Byte.MIN_VALUE;
-    private static final StorageStateBlock DEF_STATE = new StorageStateBlock(false, new BlockState(0, 0), new BlockState(0, 0), null);
+    private static final StorageStateBlock DEF_STATE = new StorageStateBlock(false, StateManager.EMPTY_STATE, null, null);
 
     private final HashMap<Short, StorageStateBlock> states = new HashMap<>();
     private byte type_states = ID_BYTE;

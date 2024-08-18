@@ -11,7 +11,10 @@ public interface  IPackVersion {
     IJsObject createObjectEmpty();
     IJsObject createObject(Object obj);
     IJsArray createArrayEmpty();
-    void addCallback(String name, IJsFunctionImpl func);
+    default void addCallback(String name, IJsFunctionImpl func){
+        addCallback(name, func, 0);
+    }
+    void addCallback(String name, IJsFunctionImpl func, int priority);
     boolean canJSObject(Object obj);
     IJsFunctionImpl createForFunction(Object func);
     IJsPass createJavaFunction(IJsFunctionImpl func);

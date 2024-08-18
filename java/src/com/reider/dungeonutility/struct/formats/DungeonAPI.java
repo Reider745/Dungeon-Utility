@@ -1,5 +1,6 @@
 package com.reider.dungeonutility.struct.formats;
 
+import com.reider.dungeonutility.api.StateManager;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
@@ -20,11 +21,11 @@ public class DungeonAPI extends LoaderType {
                     Integer.parseInt(data[2]),
                     Integer.parseInt(data[3]),
                     Integer.parseInt(data[4]),
-                    new BlockState(Utils.getIdBlock(data[0]), Integer.parseInt(data[1]))
+                    StateManager.buildBlockState(Utils.getIdBlock(data[0]), Integer.parseInt(data[1]))
             ));
         }
 
-        return new StructureDescription(blocks.toArray(new BlockData[blocks.size()]));
+        return new StructureDescription(blocks);
     }
 
     @Override
@@ -36,7 +37,8 @@ public class DungeonAPI extends LoaderType {
     public byte[] save(StructureDescription stru) {
         String str = "";
         for(int i = 0;i < stru.blocks.length;i++){
-            BlockData data = stru.blocks[i].getData();
+            final BlockData data = stru.blocks[i].getData();
+
             str += Utils.getIdBlock(data.state.id) + "." + data.state.data + "." + data.x + "." + data.y + "." + data.z;
             if(i != stru.blocks.length - 1)
                 str+=":";

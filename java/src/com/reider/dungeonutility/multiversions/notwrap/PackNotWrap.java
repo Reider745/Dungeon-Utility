@@ -63,9 +63,9 @@ public class PackNotWrap implements IPackVersion {
     }
 
     @Override
-    public void addCallback(String name, IJsFunctionImpl func) {
+    public void addCallback(String name, IJsFunctionImpl func, int priority) {
         try {
-            addCallbackMethod.invoke(null, name, (Function) this.createJavaFunction(func).passToScript(), 0);
+            addCallbackMethod.invoke(null, name, (Function) this.createJavaFunction(func).passToScript(), priority);
         }catch (Exception e){
             throw new RuntimeException(e);
         }

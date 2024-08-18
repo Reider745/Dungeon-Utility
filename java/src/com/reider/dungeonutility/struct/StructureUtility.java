@@ -11,21 +11,21 @@ import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.nbt.NativeCompoundTag;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
 public class StructureUtility {
     public static BlockData[] getBlocksByArrayList(ArrayList<BlockData> blocks){
-        BlockData[] result = new BlockData[blocks.size()];
+        final BlockData[] result = new BlockData[blocks.size()];
         for(int i = 0;i < blocks.size();i++)
             result[i] = blocks.get(i);
         return result;
     }
+
     public static ArrayList<BlockData> getArrayListByBlocks(BlockData[] blocks){
-        ArrayList<BlockData> result = new ArrayList<BlockData>();
-        for(BlockData block : blocks)
-            result.add(block);
-        return result;
+        return new ArrayList<>(Arrays.asList(blocks));
     }
+
     public static StructureDescription rotate(StructureDescription stru, int rotate){
         BlockData[] result = new BlockData[stru.blocks.length];
         for(int i = 0;i < stru.blocks.length;i++){
@@ -62,48 +62,57 @@ public class StructureUtility {
         }
         return new StructureDescription(result);
     }
+
     public static StructureDescription rotate(StructureDescription stru, StructureRotation rotate){
         return rotate(stru, rotate.ordinal());
     }
+
     public static void registerRotations(StructurePool savePool, StructureDescription stru, String name, int[] rotates){
         for(int i : rotates) {
             savePool.setStructure(name + "_" + i, rotate(stru, i));
             AdaptedScriptAPI.Logger.Log("register rotate - " + name + "_" + i, "Dungeon Utility");
         }
     }
+
     public static void registerRotations(StructureDescription stru, String name, int[] rotates){
         registerRotations(StructureLoader.default_pool, stru, name, rotates);
     }
+
     public static void registerRotations(StructurePool savePool, StructureDescription stru, String name, StructureRotation[] rotates) {
         for (StructureRotation i : rotates) {
             savePool.setStructure(name + "_" + i, rotate(stru, i));
             AdaptedScriptAPI.Logger.Log("register rotate - " + name + "_" + i.name(), "Dungeon Utility");
         }
     }
+
     public static void registerRotations(StructureDescription stru, String name, StructureRotation[] rotates) {
         registerRotations(StructureLoader.default_pool, stru, name, rotates);
     }
+
+    @Deprecated
     public static void newStructure(String name){
         StructureLoader.loadRuntime(name, new StructureDescription(new BlockData[] {}));
     }
+
     public static int getCountBlock(StructureDescription stru){
         return stru.blocks.length;
     }
+
+    @Deprecated
     public static String[] getAllStructureName(){
         return StructureLoader.getAllStructureName();
     }
+
+    @Deprecated
     public static void copy(StructurePool pool, String name1, String name2, IStructureCopy copy) {
-        StructureDescription stru = StructureLoader.getStructure(name1);
-        BlockData[] blocks = stru.blocks;
-        ArrayList<BlockData> newBlocks = new ArrayList<BlockData>();
-        for(BlockData block : blocks)
-            newBlocks.add(copy.copyBlock(block));
-        pool.setStructure(name2, new StructureDescription(getBlocksByArrayList(newBlocks), copy.copyPrototype(stru.prot)));
-        AdaptedScriptAPI.Logger.Log("copy " + name1 + ", create " + name2, "DungeonUtility");
+        pool.copy(name1, name2, copy);
     }
+
+    @Deprecated
     public static void copy(String name1, String name2, IStructureCopy c){
         copy(StructureLoader.default_pool, name1, name2, c);
     }
+
     public static int getBlockIndex(StructureDescription stru, int x, int y, int z) {
         for (int i = 0; i < stru.blocks.length; i++) {
             BlockData block = stru.blocks[i];
@@ -112,18 +121,21 @@ public class StructureUtility {
         }
         return -1;
     }
+
     public static BlockData getBlock(StructureDescription stru, int x, int y, int z){
         int index = getBlockIndex(stru, x, y, z);
         if(index != -1)
             return stru.blocks[index];
         return null;
     }
+
     public static StructureDescription addBlock(StructureDescription stru, BlockData data){
         ArrayList<BlockData> blocks = getArrayListByBlocks(stru.blocks);
         blocks.add(data);
         stru.blocks = getBlocksByArrayList(blocks);
         return stru;
     }
+
     public static StructureDescription setBlock(StructureDescription stru, BlockData data){
         ArrayList<BlockData> blocks = getArrayListByBlocks(stru.blocks);
         int index = getBlockIndex(stru, data.x, data.y, data.z);
@@ -133,6 +145,7 @@ public class StructureUtility {
         stru.blocks = getBlocksByArrayList(blocks);
         return stru;
     }
+
     public static StructureDescription setBlock(StructureDescription stru, int index, BlockData data){
         ArrayList<BlockData> blocks = getArrayListByBlocks(stru.blocks);
         if(index == -1)
@@ -141,6 +154,7 @@ public class StructureUtility {
         stru.blocks = getBlocksByArrayList(blocks);
         return stru;
     }
+
     public static class Size {
         public Size(int min, int max){
             this.min = min;
@@ -148,11 +162,13 @@ public class StructureUtility {
         }
         public int min;
         public int max;
+
         @Override
         public String toString() {
             return "{max:"+max+",min:"+min+"}";
         }
     }
+
     public static Size[] getStructureSize(StructureDescription structure){
         BlockData[] stru = structure.blocks;
         Size[] size = {new Size(0, 0),new Size(0, 0),new Size(0, 0)};
@@ -169,6 +185,7 @@ public class StructureUtility {
         }
         return size;
     }
+
     public static void spawnEntity(NativeBlockSource region, int x, int y, int z, String[] ents, Random random){
         BlockState state = region.getBlock(x, y, z);
         if(state.id == 52){
@@ -178,6 +195,7 @@ public class StructureUtility {
             tile.setCompoundTag(tag);
         }
     }
+
     private static int getDis(int x1, int y1, int z1, int x2, int y2, int z2){
         return (int) Math.sqrt(Math.pow(x1-x2, 2) + Math.pow(y1-y2, 2) + Math.pow(z1-z2, 2));
     }
@@ -189,6 +207,7 @@ public class StructureUtility {
                     if (getDis(xx, yy, zz, x, y, z) * 1.5 < r * 1.5)
                         block.set(x, y, z, region);
     }
+
     public static void generateShape(int xx, int yy, int zz, int r, int y_max, BlockData block, int countDirt, BlockData dirt, BlockData grass, NativeBlockSource region){
         for(int y = yy-r;y <= yy+r;y++){
             for(int x = xx-r;x <= xx+r;x++)
@@ -205,15 +224,18 @@ public class StructureUtility {
                 break;
         }
     }
+
     public static void fill(int x1, int y1, int z1, int x2, int y2, int z2, BlockData block, NativeBlockSource region){
         for(int x = Math.min(x1, x2);x < Math.max(x1, x2);x++)
             for(int y = Math.min(y1, y2);y < Math.max(y1, y2);y++)
                 for(int z = Math.min(z1, z2);z < Math.max(z1, z2);z++)
                     block.set(x, y, z, region);
     }
+
     public interface IHandler {
         boolean isBuildBlock(int x, int y, int z, NativeBlockSource region);
     }
+
     public static void fill(int x1, int y1, int z1, int x2, int y2, int z2, BlockData block, NativeBlockSource region, IHandler handler){
         for(int x = Math.min(x1, x2);x < Math.max(x1, x2);x++)
             for(int y = Math.min(y1, y2);y < Math.max(y1, y2);y++)

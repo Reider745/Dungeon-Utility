@@ -1,6 +1,7 @@
 package com.reider.dungeonutility.struct.formats;
 
 import com.reider.dungeonutility.DungeonUtilityMain;
+import com.reider.dungeonutility.api.StateManager;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
@@ -30,21 +31,29 @@ public class DungeonCore extends LoaderType {
 
                 Object value = json.get(0);
                 if(value instanceof Number)
-                    state = new BlockState(((Number) value).intValue(), Utils.getHashMapToJson(list.getJSONObject(2)));
+                    state = StateManager.buildBlockState(
+                            ((Number) value).intValue(),
+                            list.getJSONObject(2)
+                    );
                 else if(value instanceof String)
-                    state = new BlockState(Utils.getIdBlock((String) value), Utils.getHashMapToJson(list.getJSONObject(2)));
+                    state = StateManager.buildBlockState(
+                            Utils.getIdBlock((String) value),
+                            list.getJSONObject(2)
+                    );
 
                 if(list.length() >= 4) {
                     JSONArray extra = list.getJSONArray(3);
                     value = extra.get(0);
 
                     if(value instanceof Number)
-                        stateExtra = new BlockState(((Number) value).intValue(), Utils.getHashMapToJson(extra.getJSONObject(1)));
-                    else if(extra.get(0) instanceof String)
-                        stateExtra = new BlockState(
-                            (int) Utils.getIdBlock((String) extra.get(0)),
-                                Utils.getHashMapToJson(extra.getJSONObject(1))
+                        stateExtra = StateManager.buildBlockState(
+                                ((Number) value).intValue(),
+                                extra.getJSONObject(1)
                         );
+                    else if(extra.get(0) instanceof String)
+                        stateExtra = StateManager.buildBlockState(
+                                Utils.getIdBlock((String) extra.get(0)),
+                                extra.getJSONObject(1));
 
                 }
 
@@ -61,7 +70,7 @@ public class DungeonCore extends LoaderType {
             throw new RuntimeException(e.getMessage());
         }
 
-        return new StructureDescription(blocks.toArray(new BlockData[blocks.size()]));
+        return new StructureDescription(blocks);
     }
 
     @Override

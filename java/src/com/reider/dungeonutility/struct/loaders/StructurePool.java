@@ -3,6 +3,7 @@ package com.reider.dungeonutility.struct.loaders;
 import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
+import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.struct.formats.LoaderType;
 import com.reider.dungeonutility.struct.prototypes.IStructurePrototype;
 import com.reider.dungeonutility.struct.IStructureCopy;
@@ -10,7 +11,9 @@ import com.reider.dungeonutility.struct.StructureRotation;
 import com.reider.dungeonutility.struct.StructureUtility;
 import com.reider.dungeonutility.struct.formats.StructureCompression;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class StructurePool {
@@ -95,8 +98,14 @@ public class StructurePool {
         loader.add(name, path, type, compile);
     }
 
-    public void copy(String name1, String name2, IStructureCopy c){
-        StructureUtility.copy(this, name1, name2, c);
+    public void copy(String name1, String name2, IStructureCopy copy){
+        final  StructureDescription structure = getStructure(name1);
+        final ArrayList<BlockData> newBlocks = new ArrayList<>();
+
+        for(BlockData block : structure.blocks)
+            newBlocks.add(copy.copyBlock(block));
+
+        this.setStructure(name2, new StructureDescription(newBlocks, copy.copyPrototype(structure.prot)));
     }
 
     public void registerRotations(StructureDescription stru, String name, StructureRotation[] rotates) {

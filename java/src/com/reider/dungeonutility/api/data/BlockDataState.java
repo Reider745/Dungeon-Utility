@@ -8,10 +8,10 @@ public class BlockDataState extends BlockData{
         super(x, y, z, state);
     }
 
-    @Override
+    /*@Override
     public void set(int X, int Y, int Z, NativeBlockSource region) {
         region.setBlock(X + x, Y + y, Z + z, state);
-    }
+    }*/
 
     @Override
     public boolean isBlock(int X, int Y, int Z, NativeBlockSource region) {

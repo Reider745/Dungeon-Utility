@@ -1,6 +1,7 @@
 package com.reider.dungeonutility.struct.formats;
 
 import com.reider.dungeonutility.DungeonUtilityMain;
+import com.reider.dungeonutility.api.StateManager;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
@@ -26,19 +27,25 @@ public class Structures extends LoaderType {
             for(int i = 0;i < structure.length();i++){
                 final JSONArray list = structure.getJSONArray(i);
                 
-                Object value = list.get(3);
+                final Object value = list.get(3);
                 BlockState state = null;
                 if(value instanceof Number)
                     state = new BlockState(((Number) value).intValue(), 0);
                 else if(value instanceof String)
                     state = new BlockState(Utils.getIdBlock((String) value), 0);
                 else if(value instanceof JSONObject) {
-                    JSONObject obj = ((JSONObject) value);
+                    final JSONObject obj = ((JSONObject) value);
                     Object id = obj.get("id");
                     if (id instanceof Number)
-                        state = new BlockState(((Number) id).intValue(), ((Number) obj.get("data")).intValue());
+                        state = StateManager.buildBlockState(
+                                ((Number) id).intValue(),
+                                ((Number) obj.get("data")).intValue()
+                        );
                     else
-                        state = new BlockState(Utils.getIdBlock((String) id), ((Double) obj.get("data")).intValue());
+                        state = StateManager.buildBlockState(
+                                Utils.getIdBlock((String) id),
+                                ((Number) obj.get("data")).intValue()
+                        );
                 }
 
                 blocks.add(BlockData.createData(
@@ -52,7 +59,7 @@ public class Structures extends LoaderType {
             Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));
             throw new RuntimeException(e.getMessage());
         }
-        return new StructureDescription(blocks.toArray(new BlockData[blocks.size()]));
+        return new StructureDescription(blocks);
     }
 
     @Override

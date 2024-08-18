@@ -1,5 +1,6 @@
 package com.reider.dungeonutility.struct.formats.du_v2.util;
 
+import com.reider.dungeonutility.api.StateManager;
 import com.reider.dungeonutility.api.Utils;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.innercore.api.unlimited.IDRegistry;
@@ -18,7 +19,7 @@ public class State {
         }
 
         try {
-            return new BlockState(id, Utils.getHashMapToJson(new JSONObject(Utils.readString(buffer))));
+            return StateManager.buildBlockState(id, new JSONObject(Utils.readString(buffer)));
         } catch (JSONException e) {
             throw new RuntimeException(e);
         }
@@ -62,10 +63,8 @@ public class State {
         return count;
     }
 
-    private static final BlockState EMPTY = new BlockState(0, 0);
-
     public static boolean equals(BlockState data, BlockState data2){
-        if(data2 == null) data2 = EMPTY;
+        if(data2 == null) data2 = StateManager.EMPTY_STATE;
         return data.id == data2.id && data.getStates().toString().equals(data2.getStates().toString());
     }
 }

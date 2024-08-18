@@ -28,8 +28,8 @@ public class PackWrap implements IPackVersion {
     }
 
     @Override
-    public void addCallback(String name, IJsFunctionImpl func) {
-        Callback.addCallback(name, ScriptObjectWrap.createJavaFunction(func::call), 0);
+    public void addCallback(String name, IJsFunctionImpl func, int priority) {
+        Callback.addCallback(name, ScriptObjectWrap.createJavaFunction(func::call), priority);
     }
 
     @Override
