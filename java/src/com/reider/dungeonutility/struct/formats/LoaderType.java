@@ -68,5 +68,6 @@ public abstract class LoaderType {
         registerType("DU", new DungeonUtility());
         registerType("DungeonUtility_V2", new DungeonUtility_V2());
         registerType("DU2", new DungeonUtility_V2());
+        registerType("nbt", new VanillaNbt());
     }
 }

@@ -11,6 +11,7 @@ import com.reider.dungeonutility.struct.StructureRotation;
 import com.reider.dungeonutility.struct.StructureUtility;
 import com.reider.dungeonutility.struct.formats.StructureCompression;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.log.ICLog;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 
 import java.util.ArrayList;
@@ -84,17 +85,26 @@ public class StructurePool {
     }
 
     public void load(String name, String path, String type, boolean compile){
+        Logger.debug(DungeonUtilityMain.logger_name, "Register loader, pool: "+name_pool+", path: "+path+", name: "+name+", type: "+type);
+
         if(path == null || path.isEmpty()){
             final String[] dirs = name.replaceAll("\\\\\\\\", "/").split("/");
             load(dirs[dirs.length-1], this.path+"/"+name+".struct", type, compile);
             return;
         }
 
+        if(!path.startsWith("/storage/emulated"))
+            path += this.path + "/" + path;
+
         if(LoaderType.getType(type).isLoadRuntime()) {
-            loadRuntime(name, path, type, compile);
+            try{
+                loadRuntime(name, path, type, compile);
+            }catch (Exception e){
+                Logger.warning(ICLog.getStackTrace(e));
+                loader.add(name, path, type, compile);
+            }
             return;
         }
-
         loader.add(name, path, type, compile);
     }
 

@@ -45,6 +45,18 @@
 		{
 			"source":"README.md",
 			"targetDir":"./output"
+		},
+		{
+			"source": "big_ruin1_brick.nbt",
+			"targetDir": "."
+		},
+		{
+			"source": "watchtower.nbt",
+			"targetDir": "."
+		},
+		{
+			"source": "feature_cage1.nbt",
+			"targetDir": "."
 		}
 	],
 	"info": {

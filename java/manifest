@@ -1,6 +1,6 @@
 {
     "source-dirs": ["src"],
-    "library-dirs": [],
+    "library-dirs": ["lib"],
     "verbose": true,
     "options": [],
     "boot-classes": ["com.reider.dungeonutility.DungeonUtilityMain"]

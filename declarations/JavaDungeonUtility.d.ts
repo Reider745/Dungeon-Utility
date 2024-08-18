@@ -347,7 +347,7 @@ declare namespace JavaStructureRotation {
 
 
 
-type FILE_FORMATS = "DungeonAPI" | "DungeonAPI_V2" | "DungeonCore" | "Structures" | "DungeonUtility";
+type FILE_FORMATS = "DungeonAPI" | "DungeonAPI_V2" | "DungeonCore" | "Structures" | "DungeonUtility" | "DungeonUtility_V2" | "nbt";
 
 declare class JavaStructureRegisterLoader {
     public add(name: string, path: string, type: FILE_FORMATS, compression: boolean): void;
