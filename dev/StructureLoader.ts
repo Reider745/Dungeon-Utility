@@ -55,6 +55,11 @@ class StructurePool {
 		return this;
 	}
 
+	public upload(name: string, type: FILE_FORMATS): StructurePool {
+		this.self.load(name, "", type, false);
+		return this;
+	}
+
 	public copy(name1: string, name2: string, prot: IStructureCopy): StructurePool {
 		prot = prot || {copyBlock(data){return data}, copyPrototype(prot){return prot}};
 		prot.copyBlock = prot.copyBlock || function(data){

@@ -1,5 +1,6 @@
 package com.reider.dungeonutility.struct.generation.types.api;
 
+import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.struct.Structure;
 import com.reider.dungeonutility.struct.generation.types.IGenerationDescription;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
@@ -8,8 +9,7 @@ import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import java.util.Random;
 
 public class DefaultGeneration implements IGenerationDescription {
-    public String type;
-    public String name;
+    public String type, name, identifier;
     public int chance;
     public Structure structure;
     public int disnatnt;
@@ -31,9 +31,10 @@ public class DefaultGeneration implements IGenerationDescription {
     public int[] minAndMaxY;
     public boolean _canLegacyOffset;
 
-    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy, long time, int[] count, int[] minAndMaxY, boolean canLegacyOffset){
+    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy, long time, int[] count, int[] minAndMaxY, boolean canLegacyOffset, String identifier){
         this.type = type;
         this.name = name;
+        this.identifier = identifier;
         this.x = x;
         this.y = y;
         this.z = z;
@@ -74,6 +75,11 @@ public class DefaultGeneration implements IGenerationDescription {
     @Override
     public Structure getStructure() {
         return structure;
+    }
+
+    @Override
+    public void setStructure(StructureDescription description) {
+        this.structure.setStructure(description);
     }
 
     private int indexOf(int x, int[] list){
@@ -149,5 +155,10 @@ public class DefaultGeneration implements IGenerationDescription {
     @Override
     public boolean canLegacyOffset() {
         return _canLegacyOffset;
+    }
+
+    @Override
+    public String getUniqueIdentifier() {
+        return identifier;
     }
 }

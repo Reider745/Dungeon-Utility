@@ -6,6 +6,7 @@ import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 
 public interface IStructurePiece {
+    IGenerationDescription getFromUniqueIdentifier(String id);
     void addGeneration(IGenerationDescription stru);
     void registerType(IGenerationType type);
     void generation(int x, int z, Random random, int dimension);

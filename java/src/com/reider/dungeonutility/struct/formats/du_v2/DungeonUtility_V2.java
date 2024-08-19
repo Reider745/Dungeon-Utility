@@ -31,8 +31,8 @@ public class DungeonUtility_V2 extends LoaderType {
     public byte[] save(StructureDescription stru) {
         try{
             final HashMap<Short, ArrayList<BlockData>> temp_planes = new HashMap<>();
-            final int[] x = new int[2];
-            final int[] y = new int[2];
+            final int[] x = new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE};
+            final int[] y = new int[]{Integer.MAX_VALUE, Integer.MIN_VALUE};
             final StatesZone states = new StatesZone();
 
             for(BlockData block : stru.blocks){

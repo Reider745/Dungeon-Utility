@@ -141,6 +141,19 @@ Callback.addCallback("NativeCommand", (cmd) => {
 	}
 });
 
+let pool = new StructurePool("test")
+    .setPathStructures(__dir__);
+
+pool.upload("test", "DungeonUtility_V2");
+pool.upload("test2", "DungeonUtility_V2");
+
+Callback.addCallback("StructureLoadOne", () => {
+    new DefaultGenerationDescription(pool.get("test2"), 60)
+        .setIdentifier("test:structure")
+        .setDistance(140, "test:structure")
+        .setGenerationParams(0, 0, 10)
+        .register();
+});
 
 // EXAMPLE
 /*Callback.addCallback("StructureLoadOne", () => {

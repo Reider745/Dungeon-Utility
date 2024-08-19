@@ -1,5 +1,6 @@
 package com.reider.dungeonutility.struct.generation.types;
 
+import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.struct.Structure;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
@@ -8,6 +9,7 @@ import java.util.Random;
 
 public interface IGenerationDescription {
     Structure getStructure();
+    void setStructure(StructureDescription description);
     int getChance();
     String getType();
     boolean isGeneration(Vector3 pos, Random random, int dimension, NativeBlockSource region);
@@ -24,4 +26,5 @@ public interface IGenerationDescription {
     int[] getMinAndMaxY();
     boolean canClearStructure();
     boolean canLegacyOffset();
+    String getUniqueIdentifier();
 }

@@ -36,13 +36,16 @@ public class ChunkClearMembory extends Thread {
                     sleep(time);
                     continue;
                 }
-                long start = System.currentTimeMillis();
-                IChunkManager manager = StructurePieceController.getChunkManager();
-                int[] dimensions = manager.getDimensions();
+
+                final long start = System.currentTimeMillis();
+                final IChunkManager manager = StructurePieceController.getChunkManager();
+                final int[] dimensions = manager.getDimensions();
+
                 for(int dimension : dimensions){
                     int count = manager.getCount(dimension);
                     if(count == 0)
                         continue;
+
                     boolean critical = true;
                     for(int i = 0;i < 4;i++)
                         if(count < pace*i){
@@ -51,13 +54,16 @@ public class ChunkClearMembory extends Thread {
                             critical = false;
                             break;
                         }
+
                     if(critical){
                         for(int i = 0;i < count;i++)
                             optimization(manager, manager.remove(dimension));
                     }
                 }
+
                 Debug.get().updateСhart("chunk_clear_manager", "Chunk сlear time", (int) (System.currentTimeMillis()-start));
                 Debug.get().updateСhart("chunk_clear_manager_chunks", "Chunks", manager.getCount());
+
                 sleep(time);
             }catch(Exception e){
                 Debug.get().error(e);

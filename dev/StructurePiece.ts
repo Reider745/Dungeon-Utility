@@ -5,6 +5,7 @@ const Vector3 = WRAP_JAVA("com.zhekasmirnov.apparatus.adapter.innercore.game.com
 type GENERATION_TYPE = "default" | "Nether" | "OverWorld";
 
 interface ILegacyDescription {
+    identifier?: string;
     type?: GENERATION_TYPE;
     save?: boolean;
     offset?: {x?: number, y?: number, z?: number}
@@ -87,11 +88,15 @@ class DefaultGenerationDescription {
     private readonly chance: number;
     private readonly type: GENERATION_TYPE;
 
-    constructor(structure: Structure.advanced, chance: number, type: GENERATION_TYPE = "default"){
+    constructor(structure: Structure.advanced | JavaStructureDescription, chance: number, type: GENERATION_TYPE = "default"){
+        if(structure instanceof StructureDescriptionJava)
+            structure = new Structure.advanced(structure);
+        
         this.structure = structure;
         this.chance = chance;
         this.type = type;
 
+        this.setIdentifier();
         this.setGenerationParams();
         this.setDistance();
         this.setStorage();
@@ -110,11 +115,19 @@ class DefaultGenerationDescription {
         return this;
     }
 
+    private identifier: string;
+    public setIdentifier(identifier: string = ""): DefaultGenerationDescription {
+        this.identifier = identifier;
+        return this;
+    }
+
     private distance: number;
     private name: string;
-    public setDistance(distance: number = 0, name: string = null): DefaultGenerationDescription {
+    private checkName: boolean;
+    public setDistance(distance: number = 0, name: string = null, checkName: boolean = !!name): DefaultGenerationDescription {
         this.distance = distance;
         this.name = name;
+        this.checkName = checkName;
         return this;
     }
 
@@ -160,10 +173,11 @@ class DefaultGenerationDescription {
         return this;
     }
 
-    public clone(): DefaultGenerationDescription {
+    public clone(identifier: string = ""): DefaultGenerationDescription {
         return new DefaultGenerationDescription(this.structure, this.chance, this.type)
+            .setIdentifier(identifier)
             .setGenerationParams(this.dimension, this.offset.x, this.offset.y, this.offset.z, this.count)
-            .setDistance(this.distance, this.name)
+            .setDistance(this.distance, this.name, this.checkName)
             .setStorage(this.storage_structure, this.queue_clear, this.storage_queue)
             .setConditionsSpawned(this.check_place, this.min_y, this.max_y)
             .setBiomes(this.biomes_white_list, this.biomes)
@@ -175,6 +189,7 @@ class DefaultGenerationDescription {
             structure: this.structure,
             chance: this.chance,
             type: this.type,
+            identifier: this.identifier,
 
             //legacy
             legacy_offset: false,
@@ -182,7 +197,7 @@ class DefaultGenerationDescription {
 
             //distance
             distance: this.distance,
-            checkName: !!this.name,
+            checkName: this.checkName,
             name: this.name,
 
             //generation params
@@ -232,7 +247,7 @@ namespace StructurePiece {
                                         !!obj.white_list, obj.biomes || [], !!obj.white_list_blocks, obj.blocks || [0], obj.structure.getStructureJava(), 
                                         !!obj.checkName, obj.optimization === undefined ? true : obj.optimization, !!obj.legacySpawn, 
                                         obj.clearToMembory || 60000, obj.count||[1], obj.minAndMaxY||[0, 255], 
-                                        obj.legacy_offset === undefined ? true : obj.legacy_offset);
+                                        obj.legacy_offset === undefined ? true : obj.legacy_offset, obj.identifier || "");
 		else{
 			Logger.Log("Error StructurePiece register, Structure = undefined or null "+obj.name || "noy_name", "DungeonUtility");
 			return null;

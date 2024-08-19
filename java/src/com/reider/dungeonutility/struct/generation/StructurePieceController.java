@@ -79,7 +79,7 @@ public class StructurePieceController {
         chunk_managers.put("java", new ChunkManager());
         chunk_managers.put("native", new NativeChunkManager());
 
-        StructurePiece piece = new StructurePiece();
+        StructurePiece piece = new StructurePiece("java");
         pieces.put("java", piece);
         piece.registerType(new OverWorld());
         piece.registerType(new Nether());

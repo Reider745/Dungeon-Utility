@@ -165,6 +165,7 @@ interface IGenerationDescription {
     getMinAndMaxY(): [number, number];
     canClearStructure(): boolean;
     canLegacyOffset(): boolean;
+    getUniqueIdentifier(): string;
 }
 
 interface IGenerationType {
@@ -215,7 +216,8 @@ interface IChunkManager {
 }
 
 declare class JavaDefaultGeneration extends java.lang.Object implements IGenerationDescription {
-    constructor(type: string, name: string, x: number, y: number, z: number, chance: number, disnatnt: number, pool: boolean, isSet: boolean, dimension: number, white_list: boolean, biomes: number[], white_list_blocks: boolean, blocks: number[], structure: JavaStructure, checkName: boolean, optimization: boolean, legacy: boolean, time: number, count: number[], minAndMaxY: number[], canLegacyOffset: boolean);
+    constructor(type: string, name: string, x: number, y: number, z: number, chance: number, disnatnt: number, pool: boolean, isSet: boolean, dimension: number, white_list: boolean, biomes: number[], white_list_blocks: boolean, blocks: number[], structure: JavaStructure, checkName: boolean, optimization: boolean, legacy: boolean, time: number, count: number[], minAndMaxY: number[], canLegacyOffset: boolean, identifier: string);
+    getUniqueIdentifier(): string;
 
     public getStructure(): JavaStructure;
     public getChance(): number;

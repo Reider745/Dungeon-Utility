@@ -155,21 +155,10 @@ public class BlockData implements Cloneable {
             });
 
         if(block != null){
-            if(tag != null)
-                return new BlockData(x, y, z, block, extra, tag)
-                        .set(list);
-            if(extra != null) {
-                if(block.id == 0 && extra.id == 0)
-                    return new BlockDataAir(x, y, z)
-                            .set(list);
-                if(extra.id != 0)
-                    return new BlockData(x, y, z, block, extra, tag)
-                            .set(list);
-            }
-            if(block.id == 0)
+            if(block.id == 0 && extra != null && extra.id == 0)
                 return new BlockDataAir(x, y, z)
                         .set(list);
-            return new BlockDataState(x, y, z, block)
+            return new BlockData(x, y, z, block, extra, tag)
                     .set(list);
         }
 

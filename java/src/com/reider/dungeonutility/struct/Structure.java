@@ -2,10 +2,8 @@ package com.reider.dungeonutility.struct;
 
 import com.reider.dungeonutility.struct.loaders.StructureLoader;
 import com.reider.dungeonutility.api.StructureDescription;
-import com.reider.dungeonutility.struct.prototypes.StructurePrototypeEmpty;
 import com.reider.dungeonutility.struct.prototypes.IStructurePrototype;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
-import com.zhekasmirnov.innercore.api.NativeAPI;
 
 public class Structure {
     public static void setStructure(StructureDescription stru, int x, int y, int z, NativeBlockSource region, Object packat){
