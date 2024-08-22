@@ -1,3 +1,5 @@
+// TODO: Переписать на ts
+
 function StructureDescription(stru_name){
 	if(stru_name == undefined || stru_name == null)
 		var stru = new StructureDescriptionJava([]);

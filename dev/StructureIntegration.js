@@ -1,3 +1,4 @@
+// TODO: Переписать на ts
 let StructureIntegration = {
  registerTreeToBonsaiPots(sapling, stru, obj){
   obj = obj || {};

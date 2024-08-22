@@ -1,3 +1,4 @@
+// TODO: Переписать на ts
 let StructureUtilityJava = WRAP_JAVA("com.reider.dungeonutility.struct.StructureUtility");
 let StructureRotation = WRAP_JAVA("com.reider.dungeonutility.struct.StructureRotation");
 

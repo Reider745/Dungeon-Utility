@@ -12,7 +12,7 @@
 #include "mcpe/Block.hpp"
 #include "mcpe/BlockLegacy.hpp"
 
-#include "innercore/GlobalContext.hpp"
+#include <innercore/global_context.h>
 
 #define stl std::__ndk1
 

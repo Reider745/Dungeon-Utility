@@ -1,8 +1,10 @@
-#pragma once
+#ifndef DUNGEON_UTILITY_DIMENSIONS
+#define DUNGEON_UTILITY_DIMENSIONS
 
 #include "mcpe/Dimension.hpp"
-#include "innercore/DimensionRegistry.hpp"
 #include <map>
+#include "innercore/DimensionRegistry.hpp"
+
 /*
 _ZNK9Dimension9getHeightEv
 _ZNK9Dimension12getMinHeightEv
@@ -31,3 +33,5 @@ JS_EXPORT(N, reg, "I()", (JNIEnv* env){
 	Logger::debug("TEST", "%i", moon);
 	return NativeJS::wrapIntegerResult(moon);
 });
+
+#endif

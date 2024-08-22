@@ -93,8 +93,9 @@ public class StructurePool {
             return;
         }
 
-        if(!path.startsWith("/storage/emulated"))
-            path += this.path + "/" + path;
+        // TODO: Удобно, но не совместимо в вариации кросплатфрома ZoteCoreLoader
+        //if(!path.startsWith("/storage/emulated"))
+            //path += this.path + "/" + path;
 
         if(LoaderType.getType(type).isLoadRuntime()) {
             try{

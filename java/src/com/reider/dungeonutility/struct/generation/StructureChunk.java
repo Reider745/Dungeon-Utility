@@ -19,7 +19,7 @@ import java.util.Random;
 
 public class StructureChunk {
     private final ArrayList<BlockData> blocks;
-    private final int chunkX, chunkZ;
+    public final int chunkX, chunkZ;
 
     private int x, y, z;
     private boolean isLast = false;

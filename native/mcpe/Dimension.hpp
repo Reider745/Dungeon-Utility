@@ -2,12 +2,14 @@
 
 enum Brightness {};
 class WorldGenerator;
+class Level;
 
 struct Dimension {
 	//void getLevelConst() const;
 	int getDimensionId() const;
 	WorldGenerator getWorldGenerator() const;
 	int getMoonPhase() const;
+	Level* getLevel() const;
 	
 	void setSkylight(bool);
 	bool hasSkylight() const;

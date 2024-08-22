@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+			"name": "Android",
+            "compilerPath": "${workspaceFolder}/../toolchain/toolchain/ndk/arm/bin/arm-linux-androideabi-g++.exe",
+			"includePath": [
+				"${workspaceFolder}/../toolchain/toolchain/ndk/arm/sysroot/usr/include",
+                "${workspaceFolder}}/../toolchain/toolchain/ndk/arm/include/c++/4.9.x",
+                "${workspaceFolder}}/../toolchain/toolchain/ndk/arm/lib/gcc/arm-linux-androideabi/4.9.x/include",
+                "${workspaceFolder}}/../toolchain/toolchain/ndk/arm/include/c++/4.9.x/arm-linux-androideabi",
+
+				"${workspaceFolder}}/../toolchain/toolchain/stdincludes/horizon",
+				"${workspaceFolder}}/../toolchain/toolchain/stdincludes/inner",
+				"${workspaceFolder}}/../toolchain/toolchain/stdincludes/gnu_stl"
+			],
+			"defines": [
+				"_DEBUG",
+				"UNICODE",
+				"_UNICODE"
+			],
+			"cppStandard": "c++11",
+            "intelliSenseMode": "linux-gcc-arm"
+		}
+    ],
+    "version": 4
+}

@@ -37,6 +37,8 @@ public class StructureDescriptionChunkSlip extends StructureDescription {
         length_x = x_offset + max_x + 1;
         length_z = z_offset + max_z + 1;
         blocks_cache = new ArrayList[length_x][length_z];
+        length_x--;
+        length_z--;
 
         for(BlockData block : blocks) {
             ArrayList<BlockData> list = blocks_cache[block.x + x_offset][block.z + z_offset];
@@ -46,19 +48,24 @@ public class StructureDescriptionChunkSlip extends StructureDescription {
             }
             list.add(block);
         }
+
+        x_offset = x[0];
+        z_offset = z[0];
+        max_x = x[1];
+        max_z = z[1];
     }
 
     // Бьет структуру на чанки
     public final StructureChunk getChunk(int realChunkX, int realChunkZ, int x_center, int z_center){
         final ArrayList<BlockData> blocks = new ArrayList<>();
 
-        final int x_point_min = x_center - x_offset;
-        final int start_index_x = Math.max(Math.max(x_point_min, realChunkX) - x_point_min, 0);
-        final int end_index_x = Math.min(Math.min(x_center + max_x, realChunkX + 16) - x_point_min, length_x);
+        final int x_point_min = x_center + x_offset;
+        final int start_index_x = Math.max(realChunkX - x_point_min, 0);
+        final int end_index_x = Math.min(realChunkX + 16 - x_point_min, length_x);
 
-        final int z_point_min = z_center - z_offset;
-        final int start_index_z = Math.max(Math.max(z_point_min, realChunkZ) - z_point_min, 0);
-        final int end_index_z = Math.min(Math.min(z_center + max_z, realChunkZ + 16) - z_point_min, length_z);
+        final int z_point_min = z_center + z_offset;
+        final int start_index_z = Math.max(realChunkZ - z_point_min, 0);
+        final int end_index_z = Math.min(realChunkZ + 16 - z_point_min, length_z);
 
         for(int x = start_index_x;x <= end_index_x;x++){
             final ArrayList<BlockData>[] line = blocks_cache[x];

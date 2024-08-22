@@ -1,19 +1,18 @@
 package com.reider.dungeonutility.struct.generation;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Function;
 
 import com.reider.dungeonutility.logger.Debug;
 import com.reider.dungeonutility.DungeonUtilityMain;
+import com.reider.dungeonutility.multiversions.IPackVersion;
 import com.reider.dungeonutility.multiversions.js_types.IJsObject;
 import com.reider.dungeonutility.struct.Structure;
 import com.reider.dungeonutility.struct.generation.types.*;
 import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.runtime.saver.world.WorldDataScopeRegistry;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -22,7 +21,10 @@ public class StructurePiece implements IStructurePiece {
     private final HashMap<String, IGenerationType> types = new HashMap<>();
     private final HashMap<String, IGenerationDescription> unique_description = new HashMap<>();
     private final ArrayList<IGenerationDescription> structures = new ArrayList<>();
+
     private final HashMap<Integer, HashMap<Long, ArrayList<StructureChunk>>> dimensionsChunksStructures = new HashMap<>();
+    private final HashMap<Long, ArrayList<StructureChunk>> chunks_post = new HashMap<>();// temp variable
+    private byte timer = 0;
 
     private static final Function<Integer, HashMap<Long, ArrayList<StructureChunk>>> NEW_HASH_MAP = k -> new HashMap<>();
     private static final Function<Long, ArrayList<StructureChunk>> NEW_ARRAY_LIST = k -> new ArrayList<>();
@@ -56,6 +58,7 @@ public class StructurePiece implements IStructurePiece {
 
                         dimensionsChunksStructures.put(Integer.parseInt(dimension), chunks);
                     }
+                    return;
                 }
                 throw new RuntimeException("Not support read "+o.getClass());
             }
@@ -85,10 +88,43 @@ public class StructurePiece implements IStructurePiece {
             }
         });
 
-        DungeonUtilityMain.getPackVersionApi().addCallback("LevelLeft", args -> {
+        final IPackVersion version = DungeonUtilityMain.getPackVersionApi();
+
+        version.addCallback("LevelLeft", args -> {
             dimensionsChunksStructures.clear();
             return null;
         });
+
+        // TODO: Не более чем костыль
+        if(!AdaptedScriptAPI.isDedicatedServer()) {
+            version.addCallback("tick", args -> {
+                if(timer % 20 == 0) {
+                    timer = 0;
+
+                    synchronized (dimensionsChunksStructures) {
+                        dimensionsChunksStructures.forEach((dimension, chunks) -> {
+                            final NativeBlockSource region = NativeBlockSource.getDefaultForDimension(dimension);
+
+                            chunks.forEach((chunk, list) -> {
+                                list.forEach(structure -> {
+                                    if (region.isChunkLoadedAt(structure.chunkX, structure.chunkZ))
+                                        structure.set(region);
+                                    else
+                                        chunks_post.put(chunk, list);
+                                });
+                            });
+
+                            chunks.clear();
+                            chunks.putAll(chunks_post);
+                            chunks_post.clear();
+                        });
+                    }
+                }
+
+                timer++;
+                return null;
+            });
+        }
     }
 
     private static Long hashChunkPos(int x, int z){
@@ -108,6 +144,7 @@ public class StructurePiece implements IStructurePiece {
         if(!id.isEmpty()) {
             if(unique_description.containsKey(id))
                 throw new RuntimeException("The structure with "+id+" generation has already been registered!");
+
             stru.setStructure(new StructureDescriptionChunkSlip(stru.getStructure().getStructure()));
             unique_description.put(id, stru);
         }
@@ -118,22 +155,42 @@ public class StructurePiece implements IStructurePiece {
         types.put(type.getType(), type);
     }
 
+    // TODO: Вариант для более высокой производительности на ZoteCoreLoaded
+    // TODO: Если кто-то когда будет разбираться в DungeonUtility для оптимизации, рекоменую попыться заснуть этот кусок кода в generation(int x, int z, Random random, int dimension) и убрать все что проверяется в AdaptedScriptAPI.isDedicatedServer()
+    @Override
+    public void generationPost(int x, int z, NativeBlockSource region) {
+        synchronized (dimensionsChunksStructures){
+            final HashMap<Long, ArrayList<StructureChunk>> chunksStructures = dimensionsChunksStructures.computeIfAbsent(region.getDimension(), NEW_HASH_MAP);
+            final Long hashCode = hashChunkPos(x, z);
+            final ArrayList<StructureChunk> chunks = chunksStructures.get(hashCode);
+
+            if(chunks != null) {
+                for (StructureChunk chunk : chunks) {
+                    chunk.set(region);
+                }
+                chunksStructures.remove(hashCode);
+            }
+        }
+    }
+
     @Override
     public void generation(int x, int z, Random random, int dimension) {
         final long start = System.currentTimeMillis();
         final NativeBlockSource region = NativeBlockSource.getCurrentWorldGenRegion();
 
-        synchronized (dimensionsChunksStructures){
-            final HashMap<Long, ArrayList<StructureChunk>> chunksStructures = dimensionsChunksStructures.computeIfAbsent(dimension, NEW_HASH_MAP);
-            final Long hashCode = hashChunkPos(x, z);
+        // TODO: Работает не правильно
+        /*synchronized (dimensionsChunksStructures){
+            final HashMap<String, ArrayList<StructureChunk>> chunksStructures = dimensionsChunksStructures.computeIfAbsent(dimension, NEW_HASH_MAP);
+            final String hashCode = hashChunkPos(x, z);
             final ArrayList<StructureChunk> chunks = chunksStructures.get(hashCode);
 
             if(chunks != null) {
-                for (StructureChunk chunk : chunks)
+                for (StructureChunk chunk : chunks) {
                     chunk.set(region);
+                }
                 chunksStructures.remove(hashCode);
             }
-        }
+        }*/
 
         final IJsObject object = DungeonUtilityMain.getPackVersionApi().createObjectEmpty();
         object.setJavaObj("random", random);
@@ -183,20 +240,24 @@ public class StructurePiece implements IStructurePiece {
                 if(!description.canLegacyOffset())
                     pos = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
 
-                IStructureStorage storage = StructurePieceController.getStorage();
                 if(description.isPoolStructure(pos, random, dimension, region))
-                    storage.add(new WorldStructure(pos, description.getName(), dimension));
+                    StructurePieceController.getStorage().add(new WorldStructure(pos, description.getName(), dimension));
 
                 if(!description.getUniqueIdentifier().isEmpty()){
                     final StructureDescriptionChunkSlip chunkSlip = (StructureDescriptionChunkSlip) description.getStructure().getStructure();
+                    final HashMap<Long, ArrayList<StructureChunk>> chunks;
+
+                    synchronized(dimensionsChunksStructures) {
+                         chunks = dimensionsChunksStructures.computeIfAbsent(dimension, NEW_HASH_MAP);
+                    }
 
                     final int _x = (int) pos.x;
                     final int _z = (int) pos.z;
 
-                    final int chunkStartX = _x - ((_x - chunkSlip.x_offset) % 16) - chunkSlip.x_offset;
-                    final int chunkStartZ = _z - ((_z - chunkSlip.z_offset) % 16) - chunkSlip.z_offset;
-                    final int chunkEndX = _x - ((_x + chunkSlip.max_x) % 16) + chunkSlip.max_x;
-                    final int chunkEndZ = _z - ((_z + chunkSlip.max_z) % 16) + chunkSlip.max_z;
+                    final int chunkStartX = ((_x + chunkSlip.x_offset) >> 4);
+                    final int chunkStartZ = ((_z + chunkSlip.z_offset) / 4);
+                    final int chunkEndX = ((_x + chunkSlip.max_x) >> 4);
+                    final int chunkEndZ = ((_z + chunkSlip.max_z) >> 4);
 
                     final Structure structure = description.getStructure();
 
@@ -205,25 +266,26 @@ public class StructurePiece implements IStructurePiece {
                         structure.getStructure().prot.before(_x, (int) pos.y, _z, region, packet);
 
                     StructureChunk lastChunk = null;
-                    for(int X = chunkStartX, CX = chunkStartX / 16;X <= chunkEndX;X+=16,CX++)
-                        for(int Z = chunkStartZ, CZ = chunkStartZ / 16;Z <= chunkEndZ;Z+=16,CZ++){
-                            lastChunk = chunkSlip.getChunk(X, Z, _x, _z);
+                    synchronized (chunks) {
+                        for (int X = chunkStartX << 4, CX = chunkStartX; X <= chunkEndX << 4; X += 4, CX++)
+                            for (int Z = chunkStartZ << 4, CZ = chunkStartZ; Z <= chunkEndZ << 4; Z += 4, CZ++) {
+                                lastChunk = chunkSlip.getChunk(X, Z, _x, _z);
 
-                            if(lastChunk.isEmpty()) continue;
-                            lastChunk.init(description, pos, packet);
+                                if (lastChunk.isEmpty()) continue;
+                                lastChunk.init(description, pos, packet);
 
-                            if(region.getChunkState(CX, CZ) >= 3) {
-                                lastChunk.set(region);
-                            }else{
-                                synchronized (dimensionsChunksStructures){
-                                    dimensionsChunksStructures.computeIfAbsent(dimension, NEW_HASH_MAP)
-                                            .computeIfAbsent(hashChunkPos(CX, CZ), NEW_ARRAY_LIST)
-                                                .add(lastChunk);
+                                if (region.getChunkState(CX, CZ) >= 3) {
+                                    lastChunk.set(region);
+                                } else {
+                                    chunks.computeIfAbsent(hashChunkPos(CX, CZ), NEW_ARRAY_LIST)
+                                            .add(lastChunk);
                                 }
                             }
-                        }
+                    }
+
                     if(lastChunk != null)
                         lastChunk.setLast();
+
                     if(description.canOptimization())
                         StructurePieceController.algorithms.addPos(pos);
                 }else

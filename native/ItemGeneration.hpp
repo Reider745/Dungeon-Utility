@@ -1,17 +1,16 @@
 #pragma once
 
-#include "mcpe/Random.hpp"
 #include "mcpe/LootTableContext.hpp"
 #include "mcpe/LootTable.hpp"
 #include "mcpe/ItemStack.hpp"
+#include "mcpe/Level.hpp"
 
-#include "innercore/GlobalContext.hpp"
+#include <innercore/global_context.h>
 
 #include <vector>
 #include <map>
 #include <regex>
 #include <java.h>
-
 
 struct GenItem {
 	int id;
@@ -76,6 +75,14 @@ namespace ItemGeneration {
 		Util::LootTableUtils::fillContainer(*level, *container, *random, to_stl(name), actor);
 	}
 	void init(){
+		// TODO: Удобно, но это точно не для реализов
+		/*HookManager::addCallback(
+			SYMBOL("mcpe","_ZN4Core7Profile14constructLabelEPKc"),
+			LAMBDA((void*, const char* str),{
+				Logger::debug("Minecraft", str);
+			},), HookManager::CALL | HookManager::LISTENER
+		);*/
+		
 		HookManager::addCallback(SYMBOL("mcpe","_ZN9LootTable4fillER9ContainerR6RandomR16LootTableContext"),LAMBDA((HookManager::CallbackController* controller, LootTable* lt, Container& container, Random& random, LootTableContext& ltc),{
 			std::string tableName = std::string(lt->getDir().data());		
 			std::vector<GenItem> datas = items[tableName];

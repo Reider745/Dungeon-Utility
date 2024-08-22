@@ -3,16 +3,18 @@
 #include <logger.h>
 #include <symbol.h>
 #include <nativejs.h>
-#include "innercore/callback.h"
+#include <innercore_callbacks.h>
 
-namespace DungeonUtility {
-	jclass NativeAPI;
-};
+
 
 #include "includes/VtableHelper.h"
 #include "Structure.hpp"
 #include "ItemGeneration.hpp"
 #include "DungeonUtilityDimension.hpp"
+#include "GenerationUtils.hpp"
+#include "Global.hpp"
+
+jclass DungeonUtility::NativeAPI;
 
 class MainModule : public Module {
 public:
@@ -32,14 +34,9 @@ public:
   }
 };
 
-class OtherModule : public Module {
-public:
-	OtherModule(Module* parent, const char* id) : Module(parent, id) {};
-};
-
 MAIN {
 	Module* main_module = new MainModule("DungeonUtility");
-	new OtherModule(main_module, "DungeonUtility.other_module");
+	new GenerationUtilsModule(main_module);
 }
 
 std::string jstring2string(JNIEnv* env, jstring jStr) {

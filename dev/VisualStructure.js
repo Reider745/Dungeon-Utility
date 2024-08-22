@@ -1,3 +1,4 @@
+// TODO: Переписать на ts
 let JavaVisualStructure = WRAP_JAVA("com.reider.dungeonutility.struct.VisualStructure");
 let VisualStructure = {
 	getArrMesh(name, size, value){

@@ -5,8 +5,10 @@ import com.reider.dungeonutility.multiversions.js_types.IJsFunctionImpl;
 import com.reider.dungeonutility.multiversions.notwrap.PackNotWrap;
 import com.reider.dungeonutility.multiversions.wrap.PackWrap;
 import com.reider.dungeonutility.struct.generation.StructurePieceController;
+import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
+import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.mod.ui.window.UIWindow;
 import org.mozilla.javascript.Wrapper;
 
@@ -21,17 +23,17 @@ public class DungeonUtilityMain {
         try {
             Class.forName("com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap");
             packVersion = new PackWrap();
-        }catch (Exception ignore){
+        } catch (Exception ignore) {
             // Дополнительный слой проверки
-            try{
+            try {
                 new UIWindow(ScriptableObjectHelper.createEmpty());
                 packVersion = new PackWrap();
-            } catch (Throwable e){
+            } catch (Throwable e) {
                 packVersion = new PackNotWrap();
             }
         }
 
-        Logger.info(logger_name, "end load..., Compatibility mode: "+packVersion.getClass());
+        Logger.info(logger_name, "end load..., Compatibility mode: " + packVersion.getClass());
     }
 
     public static void boot(HashMap<?, ?> args){
@@ -54,6 +56,17 @@ public class DungeonUtilityMain {
 
         packVersion.addCallback("GenerateChunk", func);
         packVersion.addCallback("GenerateCustomDimensionChunk", func);
+
+        if(!AdaptedScriptAPI.isDedicatedServer()){
+            packVersion.addCallback("PostProcessChunk", _args -> {
+                StructurePieceController.getPiece().generationPost(
+                        ((Number) _args[0]).intValue(),
+                        ((Number) _args[1]).intValue(),
+                        NativeBlockSource.getCurrentWorldGenRegion()
+                );
+                return null;
+            });
+        }
 
         Logger.info(logger_name, "Added callback generation");
     }

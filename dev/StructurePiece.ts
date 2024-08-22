@@ -116,6 +116,11 @@ class DefaultGenerationDescription {
     }
 
     private identifier: string;
+    /**
+     * Исправляет баг половинчитых структур, не рекомендуется использовать на структурах, которые генеруются часто, например деревья, т.к повышается потребление ОЗУ и ЦПУ
+     * @param identifier - уникальный индификатор, по которому будет сохраняться структура, после выхода из мира, чтобы при возвращении в мир установить 
+     * @returns Возвращает самого себя
+     */
     public setIdentifier(identifier: string = ""): DefaultGenerationDescription {
         this.identifier = identifier;
         return this;
