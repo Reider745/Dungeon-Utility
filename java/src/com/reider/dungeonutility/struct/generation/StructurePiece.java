@@ -50,8 +50,11 @@ public class StructurePiece implements IStructurePiece {
                             final ArrayList<StructureChunk> structures = new ArrayList<>();
                             final JSONArray list = json_chunks.getJSONArray(chunk);
 
-                            for(int i = 0;i < list.length();i++)
-                                structures.add(StructureChunk.fromJSON(list.getJSONObject(i)));
+                            for(int i = 0;i < list.length();i++) {
+                                try{
+                                    structures.add(StructureChunk.fromJSON(list.getJSONObject(i)));
+                                }catch (Exception ignore){}
+                            }
 
                             chunks.put(Long.parseLong(chunk), structures);
                         }
@@ -67,21 +70,23 @@ public class StructurePiece implements IStructurePiece {
             public Object saveAsJson() throws Exception {
                 final JSONObject json_dimensions = new JSONObject();
 
-                for(final Integer dimension : dimensionsChunksStructures.keySet()){
-                    final JSONObject json_chunks = new JSONObject();
-                    final HashMap<Long, ArrayList<StructureChunk>> chunks = dimensionsChunksStructures.get(dimension);
+                synchronized (dimensionsChunksStructures) {
+                    for (final Integer dimension : dimensionsChunksStructures.keySet()) {
+                        final JSONObject json_chunks = new JSONObject();
+                        final HashMap<Long, ArrayList<StructureChunk>> chunks = dimensionsChunksStructures.get(dimension);
 
-                    for(Long chunk : chunks.keySet()){
-                        final JSONArray json_list = new JSONArray();
-                        final ArrayList<StructureChunk> list = chunks.get(chunk);
+                        for (Long chunk : chunks.keySet()) {
+                            final JSONArray json_list = new JSONArray();
+                            final ArrayList<StructureChunk> list = chunks.get(chunk);
 
-                        for(StructureChunk structure : list)
-                            json_list.put(structure.toJSON());
+                            for (StructureChunk structure : list)
+                                json_list.put(structure.toJSON());
 
-                        json_chunks.put(chunk.toString(), json_list);
+                            json_chunks.put(chunk.toString(), json_list);
+                        }
+
+                        json_dimensions.put(dimension.toString(), json_chunks);
                     }
-
-                    json_dimensions.put(dimension.toString(), json_chunks);
                 }
 
                 return json_dimensions;
@@ -105,14 +110,16 @@ public class StructurePiece implements IStructurePiece {
                         dimensionsChunksStructures.forEach((dimension, chunks) -> {
                             final NativeBlockSource region = NativeBlockSource.getDefaultForDimension(dimension);
 
-                            chunks.forEach((chunk, list) -> {
-                                list.forEach(structure -> {
-                                    if (region.isChunkLoadedAt(structure.chunkX, structure.chunkZ))
-                                        structure.set(region);
-                                    else
-                                        chunks_post.put(chunk, list);
+                            synchronized (chunks) {
+                                chunks.forEach((chunk, list) -> {
+                                    list.forEach(structure -> {
+                                        if (region.isChunkLoadedAt(structure.chunkX, structure.chunkZ))
+                                            structure.set(region);
+                                        else
+                                            chunks_post.put(chunk, list);
+                                    });
                                 });
-                            });
+                            }
 
                             chunks.clear();
                             chunks.putAll(chunks_post);

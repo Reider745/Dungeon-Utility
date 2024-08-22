@@ -143,12 +143,10 @@ ModAPI.registerAPI("DungeonUtility", {
 }
 
 // EXAMPLES
-
-/*let pool = new StructurePool("test")
-    .setPathStructures(__dir__);
-
-pool.upload("test", "DungeonUtility_V2");
-pool.upload("test2", "DungeonUtility_V2");
+/*
+let pool = new StructurePool("test")
+    .setPathStructures(__dir__)
+    .upload("test2", "DungeonUtility_V2");
 
 Callback.addCallback("StructureLoadOne", () => {
     new DefaultGenerationDescription(pool.get("test2"), 60)
@@ -157,6 +155,9 @@ Callback.addCallback("StructureLoadOne", () => {
         .setGenerationParams(0, 0, 10)
         .register();
 });*/
+
+
+/**/
 
 /*Callback.addCallback("StructureLoadOne", () => {
     let pool = new StructurePool("test");
