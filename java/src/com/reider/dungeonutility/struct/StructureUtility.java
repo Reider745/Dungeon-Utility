@@ -26,40 +26,35 @@ public class StructureUtility {
         return new ArrayList<>(Arrays.asList(blocks));
     }
 
+    private interface IRotateBlock {
+        BlockData onRotate(BlockData original);
+    }
+
+    private static final IRotateBlock[] ROTATES = new IRotateBlock[]{
+            (data -> new BlockData(data.x, data.y, data.z,data)),
+            (data -> new BlockData(-data.x, data.y, data.z,data)),
+            (data -> new BlockData(-data.x, data.y, -data.z,data)),
+            (data -> new BlockData(data.x, data.y, -data.z,data)),
+            (data -> new BlockData(data.x, -data.y, data.z,data)),
+            (data -> new BlockData(-data.x, -data.y, data.z,data)),
+            (data -> new BlockData(-data.x, -data.y, -data.z,data)),
+            (data -> new BlockData(data.x, -data.y, -data.z,data))
+    };
+
+    private static final IRotateBlock DEFAULT_ROTATE = (data -> new BlockData(data.x, data.y, data.z,data));
+
     public static StructureDescription rotate(StructureDescription stru, int rotate){
-        BlockData[] result = new BlockData[stru.blocks.length];
-        for(int i = 0;i < stru.blocks.length;i++){
-            BlockData data = stru.blocks[i];
-            switch(rotate){
-                case 0:
-                    result[i] = new BlockData(data.x, data.y, data.z,data);
-                    break;
-                case 1:
-                    result[i] = new BlockData(-data.x, data.y, data.z,data);
-                    break;
-                case 2:
-                    result[i] = new BlockData(-data.x, data.y, -data.z,data);
-                    break;
-                case 3:
-                    result[i] = new BlockData(data.x, data.y, -data.z,data);
-                    break;
-                case 4:
-                    result[i] = new BlockData(data.x, -data.y, data.z,data);
-                    break;
-                case 5:
-                    result[i] = new BlockData(-data.x, -data.y, data.z,data);
-                    break;
-                case 6:
-                    result[i] = new BlockData(-data.x, -data.y, -data.z,data);
-                    break;
-                case 7:
-                    result[i] = new BlockData(data.x, -data.y, -data.z,data);
-                    break;
-                default:
-                    result[i] = new BlockData(data.x, data.y, data.z,data);
-                    break;
-            }
-        }
+        final BlockData[] result = new BlockData[stru.blocks.length];
+        final IRotateBlock rotateFunc;
+
+        if(rotate < ROTATES.length)
+            rotateFunc = ROTATES[rotate];
+        else
+            rotateFunc = DEFAULT_ROTATE;
+
+        for(int i = 0;i < stru.blocks.length;i++)
+            result[i] = rotateFunc.onRotate(stru.blocks[i]);
+
         return new StructureDescription(result);
     }
 
@@ -172,8 +167,7 @@ public class StructureUtility {
     public static Size[] getStructureSize(StructureDescription structure){
         BlockData[] stru = structure.blocks;
         Size[] size = {new Size(0, 0),new Size(0, 0),new Size(0, 0)};
-        for(int i = 0; i < stru.length;i++){
-            BlockData block = stru[i];
+        for (BlockData block : stru) {
             size[0].max = Math.max(size[0].max, block.x);
             size[0].min = Math.min(size[0].min, block.x);
 

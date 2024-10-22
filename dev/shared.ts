@@ -142,6 +142,8 @@ ModAPI.registerAPI("DungeonUtility", {
     });
 }
 
+new StructurePool("test")
+    
 // EXAMPLES
 /*
 let pool = new StructurePool("test")

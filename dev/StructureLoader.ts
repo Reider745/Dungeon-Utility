@@ -55,7 +55,7 @@ class StructurePool {
 		return this;
 	}
 
-	public upload(name: string, type: FILE_FORMATS): StructurePool {
+	public upload(name: string, type?: FILE_FORMATS): StructurePool {
 		this.self.load(name, "", type, false);
 		return this;
 	}

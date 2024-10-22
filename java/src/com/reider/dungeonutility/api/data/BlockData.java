@@ -49,10 +49,13 @@ public class BlockData implements Cloneable {
 
     public BlockData(BlockData data){
         this(data.x, data.y, data.z, data.state, data.stateExtra, data.tag);
+
+        set(data.list);
     }
 
     public BlockData(int x, int y, int z, BlockData data){
         this(x, y, z, data.state, data.stateExtra, data.tag);
+        set(data.list);
     }
 
     public BlockData set(Collection<ISetBlock> list){

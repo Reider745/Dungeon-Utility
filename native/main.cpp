@@ -14,6 +14,10 @@
 #include "GenerationUtils.hpp"
 #include "Global.hpp"
 
+struct Aboba {
+	int16_t a, b;
+};
+
 jclass DungeonUtility::NativeAPI;
 
 class MainModule : public Module {
@@ -26,12 +30,56 @@ public:
 			jclass localClass = env->FindClass("com/reider/dungeonutility/NativeAPI");
 			DungeonUtility::NativeAPI = reinterpret_cast<jclass>(env->NewGlobalRef(localClass)); 
 		}
+
 		DLHandleManager::initializeHandle("libminecraftpe.so", "mcpe");
+
 		ItemGeneration::init();
 		Structure::init();
 		DungeonUtilityDimension::init();
-		
-  }
+		//_ZNK9Dimension9getHeightEv
+		//_ZNK9Dimension14getHeightRangeEv
+		// HookManager::addCallback(
+		// 	SYMBOL("mcpe", "_ZNK9Dimension12getMinHeightEv"),
+		// 	LAMBDA((), {
+		// 		return (int16_t) 64;
+		// 	},),
+		// 	HookManager::CALL | HookManager::REPLACE | HookManager::RESULT
+		// );//
+
+
+		// HookManager::addCallback(
+		// 	SYMBOL("mcpe", "_ZNK9Dimension14getMaxFogStartEv"),
+		// 	LAMBDA((), {
+		// 		Logger::debug("Test", "_ZNK9Dimension14getMaxFogStartEv");
+		// 		return 64;
+		// 	},),
+		// 	HookManager::CALL | HookManager::REPLACE | HookManager::RESULT
+		// );
+
+		// HookManager::addCallback(
+		// 	SYMBOL("mcpe", "_ZNK9Dimension14getCloudHeightEv"),
+		// 	LAMBDA((), {
+		// 		Logger::debug("Test", "_ZNK9Dimension14getCloudHeightEv");
+		// 		return -16;
+		// 	},),
+		// 	HookManager::CALL | HookManager::REPLACE | HookManager::RESULT
+		// );
+
+		/*HookManager::addCallback(
+			SYMBOL("mcpe", "_ZNK9Dimension14getHeightRangeEv"),
+			LAMBDA((HookManager::CallbackController* ctr, void* self), {
+				Logger::debug("Test", "test1 %p", self);
+				Aboba* hz = ctr->call<Aboba*>(self);
+				
+				Logger::debug("Test", "test %i %i", hz->a, hz->b);
+				hz->a = (int16_t) -255;
+				hz->b = (int16_t) 0;
+				Logger::debug("Test", "test %i %i", hz->a, hz->b);
+				return hz;
+			},),
+			HookManager::CALL | HookManager::REPLACE | HookManager::RESULT | HookManager::CONTROLLER
+		);*/
+	}//
 };
 
 MAIN {

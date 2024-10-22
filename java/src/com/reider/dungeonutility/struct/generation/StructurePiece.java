@@ -100,8 +100,17 @@ public class StructurePiece implements IStructurePiece {
             return null;
         });
 
+        version.addCallback("ChunkLoaded", args -> {
+            StructurePieceController.getPiece().generationPost(
+                    ((Number) args[0]).intValue(),
+                    ((Number) args[1]).intValue(),
+                    NativeBlockSource.getCurrentWorldGenRegion()
+            );
+            return null;
+        });
+
         // TODO: Не более чем костыль
-        if(!AdaptedScriptAPI.isDedicatedServer()) {
+        /*if(!AdaptedScriptAPI.isDedicatedServer()) {
             version.addCallback("tick", args -> {
                 if(timer % 20 == 0) {
                     timer = 0;
@@ -131,7 +140,7 @@ public class StructurePiece implements IStructurePiece {
                 timer++;
                 return null;
             });
-        }
+        }*/
     }
 
     private static Long hashChunkPos(int x, int z){
@@ -172,8 +181,10 @@ public class StructurePiece implements IStructurePiece {
             final ArrayList<StructureChunk> chunks = chunksStructures.get(hashCode);
 
             if(chunks != null) {
-                for (StructureChunk chunk : chunks) {
-                    chunk.set(region);
+                synchronized (chunks){
+                    for (StructureChunk chunk : chunks) {
+                        chunk.set(region);
+                    }
                 }
                 chunksStructures.remove(hashCode);
             }

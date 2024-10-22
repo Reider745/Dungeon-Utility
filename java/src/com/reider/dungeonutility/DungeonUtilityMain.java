@@ -57,7 +57,7 @@ public class DungeonUtilityMain {
         packVersion.addCallback("GenerateChunk", func);
         packVersion.addCallback("GenerateCustomDimensionChunk", func);
 
-        if(!AdaptedScriptAPI.isDedicatedServer()){
+        /*if(!AdaptedScriptAPI.isDedicatedServer()){
             packVersion.addCallback("PostProcessChunk", _args -> {
                 StructurePieceController.getPiece().generationPost(
                         ((Number) _args[0]).intValue(),
@@ -66,7 +66,7 @@ public class DungeonUtilityMain {
                 );
                 return null;
             });
-        }
+        }*/
 
         Logger.info(logger_name, "Added callback generation");
     }
