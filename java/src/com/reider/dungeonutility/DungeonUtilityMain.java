@@ -10,6 +10,7 @@ import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.mod.ui.window.UIWindow;
+import com.zhekasmirnov.innercore.api.runtime.ChunkManager;
 import org.mozilla.javascript.Wrapper;
 
 import java.util.HashMap;
@@ -20,18 +21,19 @@ public class DungeonUtilityMain {
     public static final String logger_name = "DungeonUtility";
 
     static {
-        try {
+        packVersion = new PackNotWrap();
+        /*try {
             Class.forName("com.zhekasmirnov.innercore.api.scriptwrap.ScriptObjectWrap");
             packVersion = new PackWrap();
         } catch (Exception ignore) {
             // Дополнительный слой проверки
             try {
                 new UIWindow(ScriptableObjectHelper.createEmpty());
-                packVersion = new PackWrap();
-            } catch (Throwable e) {
                 packVersion = new PackNotWrap();
+            } catch (Throwable e) {
+                packVersion = new PackWrap();
             }
-        }
+        }*/
 
         Logger.info(logger_name, "end load..., Compatibility mode: " + packVersion.getClass());
     }
@@ -56,17 +58,6 @@ public class DungeonUtilityMain {
 
         packVersion.addCallback("GenerateChunk", func);
         packVersion.addCallback("GenerateCustomDimensionChunk", func);
-
-        /*if(!AdaptedScriptAPI.isDedicatedServer()){
-            packVersion.addCallback("PostProcessChunk", _args -> {
-                StructurePieceController.getPiece().generationPost(
-                        ((Number) _args[0]).intValue(),
-                        ((Number) _args[1]).intValue(),
-                        NativeBlockSource.getCurrentWorldGenRegion()
-                );
-                return null;
-            });
-        }*/
 
         Logger.info(logger_name, "Added callback generation");
     }

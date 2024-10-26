@@ -38,8 +38,6 @@ public class StructureDescription implements Cloneable {
         this(blocks.toArray(EMPTY_BLOCKS), EMPTY_PROTOTYPE);
     }
 
-
-
     public StructureDescription copy(){
         return new StructureDescription(this);
     }
@@ -51,13 +49,13 @@ public class StructureDescription implements Cloneable {
                     block.set(x, y, z, region);
                 }
             }else{
-                prot.before(x, y, z, region, packet);
+                addProt.before(x, y, z, region, packet);
                 for (BlockData block : blocks) {
-                    if (prot.isBlock(new Vector3(x, y, z), block, region, packet))
+                    if (addProt.isBlock(new Vector3(x, y, z), block, region, packet))
                         block.set(x, y, z, region);
-                    prot.setBlock(new Vector3(x, y, z), block, region, packet);
+                    addProt.setBlock(new Vector3(x, y, z), block, region, packet);
                 }
-                prot.after(x, y, z, region, packet);
+                addProt.after(x, y, z, region, packet);
             }
             return;
         }

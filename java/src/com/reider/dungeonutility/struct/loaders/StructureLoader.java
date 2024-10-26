@@ -116,4 +116,8 @@ public class StructureLoader {
     public static void deLoad(String name){
         default_pool.deLoad(name);
     }
+
+    public static StructurePool getDefaultPool(){
+        return default_pool;
+    }
 }

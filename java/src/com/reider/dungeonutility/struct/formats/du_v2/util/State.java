@@ -65,6 +65,7 @@ public class State {
 
     public static boolean equals(BlockState data, BlockState data2){
         if(data2 == null) data2 = StateManager.EMPTY_STATE;
+        if(data == null) data = StateManager.EMPTY_STATE;
         return data.id == data2.id && data.getStates().toString().equals(data2.getStates().toString());
     }
 }

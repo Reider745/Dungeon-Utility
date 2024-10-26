@@ -13,6 +13,7 @@ import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
+import com.zhekasmirnov.innercore.api.runtime.ChunkManager;
 import com.zhekasmirnov.innercore.api.runtime.saver.world.WorldDataScopeRegistry;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -100,14 +101,7 @@ public class StructurePiece implements IStructurePiece {
             return null;
         });
 
-        version.addCallback("ChunkLoaded", args -> {
-            StructurePieceController.getPiece().generationPost(
-                    ((Number) args[0]).intValue(),
-                    ((Number) args[1]).intValue(),
-                    NativeBlockSource.getCurrentWorldGenRegion()
-            );
-            return null;
-        });
+        ChunkManager.addListenerChunkStateChaged((chunkX, chunkZ, dimension, preState, state, value) -> StructurePieceController.getPiece().generationPost(chunkX, chunkZ, NativeBlockSource.getDefaultForDimension(dimension)), new int[]{9});
 
         // TODO: Не более чем костыль
         /*if(!AdaptedScriptAPI.isDedicatedServer()) {

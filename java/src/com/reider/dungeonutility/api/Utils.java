@@ -85,7 +85,6 @@ public class Utils {
             inputStream.read(bytes);
             inputStream.close();
 
-            Logger.debug("Bytes "+bytes.length);
             return bytes;
         } catch (Exception e) {
             Logger.warning("Read "+ICLog.getStackTrace(e));
