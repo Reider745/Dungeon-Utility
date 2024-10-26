@@ -10,7 +10,6 @@ import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.mod.ScriptableObjectHelper;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.mod.ui.window.UIWindow;
-import com.zhekasmirnov.innercore.api.runtime.ChunkManager;
 import org.mozilla.javascript.Wrapper;
 
 import java.util.HashMap;

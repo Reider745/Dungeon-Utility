@@ -12,8 +12,8 @@ import com.reider.dungeonutility.struct.generation.types.*;
 import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
-import com.zhekasmirnov.innercore.api.runtime.ChunkManager;
 import com.zhekasmirnov.innercore.api.runtime.saver.world.WorldDataScopeRegistry;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -101,7 +101,11 @@ public class StructurePiece implements IStructurePiece {
             return null;
         });
 
-        ChunkManager.addListenerChunkStateChaged((chunkX, chunkZ, dimension, preState, state, value) -> StructurePieceController.getPiece().generationPost(chunkX, chunkZ, NativeBlockSource.getDefaultForDimension(dimension)), new int[]{9});
+        version.addCallback("ChunkLoadingStateChanged", (args -> {
+            StructurePieceController.getPiece().generationPost(((Number) args[0]).intValue(), ((Number) args[1]).intValue(), NativeBlockSource.getDefaultForDimension(((Number) args[2]).intValue()));
+            return null;
+        }));
+        NativeAPI.setChunkStateChangeCallbackEnabled(9, true);
 
         // TODO: Не более чем костыль
         /*if(!AdaptedScriptAPI.isDedicatedServer()) {
