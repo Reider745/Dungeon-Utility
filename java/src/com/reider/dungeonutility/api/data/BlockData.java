@@ -140,20 +140,19 @@ public class BlockData implements Cloneable {
     private static final BlockDataEmpty EMPTY_BLOCK_DATA = new BlockDataEmpty();
 
     public static BlockData createData(int x, int y, int z, BlockState block, BlockState extra, NativeCompoundTag tag){
-        //Logger.debug(x+" "+y+" "+z+"   "+(block != null) + "    "+(extra != null));
         final Collection<ISetBlock> list = new HashSet<>();
 
         if(block != null)
             list.add((data, x1, y1, z1, region) -> {
-                region.setBlock(x + x1, y + y1, z + z1, data.state);
+                region.setBlock(data.x + x1, data.y + y1, data.z + z1, data.state);
             });
         if(extra != null)
             list.add((data, x1, y1, z1, region) -> {
-                region.setExtraBlock(x + x1, y + y1, z + z1, data.stateExtra);
+                region.setExtraBlock(data.x + x1, data.y + y1, data.z + z1, data.stateExtra);
             });
         if(tag != null)
             list.add((data, x1, y1, z1, region) -> {
-                final NativeTileEntity tile = region.getBlockEntity(x + x1, y + y1, z + z1);
+                final NativeTileEntity tile = region.getBlockEntity(data.x + x1, data.y + y1, data.z + z1);
                 if(tile != null) tile.setCompoundTag(data.tag);
             });
 

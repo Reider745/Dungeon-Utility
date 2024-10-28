@@ -102,7 +102,8 @@ public class StructurePiece implements IStructurePiece {
         });
 
         version.addCallback("ChunkLoadingStateChanged", (args -> {
-            StructurePieceController.getPiece().generationPost(((Number) args[0]).intValue(), ((Number) args[1]).intValue(), NativeBlockSource.getDefaultForDimension(((Number) args[2]).intValue()));
+            if(((Number) args[4]).intValue() == 9)
+                StructurePieceController.getPiece().generationPost(((Number) args[0]).intValue(), ((Number) args[1]).intValue(), NativeBlockSource.getDefaultForDimension(((Number) args[2]).intValue()));
             return null;
         }));
         NativeAPI.setChunkStateChangeCallbackEnabled(9, true);
