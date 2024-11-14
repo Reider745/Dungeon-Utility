@@ -1,10 +1,10 @@
 package com.reider.dungeonutility.struct.formats;
 
 import com.reider.dungeonutility.DungeonUtilityMain;
-import com.reider.dungeonutility.api.StateManager;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
+import com.reider.dungeonutility.struct.formats.legacy.BlockPalette;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
@@ -18,7 +18,7 @@ public class DungeonCore extends LoaderType {
     private static char symbol = '.';
 
     @Override
-    public StructureDescription read(byte[] bytes, String path) {
+    public StructureDescription read(byte[] bytes, String path, BlockPalette palette) {
         final ArrayList<BlockData> blocks = new ArrayList<>();
         
         try{
@@ -29,15 +29,15 @@ public class DungeonCore extends LoaderType {
                 BlockState state = null;
                 BlockState stateExtra = null;
 
-                Object value = json.get(0);
+                Object value = list.get(0);
                 if(value instanceof Number)
-                    state = StateManager.buildBlockState(
+                    state = palette.buildBlockState(
                             ((Number) value).intValue(),
                             list.getJSONObject(2)
                     );
                 else if(value instanceof String)
-                    state = StateManager.buildBlockState(
-                            Utils.getIdBlock((String) value),
+                    state = palette.buildBlockState(
+                            (String) value,
                             list.getJSONObject(2)
                     );
 
@@ -46,13 +46,13 @@ public class DungeonCore extends LoaderType {
                     value = extra.get(0);
 
                     if(value instanceof Number)
-                        stateExtra = StateManager.buildBlockState(
+                        stateExtra = palette.buildBlockState(
                                 ((Number) value).intValue(),
                                 extra.getJSONObject(1)
                         );
                     else if(extra.get(0) instanceof String)
-                        stateExtra = StateManager.buildBlockState(
-                                Utils.getIdBlock((String) extra.get(0)),
+                        stateExtra = palette.buildBlockState(
+                                (String) extra.get(0),
                                 extra.getJSONObject(1));
 
                 }

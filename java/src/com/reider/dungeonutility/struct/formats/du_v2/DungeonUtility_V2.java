@@ -13,12 +13,13 @@ import com.reider.dungeonutility.struct.formats.du_v2.zones.BaseZone;
 import com.reider.dungeonutility.struct.formats.du_v2.zones.v1.DescriptionZone;
 import com.reider.dungeonutility.struct.formats.du_v2.zones.v1.PlaneBlocksZone;
 import com.reider.dungeonutility.struct.formats.du_v2.zones.v1.StatesZone;
+import com.reider.dungeonutility.struct.formats.legacy.BlockPalette;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
 
 public class DungeonUtility_V2 extends LoaderType {
     @Override
-    public StructureDescription read(byte[] file, String path) {
+    public StructureDescription read(byte[] file, String path, BlockPalette palette) {
         ByteBuffer buffer = ByteBuffer.wrap(file);
         byte version = buffer.get();// На тот случай, если внутри сильно что-то изменится
 

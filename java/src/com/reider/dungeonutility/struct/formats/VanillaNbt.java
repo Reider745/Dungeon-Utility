@@ -5,6 +5,7 @@ import com.reider.dungeonutility.api.StructureDescription;
 
 import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.struct.StructureUtility;
+import com.reider.dungeonutility.struct.formats.legacy.BlockPalette;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
@@ -28,7 +29,7 @@ public class VanillaNbt extends LoaderType {
     }
 
     @Override
-    public StructureDescription read(byte[] file, String path) {
+    public StructureDescription read(byte[] file, String path, BlockPalette _palette) {
         try {
             final NBTInputStream inputStream = new NBTInputStream(detectDecompression(new ByteArrayInputStream(file)));
             final CompoundTag tag = (CompoundTag) inputStream.readTag(512).getTag();

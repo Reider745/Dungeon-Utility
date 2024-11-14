@@ -4,13 +4,14 @@ import com.reider.dungeonutility.api.StateManager;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
+import com.reider.dungeonutility.struct.formats.legacy.BlockPalette;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 
 import java.util.ArrayList;
 
 public class DungeonAPI extends LoaderType {
     @Override
-    public StructureDescription read(byte[] bytes, String path) {
+    public StructureDescription read(byte[] bytes, String path, BlockPalette palette) {
         final String file = new String(bytes);
         final ArrayList<BlockData> blocks = new ArrayList<>();
         final String[] strings = file.split(":");
@@ -21,7 +22,7 @@ public class DungeonAPI extends LoaderType {
                     Integer.parseInt(data[2]),
                     Integer.parseInt(data[3]),
                     Integer.parseInt(data[4]),
-                    StateManager.buildBlockState(Utils.getIdBlock(data[0]), Integer.parseInt(data[1]))
+                    palette.buildBlockState(data[0], Integer.parseInt(data[1]))
             ));
         }
 

@@ -5,6 +5,7 @@ import com.reider.dungeonutility.api.StateManager;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
+import com.reider.dungeonutility.struct.formats.legacy.BlockPalette;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
@@ -17,7 +18,7 @@ import org.json.JSONObject;
 
 public class Structures extends LoaderType {
     @Override
-    public StructureDescription read(byte[] bytes, String path) {
+    public StructureDescription read(byte[] bytes, String path, BlockPalette palette) {
         final ArrayList<BlockData> blocks = new ArrayList<>();
 
         try{
@@ -30,20 +31,20 @@ public class Structures extends LoaderType {
                 final Object value = list.get(3);
                 BlockState state = null;
                 if(value instanceof Number)
-                    state = new BlockState(((Number) value).intValue(), 0);
+                    state = palette.buildBlockState(((Number) value).intValue(), 0);
                 else if(value instanceof String)
-                    state = new BlockState(Utils.getIdBlock((String) value), 0);
+                    state = palette.buildBlockState((String) value, 0);
                 else if(value instanceof JSONObject) {
                     final JSONObject obj = ((JSONObject) value);
                     Object id = obj.get("id");
                     if (id instanceof Number)
-                        state = StateManager.buildBlockState(
+                        state = palette.buildBlockState(
                                 ((Number) id).intValue(),
                                 ((Number) obj.get("data")).intValue()
                         );
                     else
-                        state = StateManager.buildBlockState(
-                                Utils.getIdBlock((String) id),
+                        state = palette.buildBlockState(
+                                (String) id,
                                 ((Number) obj.get("data")).intValue()
                         );
                 }

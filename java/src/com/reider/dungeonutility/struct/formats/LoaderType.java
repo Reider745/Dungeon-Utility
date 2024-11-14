@@ -5,13 +5,14 @@ import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.struct.formats.du_v2.DungeonUtility_V2;
+import com.reider.dungeonutility.struct.formats.legacy.BlockPalette;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
 import java.util.HashMap;
 
 public abstract class LoaderType {
-    public abstract StructureDescription read(byte[] file, String path);
+    public abstract StructureDescription read(byte[] file, String path, BlockPalette palette);
     public abstract byte[] save(StructureDescription stru);
     public abstract boolean isLoadRuntime();
 
@@ -19,7 +20,7 @@ public abstract class LoaderType {
         final byte[] file = loader.save(structure);
         Utils.writeFileBytes(path, file);
 
-        StructureDescription result = loader.read(file, path);
+        StructureDescription result = loader.read(file, path, BlockPalette.DEFAULT);
         Utils.writeFileBytes(path+".result.stru", loader.save(result));
     }
 

@@ -6,6 +6,7 @@ import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.struct.StructureUtility;
+import com.reider.dungeonutility.struct.formats.legacy.BlockPalette;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
@@ -17,7 +18,7 @@ import org.json.JSONException;
 
 public class DungeonAPI_V2 extends LoaderType {
     @Override
-    public StructureDescription read(byte[] bytes, String path) {
+    public StructureDescription read(byte[] bytes, String path, BlockPalette palette) {
         final ArrayList<BlockData> blocks = new ArrayList<>();
         try {
             final JSONArray json = new JSONArray(new String(bytes));
@@ -27,7 +28,7 @@ public class DungeonAPI_V2 extends LoaderType {
                 final String[] datas = block.split("\\.");
 
                 blocks.add(BlockData.createData(Integer.parseInt(datas[2]), Integer.parseInt(datas[3]), Integer.parseInt(datas[4]),
-                        StateManager.buildBlockState(Utils.getIdBlock(datas[0]), Integer.parseInt(datas[1]))));
+                        palette.buildBlockState(datas[0], Integer.parseInt(datas[1]))));
             }
         } catch (JSONException e) {
             Logger.debug(DungeonUtilityMain.logger_name, ICLog.getStackTrace(e));

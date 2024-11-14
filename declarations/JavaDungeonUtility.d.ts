@@ -409,8 +409,11 @@ declare class JavaStructureCompression {
     static decompression(path: string): string;
 }
 
+declare class BlockPalette {
+    }
+
 interface ILoaderType {
-    read(file: number[], path: string): void;
+    read(file: number[], path: string, palette: BlockPalette): void;
     save(stru: JavaStructureDescription): number[];
     isLoadRuntime(): boolean;
 }

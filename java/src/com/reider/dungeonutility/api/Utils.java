@@ -21,7 +21,7 @@ public class Utils {
     }
 
     public static int getIdBlock(String id){
-        if(id.equals(""))
+        if(id.isEmpty())
             return 0;
         if(isNumber(id))
             return Integer.parseInt(id);

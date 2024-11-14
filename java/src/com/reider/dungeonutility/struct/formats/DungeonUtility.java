@@ -5,6 +5,7 @@ import com.reider.dungeonutility.api.StateManager;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
+import com.reider.dungeonutility.struct.formats.legacy.BlockPalette;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.block.BlockState;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.log.ICLog;
@@ -59,7 +60,7 @@ public class DungeonUtility extends LoaderType {
     }
 
     @Override
-    public StructureDescription read(byte[] bytes, String path) {
+    public StructureDescription read(byte[] bytes, String path, BlockPalette palette) {
         final ArrayList<BlockData> blocks = new ArrayList<>();
         
         try{

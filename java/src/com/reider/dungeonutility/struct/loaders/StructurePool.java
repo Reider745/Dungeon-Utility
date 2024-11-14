@@ -5,6 +5,7 @@ import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.Utils;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.struct.formats.LoaderType;
+import com.reider.dungeonutility.struct.formats.legacy.BlockPalette;
 import com.reider.dungeonutility.struct.prototypes.IStructurePrototype;
 import com.reider.dungeonutility.struct.IStructureCopy;
 import com.reider.dungeonutility.struct.StructureRotation;
@@ -24,6 +25,7 @@ public class StructurePool {
     private final StructureRegisterLoader loader = new StructureRegisterLoader(this);
     private final String name_pool;
     private String path = null;
+    private BlockPalette palette = BlockPalette.DEFAULT;
 
     public StructurePool(String name, boolean global){
         this.name_pool = name;
@@ -42,6 +44,10 @@ public class StructurePool {
 
     public String getName(){
         return name_pool;
+    }
+
+    public void setBlockPalette(BlockPalette palette) {
+        this.palette = palette;
     }
 
     public StructureRegisterLoader getLoader() {
@@ -78,9 +84,9 @@ public class StructurePool {
 
     public void loadRuntime(String name, String path, String type, boolean compression){
         if(compression) {
-            setStructure(name, LoaderType.getType(type).read(StructureCompression.decompression(path).getBytes(), path));
+            setStructure(name, LoaderType.getType(type).read(StructureCompression.decompression(path).getBytes(), path, palette));
         } else {
-            setStructure(name, LoaderType.getType(type).read(Utils.readFileBytes(path), path));
+            setStructure(name, LoaderType.getType(type).read(Utils.readFileBytes(path), path, palette));
         }
     }
 
