@@ -35,7 +35,7 @@ let StructureUtility = {
 		return StructureLoader.getStructure(name).blocks;
 	},
 	newStructure(name, stru){
-		StructureLoader.setStructure(name, new StructureDescription(stru || []));
+		StructureLoader.setStructure(name, new StructureDescription(stru || []).getDescription());
 	},
 	getCountBlock(stru){
 		return this.getStructureByName(stru).length;
