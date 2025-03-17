@@ -44,7 +44,9 @@ public class StateManager {
     }
 
     public static BlockState buildBlockState(int id, HashMap<String, Integer> states){
-        if(!isLevelLoaded) throw new RuntimeException("Not is level loaded");
+        if(!isLevelLoaded) {
+            return new BlockState(id, states);
+        }
 
         for(BlockState state : statesByRuntimeId){
             if(state.id == id && state.getNamedStates().equals(states)){

@@ -34,33 +34,17 @@ public class BlockPalette {
         this.convertStates = convertStates;
     }
 
-    private static final HashMap<String, Integer>[] STATES_FOR_META = new HashMap[16];
-
-    static {
-        for(int meta = 0;meta < STATES_FOR_META.length;meta++) {
-            final HashMap<String, Integer> states = new HashMap<>();
-            states.put("color", meta);
-            STATES_FOR_META[meta] = states;
-        }
-    }
-
     public BlockState buildBlockState(int num_id, int meta) {
-        try{
-            if(num_id > 8000)
-                return StateManager.buildBlockState(num_id, STATES_FOR_META[meta]);
+        if(num_id > 8000)
             return StateManager.buildBlockState(num_id, meta);
-        }catch (Exception ignore) {}
-        return StateManager.buildBlockState(num_id, 0);
+        return StateManager.buildBlockState(num_id, meta);
     }
 
     public BlockState buildBlockState(String id, int meta) {
-        try{
-            final int num_id = Utils.getIdBlock(id);
-            if(num_id > 8000)
-                return buildBlockState(id, STATES_FOR_META[meta]);
+        final int num_id = Utils.getIdBlock(id);
+        if (num_id > 8000)
             return buildBlockState(num_id, meta);
-        }catch (Exception ignore) {}
-        return buildBlockState(id, 0);
+        return buildBlockState(num_id, meta);
     }
 
     public BlockState buildBlockState(int id, JSONObject json) {
@@ -70,6 +54,7 @@ public class BlockPalette {
             throw new RuntimeException(e);
         }
     }
+
     public BlockState buildBlockState(String id, JSONObject json) {
         try {
             return buildBlockState(id, Utils.getHashMapToJson(json));
