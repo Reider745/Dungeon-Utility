@@ -21,6 +21,19 @@ ModAPI.registerAPI("DungeonUtility", {
 	version: 5
 });
 
+/*ModAPI.addAPICallback("DungeonUtility", (api) => {
+    alert(StructureLoader.getAllStructureAndPool().toString())
+    StructureUtility.newStructure("test");
+
+    StructureUtility.addBlock("test", 0, 0, 0, new BlockState(VanillaBlockID.stone, 0));
+    StructureUtility.addBlock("test", 0, 1, 0, new BlockState(VanillaBlockID.planks, 0));
+
+    Item.registerUseFunctionForID(VanillaItemID.apple, (coords, item, block, player) => {
+        Structure.set("test", coords.x, coords.y, coords.z, BlockSource.getDefaultForActor(player));
+    });
+});*/
+
+
 {
     let use_wand = false, firstClick = false;
     let coordinates = [
@@ -142,8 +155,6 @@ ModAPI.registerAPI("DungeonUtility", {
     });
 }
 
-new StructurePool("test")
-    
 // EXAMPLES
 /*
 let pool = new StructurePool("test")
