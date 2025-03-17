@@ -4,18 +4,18 @@ plugins {
 }
 
 dependencies {
-	implementation fileTree (dir: "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath", include: '*.jar')
+	implementation fileTree(dir: "/home/reider/Documents/innercore-mod-toolchain-master/toolchain/toolchain/classpath", include:  '*.jar')
 }
 
 sourceSets {
 	main {
 		java {
 			srcDirs = ["java/src"]
-			buildDir = "C:\\vs\\toolchainnew\\toolchain\\toolchain\\build\\DungeonUtiltity-6a95e\\gradle\\classes\\${project.name}"
+			buildDir = "/home/reider/Documents/innercore-mod-toolchain-master/toolchain/toolchain/build/DungeonUtility-0d8c5/gradle/classes/${project.name}"
 		}
 		resources {
 			srcDirs = []
 		}
-		compileClasspath += files("C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\android-support-multidex.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\android-support-v4.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\android-support-v7-recyclerview.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\android.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\horizon-classes.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\inner.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\json-io.jar", "C:\\vs\\toolchainnew\\toolchain\\toolchain\\classpath\\rhino.jar")
+		compileClasspath += files("/home/reider/Documents/innercore-mod-toolchain-master/toolchain/toolchain/classpath/android.jar", "/home/reider/Documents/innercore-mod-toolchain-master/toolchain/toolchain/classpath/horizon-1.2.jar", "/home/reider/Documents/innercore-mod-toolchain-master/toolchain/toolchain/classpath/innercore-all.jar")
 	}
 }
