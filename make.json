@@ -21,15 +21,12 @@
 	],
 	"compile": [
 		{
-			"source": "native",
-			"type": "native"
-		},
-		{
 			"source": "java",
 			"type": "java"
 		}
 	],
 	"declarations": [
+		"declarations/android.d.ts",
 		"declarations/JavaDungeonUtility.d.ts",
 		"declarations/RuntimeSetting.d.ts"
 	],

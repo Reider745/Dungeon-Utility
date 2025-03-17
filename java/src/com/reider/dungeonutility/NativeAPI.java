@@ -9,16 +9,16 @@ import com.zhekasmirnov.horizon.runtime.logger.Logger;
 
 import java.util.ArrayList;
 
+@Deprecated
 public class NativeAPI {
-    public native static void setCustomStructure(String name, int x, int y, int z, long region);
+    public static void setCustomStructure(String name, int x, int y, int z, long region){}
     public static void setCustomStructure(String name, int x, int y, int z, NativeBlockSource region){
         setCustomStructure(name, x, y, z, region.getPointer());
     }
 
-    public native static boolean isCustomLoad(String name);
-
-    public native static void addItem(String name, int id, int data, float cahnce, int min, int max);
-    public native static void fill(String name, int x, int y, int z, long region);
+    public static boolean isCustomLoad(String name) {return false;}
+    public static void addItem(String name, int id, int data, float cahnce, int min, int max) {}
+    public static void fill(String name, int x, int y, int z, long region) {}
     public static void fill(String name, int x, int y, int z, NativeBlockSource region){
         fill(name, x, y, z, region.getPointer());
     }
