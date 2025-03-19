@@ -4,6 +4,8 @@ import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.api.data.BlockData;
 import com.reider.dungeonutility.multiversions.js_types.IJsObject;
 import com.reider.dungeonutility.struct.Structure;
+import com.reider.dungeonutility.struct.generation.stand.api.BaseStand;
+import com.reider.dungeonutility.struct.generation.stand.api.StandManager;
 import com.reider.dungeonutility.struct.generation.types.IGenerationDescription;
 import com.reider.dungeonutility.struct.prototypes.IStructurePrototype;
 import com.reider.dungeonutility.struct.prototypes.StructurePrototypeEmpty;
@@ -20,6 +22,7 @@ import java.util.Random;
 public class StructureChunk {
     private final ArrayList<BlockData> blocks;
     public final int chunkX, chunkZ;
+    private final BaseStand stand;
 
     private int x, y, z;
     private boolean isLast = false;
@@ -27,10 +30,11 @@ public class StructureChunk {
     private Object packet;
     private String id;
 
-    public StructureChunk(ArrayList<BlockData> blocks, int chunkX, int chunkZ){
+    public StructureChunk(ArrayList<BlockData> blocks, int chunkX, int chunkZ, BaseStand stand){
         this.blocks = blocks;
         this.chunkX = chunkX;
         this.chunkZ = chunkZ;
+        this.stand = stand;
     }
 
     public StructureChunk init(IGenerationDescription description, Vector3 pos, Object packet) {
@@ -69,6 +73,18 @@ public class StructureChunk {
             }
         }
 
+        if(stand != null) {
+            final int x_point_min = x + stand.xOffset;
+            final int start_index_x = Math.max(chunkX - x_point_min, 0);
+            final int end_index_x = Math.min(chunkX + 16 - x_point_min, stand.lengthX);
+
+            final int z_point_min = z + stand.zOffset;
+            final int start_index_z = Math.max(chunkZ - z_point_min, 0);
+            final int end_index_z = Math.min(chunkZ + 16 - z_point_min, stand.lengthZ);
+
+            stand.setStandPart(region, x, y, z, start_index_x, end_index_x, start_index_z, end_index_z);
+        }
+
         if(isLast) {
             mainPrototype.after(x, y, z, region, packet);
             if(isUseGlobal)
@@ -98,6 +114,7 @@ public class StructureChunk {
         json.put("l", isLast);
         json.put("cx", chunkX);
         json.put("cz", chunkZ);
+        if(stand != null) json.put("st", stand.getName());
 
         return json;
     }
@@ -115,7 +132,8 @@ public class StructureChunk {
         final IJsObject object = DungeonUtilityMain.getPackVersionApi().createObjectEmpty();
         object.setJavaObj("random", new Random());
 
-        return slip.getChunk(json.getInt("cx"), json.getInt("cz"), pos.getInt(0), pos.getInt(2))
+        return slip.getChunk(json.getInt("cx"), json.getInt("cz"), pos.getInt(0), pos.getInt(2),
+                        StandManager.build(json.optString("st", "fallback"), description.getStructure()))
                 .init(description, new Vector3(pos.getInt(0), pos.getInt(1), pos.getInt(2)),
                         object.passToScript());
     }

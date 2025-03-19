@@ -72,6 +72,15 @@ public class BlockData implements Cloneable {
         return this.copy();
     }
 
+    public void setCoordsNotMath(int x, int y, int z, NativeBlockSource region) {
+        x -= this.x;
+        y -= this.y;
+        z -= this.z;
+
+        for(ISetBlock func : list)
+            func.set(this, x, y, z, region);
+    }
+
     public void set(int X, int Y, int Z, NativeBlockSource region){
         for(ISetBlock func : list)
             func.set(this, X, Y, Z, region);
@@ -182,5 +191,9 @@ public class BlockData implements Cloneable {
 
     public static BlockData getBlockByCoords(int x, int y, int z, NativeBlockSource region){
         return createData(x, y, z, region.getBlock(x, y, z), region.getExtraBlock(x , y, z), null);
+    }
+
+    public static BlockData createData(BlockState state) {
+        return createData(0, 0, 0, state);
     }
 }

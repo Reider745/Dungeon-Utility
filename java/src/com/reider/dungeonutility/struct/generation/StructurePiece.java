@@ -8,12 +8,14 @@ import com.reider.dungeonutility.DungeonUtilityMain;
 import com.reider.dungeonutility.multiversions.IPackVersion;
 import com.reider.dungeonutility.multiversions.js_types.IJsObject;
 import com.reider.dungeonutility.struct.Structure;
+import com.reider.dungeonutility.struct.generation.stand.api.BaseStand;
+import com.reider.dungeonutility.struct.generation.stand.api.StandManager;
 import com.reider.dungeonutility.struct.generation.types.*;
 import com.reider.dungeonutility.struct.generation.types.api.WorldStructure;
 import com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 import com.zhekasmirnov.apparatus.mcpe.NativeBlockSource;
+import com.zhekasmirnov.horizon.runtime.logger.Logger;
 import com.zhekasmirnov.innercore.api.NativeAPI;
-import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 import com.zhekasmirnov.innercore.api.runtime.saver.world.WorldDataScopeRegistry;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -107,39 +109,6 @@ public class StructurePiece implements IStructurePiece {
             return null;
         }));
         NativeAPI.setChunkStateChangeCallbackEnabled(9, true);
-
-        // TODO: Не более чем костыль
-        /*if(!AdaptedScriptAPI.isDedicatedServer()) {
-            version.addCallback("tick", args -> {
-                if(timer % 20 == 0) {
-                    timer = 0;
-
-                    synchronized (dimensionsChunksStructures) {
-                        dimensionsChunksStructures.forEach((dimension, chunks) -> {
-                            final NativeBlockSource region = NativeBlockSource.getDefaultForDimension(dimension);
-
-                            synchronized (chunks) {
-                                chunks.forEach((chunk, list) -> {
-                                    list.forEach(structure -> {
-                                        if (region.isChunkLoadedAt(structure.chunkX, structure.chunkZ))
-                                            structure.set(region);
-                                        else
-                                            chunks_post.put(chunk, list);
-                                    });
-                                });
-                            }
-
-                            chunks.clear();
-                            chunks.putAll(chunks_post);
-                            chunks_post.clear();
-                        });
-                    }
-                }
-
-                timer++;
-                return null;
-            });
-        }*/
     }
 
     private static Long hashChunkPos(int x, int z){
@@ -162,6 +131,11 @@ public class StructurePiece implements IStructurePiece {
 
             stru.setStructure(new StructureDescriptionChunkSlip(stru.getStructure().getStructure()));
             unique_description.put(id, stru);
+        }
+
+        final BaseStand stand = StandManager.build(stru.getStandName(), stru.getStructure());
+        if(stand != null) {
+            stru.getStructure().setStand(stand);
         }
     }
 
@@ -286,7 +260,7 @@ public class StructurePiece implements IStructurePiece {
                     synchronized (chunks) {
                         for (int X = chunkStartX << 4, CX = chunkStartX; X <= chunkEndX << 4; X += 4, CX++)
                             for (int Z = chunkStartZ << 4, CZ = chunkStartZ; Z <= chunkEndZ << 4; Z += 4, CZ++) {
-                                lastChunk = chunkSlip.getChunk(X, Z, _x, _z);
+                                lastChunk = chunkSlip.getChunk(X, Z, _x, _z, description.getStructure().getStand());
 
                                 if (lastChunk.isEmpty()) continue;
                                 lastChunk.init(description, pos, packet);

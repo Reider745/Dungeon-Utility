@@ -1,5 +1,6 @@
 package com.reider.dungeonutility.struct;
 
+import com.reider.dungeonutility.struct.generation.stand.api.BaseStand;
 import com.reider.dungeonutility.struct.loaders.StructureLoader;
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.struct.prototypes.IStructurePrototype;
@@ -31,6 +32,7 @@ public class Structure {
     private StructureDescription stru;
     private IStructurePrototype prot;
     private boolean useGlobalProt;
+    protected BaseStand stand;
 
     public Structure(StructureDescription stru){
         this.stru = stru;
@@ -70,14 +72,26 @@ public class Structure {
 
     public void setStructure(int x, int y, int z, NativeBlockSource region, Object packet){
         stru.set(x, y, z, region, prot, useGlobalProt, packet);
+        if(stand != null)
+            stand.setStand(region, x, y, z);
     }
     public void build(int x, int y, int z, NativeBlockSource region, long spl, Object packet){
         try {
             stru.build(x, y, z, region, prot, useGlobalProt, packet, spl);
+            if(stand != null)
+                stand.setStand(region, x, y, z);
         }catch (InterruptedException e){}
     }
 
     public void destroy(int x, int y, int z, NativeBlockSource region){
         stru.destroy(x, y, z, region);
+    }
+
+    public void setStand(BaseStand stand) {
+        this.stand = stand;
+    }
+
+    public BaseStand getStand() {
+        return stand;
     }
 }

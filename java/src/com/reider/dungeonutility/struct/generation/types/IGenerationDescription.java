@@ -27,4 +27,5 @@ public interface IGenerationDescription {
     boolean canClearStructure();
     boolean canLegacyOffset();
     String getUniqueIdentifier();
+    String getStandName();
 }

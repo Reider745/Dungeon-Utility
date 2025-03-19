@@ -30,8 +30,9 @@ public class DefaultGeneration implements IGenerationDescription {
     public int[] count;
     public int[] minAndMaxY;
     public boolean _canLegacyOffset;
+    public String standName;
 
-    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy, long time, int[] count, int[] minAndMaxY, boolean canLegacyOffset, String identifier){
+    public DefaultGeneration(String type, String name, int x, int y, int z, int chance, int disnatnt, boolean pool, boolean isSet, int dimension, boolean white_list, int[] biomes, boolean white_list_blocks, int[] blocks, Structure structure, boolean checkName, boolean optimization, boolean legacy, long time, int[] count, int[] minAndMaxY, boolean canLegacyOffset, String identifier, String standName){
         this.type = type;
         this.name = name;
         this.identifier = identifier;
@@ -55,6 +56,7 @@ public class DefaultGeneration implements IGenerationDescription {
         this.minAndMaxY = minAndMaxY;
         this.count = count;
         this._canLegacyOffset = canLegacyOffset;
+        this.standName = standName;
     }
 
     @Override
@@ -160,5 +162,10 @@ public class DefaultGeneration implements IGenerationDescription {
     @Override
     public String getUniqueIdentifier() {
         return identifier;
+    }
+
+    @Override
+    public String getStandName() {
+        return standName;
     }
 }

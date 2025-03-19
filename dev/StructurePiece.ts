@@ -3,6 +3,7 @@ const DefaultDescription = WRAP_JAVA("com.reider.dungeonutility.struct.generatio
 const Vector3 = WRAP_JAVA("com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3");
 
 type GENERATION_TYPE = "default" | "Nether" | "OverWorld";
+type STAND_NAME = "lasting" | "surface_tower";
 
 interface ILegacyDescription {
     identifier?: string;
@@ -29,6 +30,7 @@ interface ILegacyDescription {
     count?: number[];
     minAndMaxY?: [number, number];
     legacy_offset?: boolean;
+    standName?: STAND_NAME;
 }
 
 type PacketMessage = {
@@ -178,6 +180,12 @@ class DefaultGenerationDescription {
         return this;
     }
 
+    private standName: STAND_NAME;
+    public setStand(stand: STAND_NAME): DefaultGenerationDescription {
+        this.standName = stand;
+        return this;
+    }
+
     public clone(identifier: string = ""): DefaultGenerationDescription {
         return new DefaultGenerationDescription(this.structure, this.chance, this.type)
             .setIdentifier(identifier)
@@ -225,7 +233,8 @@ class DefaultGenerationDescription {
 
             //surface
             white_list_blocks: this.surface_white_list,
-            blocks: this.surface
+            blocks: this.surface,
+            standName: this.standName
         });
     }
 
@@ -252,7 +261,7 @@ namespace StructurePiece {
                                         !!obj.white_list, obj.biomes || [], !!obj.white_list_blocks, obj.blocks || [0], obj.structure.getStructureJava(), 
                                         !!obj.checkName, obj.optimization === undefined ? true : obj.optimization, !!obj.legacySpawn, 
                                         obj.clearToMembory || 60000, obj.count||[1], obj.minAndMaxY||[0, 255], 
-                                        obj.legacy_offset === undefined ? true : obj.legacy_offset, obj.identifier || "");
+                                        obj.legacy_offset === undefined ? true : obj.legacy_offset, obj.identifier || "", obj.standName || "");
 		else{
 			Logger.Log("Error StructurePiece register, Structure = undefined or null "+obj.name || "noy_name", "DungeonUtility");
 			return null;
@@ -283,3 +292,14 @@ namespace StructurePiece {
             .del(x, y, z);
 	}
 };
+
+/*let pool = new StructurePool("test");
+pool.setPathStructures(__dir__ + "output");
+pool.upload("grib2", "DU2");
+
+Callback.addCallback("StructureLoadOne", () => {
+    new DefaultGenerationDescription(new Structure.advanced(pool.get("grib2")), 10)
+        //.setIdentifier("test:grib")
+        .setStand("lasting")
+        .register();
+})*/

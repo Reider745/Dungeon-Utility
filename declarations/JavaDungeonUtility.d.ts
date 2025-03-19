@@ -66,6 +66,7 @@ declare class JavaBlockData extends java.lang.Object {
     static createData(x: number, y: number, z: number, block: Nullable<JavaBlockState>, extra: Nullable<JavaBlockState>): JavaBlockData;
     static createData(x: number, y: number, z: number, block: Nullable<JavaBlockState>): JavaBlockData;
     static createData(x: number, y: number, z: number): JavaBlockData;
+    static createData(block: Nullable<JavaBlockState>): JavaBlockData;
     static getBlockByCoords(x: number, y: number, z: number, region: BlockSource): JavaBlockData;
 }
 
@@ -113,6 +114,12 @@ declare class JavaDefaultStructurePrototype extends java.lang.Object implements 
     public after(x: number, y: number, z: number, region: BlockSource, packet: any): void;
 }
 
+declare class JavaBaseStand {
+    public setName(name: string): void;
+    public getName(): string;
+    public setStand(region: BlockSource, x: number, y: number, z: number): void;
+}
+
 declare class JavaStructure {
     /** @deprecated */
     static setStructure(stru: JavaStructureDescription, x: number, y: number, z: number, region: BlockSource, packat: any): void;
@@ -145,6 +152,8 @@ declare class JavaStructure {
     setStructure(x: number, y: number, z: number, region: BlockSource, packat: any): void;
     build(x: number, y: number, z: number, region: BlockSource, sleep: number, packat: any): void;
     destroy(x: number, y: number, z: number, region: BlockSource): boolean;
+    setStand(stand: JavaBaseStand): void
+    getStand(): Nullable<JavaBaseStand>;
 }
 
 interface IGenerationDescription {
@@ -166,6 +175,7 @@ interface IGenerationDescription {
     canClearStructure(): boolean;
     canLegacyOffset(): boolean;
     getUniqueIdentifier(): string;
+    getStandName(): string;
 }
 
 interface IGenerationType {
@@ -216,9 +226,9 @@ interface IChunkManager {
 }
 
 declare class JavaDefaultGeneration extends java.lang.Object implements IGenerationDescription {
-    constructor(type: string, name: string, x: number, y: number, z: number, chance: number, disnatnt: number, pool: boolean, isSet: boolean, dimension: number, white_list: boolean, biomes: number[], white_list_blocks: boolean, blocks: number[], structure: JavaStructure, checkName: boolean, optimization: boolean, legacy: boolean, time: number, count: number[], minAndMaxY: number[], canLegacyOffset: boolean, identifier: string);
-    getUniqueIdentifier(): string;
-
+    constructor(type: string, name: string, x: number, y: number, z: number, chance: number, disnatnt: number, pool: boolean, isSet: boolean, dimension: number, white_list: boolean, biomes: number[], white_list_blocks: boolean, blocks: number[], structure: JavaStructure, checkName: boolean, optimization: boolean, legacy: boolean, time: number, count: number[], minAndMaxY: number[], canLegacyOffset: boolean, identifier: string, standName: string);
+    public getUniqueIdentifier(): string;
+    public getStandName(): string;
     public getStructure(): JavaStructure;
     public getChance(): number;
     public getType(): string;

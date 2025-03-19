@@ -2,6 +2,7 @@ package com.reider.dungeonutility.struct.generation;
 
 import com.reider.dungeonutility.api.StructureDescription;
 import com.reider.dungeonutility.api.data.BlockData;
+import com.reider.dungeonutility.struct.generation.stand.api.BaseStand;
 
 import java.util.ArrayList;
 
@@ -56,7 +57,7 @@ public class StructureDescriptionChunkSlip extends StructureDescription {
     }
 
     // Бьет структуру на чанки
-    public final StructureChunk getChunk(int realChunkX, int realChunkZ, int x_center, int z_center){
+    public final StructureChunk getChunk(int realChunkX, int realChunkZ, int x_center, int z_center, BaseStand stand){
         final ArrayList<BlockData> blocks = new ArrayList<>();
 
         final int x_point_min = x_center + x_offset;
@@ -70,10 +71,13 @@ public class StructureDescriptionChunkSlip extends StructureDescription {
         for(int x = start_index_x;x <= end_index_x;x++){
             final ArrayList<BlockData>[] line = blocks_cache[x];
 
-            for(int z = start_index_z;z <= end_index_z;z++)
-                blocks.addAll(line[z]);
+            for(int z = start_index_z;z <= end_index_z;z++) {
+                ArrayList<BlockData> list = line[z];
+                if(list != null)
+                    blocks.addAll(list);
+            }
         }
 
-        return new StructureChunk(blocks, realChunkX, realChunkZ);
+        return new StructureChunk(blocks, realChunkX, realChunkZ, stand);
     }
 }
