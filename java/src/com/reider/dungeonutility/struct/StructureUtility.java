@@ -151,12 +151,18 @@ public class StructureUtility {
     }
 
     public static class Size {
+        public int min;
+        public int max;
+
         public Size(int min, int max){
             this.min = min;
             this.max = max;
         }
-        public int min;
-        public int max;
+
+        public Size() {
+            this.min = Integer.MAX_VALUE;
+            this.max = Integer.MIN_VALUE;
+        }
 
         @Override
         public String toString() {
@@ -165,17 +171,25 @@ public class StructureUtility {
     }
 
     public static Size[] getStructureSize(StructureDescription structure){
-        BlockData[] stru = structure.blocks;
-        Size[] size = {new Size(0, 0),new Size(0, 0),new Size(0, 0)};
+        final BlockData[] stru = structure.blocks;
+
+        if(stru.length == 0)
+            return new Size[] {
+                    new Size(0, 0),
+                    new Size(0, 0),
+                    new Size(0, 0)
+            };
+
+        final Size[] size = {new Size(),new Size(),new Size()};
         for (BlockData block : stru) {
             size[0].max = Math.max(size[0].max, block.x);
             size[0].min = Math.min(size[0].min, block.x);
 
-            size[1].max = Math.max(size[0].max, block.y);
-            size[1].min = Math.min(size[0].min, block.y);
+            size[1].max = Math.max(size[1].max, block.y);
+            size[1].min = Math.min(size[1].min, block.y);
 
-            size[2].max = Math.max(size[0].max, block.z);
-            size[2].min = Math.min(size[0].min, block.z);
+            size[2].max = Math.max(size[2].max, block.z);
+            size[2].min = Math.min(size[2].min, block.z);
         }
         return size;
     }
