@@ -2,7 +2,7 @@
 	const DebugDu = WRAP_JAVA("com.reider.dungeonutility.logger.Debug");
 	const LoggerDisable = WRAP_JAVA("com.reider.dungeonutility.logger.LoggerDisable");
 	const LoggerEnable = WRAP_JAVA("com.reider.dungeonutility.logger.LoggerEnable");
-	const ChunkClearMembory = WRAP_JAVA("com.reider.dungeonutility.struct.generation.thread.ChunkClearMembory");
+	const ChunkClearMemory = WRAP_JAVA("com.reider.dungeonutility.struct.generation.thread.ChunkClearMemory");
 
 	ModAPI.addAPICallback("RuntimeSetting", (api) => {
 		const ConfigStorage = api.ConfigStorage;

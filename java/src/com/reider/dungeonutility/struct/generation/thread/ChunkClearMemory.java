@@ -5,13 +5,13 @@ import com.reider.dungeonutility.struct.generation.StructurePieceController;
 import com.reider.dungeonutility.struct.generation.types.IChunkManager;
 import com.reider.dungeonutility.struct.generation.types.api.IChunk;
 
-public class ChunkClearMembory extends Thread {
+public class ChunkClearMemory extends Thread {
     public static boolean enable = true;
     public static long time = 3000l;
     public static long limit = 60 * 1000l;
     public static int pace = 64;
 
-    public ChunkClearMembory(){
+    public ChunkClearMemory(){
         this.start();
     }
 
