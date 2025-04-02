@@ -194,28 +194,23 @@ public class StructurePiece implements IStructurePiece {
     }
 
     public void generationStructure(IGenerationDescription description, int x, int z,Random random, NativeBlockSource region, Object packet){
-        int dimension = region.getDimension();
-        IGenerationType type = types.get(description.getType());
+        final int dimension = region.getDimension();
+        final IGenerationType type = types.get(description.getType());
+
         if(type == null) return;
-        int[] counts = description.getCount();
-        int count = counts[random.nextInt(counts.length)];
+
+        final int[] counts = description.getCount();
+        final int count = counts[random.nextInt(counts.length)];
+
         for(int i = 0;i < count;i++)
             if(random.nextInt(description.getChance()) <= 1) {
                 Vector3 pos = type.getPosition(x, z, random, dimension, region);
-                Vector3 offset = description.getOffset();
-                int[] y = description.getMinAndMaxY();
-                if(y[0] >= pos.y && pos.y <= y[1]){
-                    boolean res = true;
-                    for(int yy = y[0];yy < y[1];yy++)
-                        if(region.getBlockId((int) pos.x, yy, (int) pos.z) == 0 && region.getBlockId((int) pos.x, yy-1, (int) pos.z) != 0){
-                            pos = new Vector3(pos.x, yy, pos.z);
-                            res = false;
-                            break;
-                        }
-                    if(res)
-                        return;
-                }
-                
+                final Vector3 offset = description.getOffset();
+                final int[] y = description.getMinAndMaxY();
+
+                if(y[0] > pos.y || pos.y > y[1])
+                    return;
+
                 if(description.canLegacyOffset())
                     pos = new Vector3(pos.x + offset.x, pos.y + offset.y, pos.z + offset.z);
 
