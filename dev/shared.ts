@@ -91,8 +91,14 @@ ModAPI.registerAPI("DungeonUtility", {
         }
         
         try{
+            WRAP_JAVA("com.reider.dungeonutility.command.SetClientStructure").processCommand(cmd);
+
             if(args[0] == "/struct"){
-                if(args[1] == "save" && args[2]){
+                if(args[1] == "load" && args[2]) {
+                    StructureLoader.loadRuntime(__dir__ + "output/" + args[2] + ".struct", args[2], (args[3] || "DU") as FILE_FORMATS, args[4] == "true");
+                    Game.message("Попытка загрузки структуры: " + (__dir__ + args[2] + ".struct"));
+                    Game.prevent();
+                }else if(args[1] == "save" && args[2]){
                     Game.prevent();
 
                     if((coordinates[0].x == 0 && coordinates[0].y == 0 && coordinates[0].z == 0) ||

@@ -48,7 +48,7 @@ public class LoggerEnable implements ILogger {
 
     public int TEXT_SIZE = 15;
     public static int X = 0;
-    public static int GREEN = Color.argb(.5f, .0f, 1f, .0f);
+    public static int GREEN = Color.argb( 255 / 2, 0, 255, 0);
 
     private final UIWindow window = new UIWindow(new UIWindowLocation());
 

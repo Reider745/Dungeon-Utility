@@ -194,6 +194,7 @@ class DefaultGenerationDescription {
             .setStorage(this.storage_structure, this.queue_clear, this.storage_queue)
             .setConditionsSpawned(this.check_place, this.min_y, this.max_y)
             .setBiomes(this.biomes_white_list, this.biomes)
+            .setStand(this.standName)
             .setSurface(this.surface_white_list, this.surface);
     }
 

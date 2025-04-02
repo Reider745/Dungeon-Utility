@@ -12,6 +12,7 @@ import com.reider.dungeonutility.struct.StructureRotation;
 import com.reider.dungeonutility.struct.StructureUtility;
 import com.reider.dungeonutility.struct.formats.StructureCompression;
 import com.zhekasmirnov.horizon.runtime.logger.Logger;
+import com.zhekasmirnov.innercore.api.NativeAPI;
 import com.zhekasmirnov.innercore.api.log.ICLog;
 import com.zhekasmirnov.innercore.api.mod.adaptedscript.AdaptedScriptAPI;
 

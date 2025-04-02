@@ -210,6 +210,7 @@ declare const StructurePieceController: typeof JavaStructurePieceController;
 declare const DefaultDescription: typeof JavaDefaultGeneration;
 declare const Vector3: typeof com.zhekasmirnov.apparatus.adapter.innercore.game.common.Vector3;
 type GENERATION_TYPE = "default" | "Nether" | "OverWorld";
+type STAND_NAME = "lasting" | "surface_tower";
 interface ILegacyDescription {
     identifier?: string;
     type?: GENERATION_TYPE;
@@ -236,6 +237,7 @@ interface ILegacyDescription {
     count?: number[];
     minAndMaxY?: [number, number];
     legacy_offset?: boolean;
+    standName?: STAND_NAME;
 }
 type PacketMessage = {
     text: string;
@@ -273,6 +275,7 @@ declare class DefaultGenerationDescription {
     private biomes_white_list;
     private biomes;
     setBiomes(white_list?: boolean, list?: number[]): DefaultGenerationDescription;
+    public setStand(stand: STAND_NAME): DefaultGenerationDescription
     private surface_white_list;
     private surface;
     /**
